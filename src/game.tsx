@@ -3,7 +3,6 @@ import { makeDrawSystem } from "./gl/draw";
 import {
   discoveryInitDialogue,
   discoveryScenes,
-  drawDiscoveryBody,
   introText,
 } from "./bosses/discovery-scenes.tsx";
 import {
@@ -16,7 +15,7 @@ import { createRoot } from "react-dom/client";
 import { TypedInTextSequence } from "./TypedInText.tsx";
 import React from "react";
 import { makeGame } from "./ecs/game.ts";
-import { drawEntities, iterEntities, sequence, text } from "./ecs/entity.tsx";
+import { sequence, text } from "./ecs/entity.tsx";
 
 // testing function not for release
 export async function game() {
@@ -46,8 +45,8 @@ export async function game() {
   game.addEntity(discoveryScenes);
 
   const loop = () => {
-    iterEntities(game);
-    drawEntities(game);
+    game.iterEntities();
+    game.drawEntities();
 
     game.t += 1 / 60;
 

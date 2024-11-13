@@ -1,3 +1,4 @@
+"use strict";
 (() => {
   var __create = Object.create;
   var __defProp = Object.defineProperty;
@@ -648,8 +649,8 @@
           }
           var didWarnAboutMaps = false;
           var userProvidedKeyEscapeRegex = /\/+/g;
-          function escapeUserProvidedKey(text3) {
-            return text3.replace(userProvidedKeyEscapeRegex, "$&/");
+          function escapeUserProvidedKey(text2) {
+            return text2.replace(userProvidedKeyEscapeRegex, "$&/");
           }
           function getElementKey(element, index) {
             if (typeof element === "object" && element !== null && element.key != null) {
@@ -4284,15 +4285,15 @@
           var COMMENT_NODE = 8;
           var DOCUMENT_NODE = 9;
           var DOCUMENT_FRAGMENT_NODE = 11;
-          var setTextContent = function(node, text3) {
-            if (text3) {
+          var setTextContent = function(node, text2) {
+            if (text2) {
               var firstChild = node.firstChild;
               if (firstChild && firstChild === node.lastChild && firstChild.nodeType === TEXT_NODE) {
-                firstChild.nodeValue = text3;
+                firstChild.nodeValue = text2;
                 return;
               }
             }
-            node.textContent = text3;
+            node.textContent = text2;
           };
           var shorthandToLonghand = {
             animation: ["animationDelay", "animationDirection", "animationDuration", "animationFillMode", "animationIterationCount", "animationName", "animationPlayState", "animationTimingFunction"],
@@ -9468,8 +9469,8 @@
             }
             return domElement;
           }
-          function createTextNode(text3, rootContainerElement) {
-            return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text3);
+          function createTextNode(text2, rootContainerElement) {
+            return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text2);
           }
           function setInitialProperties(domElement, tag, rawProps, rootContainerElement) {
             var isCustomComponentTag = isCustomComponent(tag, rawProps);
@@ -9913,8 +9914,8 @@
             }
             return updatePayload;
           }
-          function diffHydratedText(textNode, text3, isConcurrentMode) {
-            var isDifferent = textNode.nodeValue !== text3;
+          function diffHydratedText(textNode, text2, isConcurrentMode) {
+            var isDifferent = textNode.nodeValue !== text2;
             return isDifferent;
           }
           function warnForDeletedHydratableElement(parentNode, child) {
@@ -9944,16 +9945,16 @@
               error("Expected server HTML to contain a matching <%s> in <%s>.", tag, parentNode.nodeName.toLowerCase());
             }
           }
-          function warnForInsertedHydratedText(parentNode, text3) {
+          function warnForInsertedHydratedText(parentNode, text2) {
             {
-              if (text3 === "") {
+              if (text2 === "") {
                 return;
               }
               if (didWarnInvalidHydration) {
                 return;
               }
               didWarnInvalidHydration = true;
-              error('Expected server HTML to contain a matching text node for "%s" in <%s>.', text3, parentNode.nodeName.toLowerCase());
+              error('Expected server HTML to contain a matching text node for "%s" in <%s>.', text2, parentNode.nodeName.toLowerCase());
             }
           }
           function restoreControlledState$3(domElement, tag, props) {
@@ -10326,12 +10327,12 @@
           function shouldSetTextContent(type, props) {
             return type === "textarea" || type === "noscript" || typeof props.children === "string" || typeof props.children === "number" || typeof props.dangerouslySetInnerHTML === "object" && props.dangerouslySetInnerHTML !== null && props.dangerouslySetInnerHTML.__html != null;
           }
-          function createTextInstance(text3, rootContainerInstance, hostContext, internalInstanceHandle) {
+          function createTextInstance(text2, rootContainerInstance, hostContext, internalInstanceHandle) {
             {
               var hostContextDev = hostContext;
-              validateDOMNesting(null, text3, hostContextDev.ancestorInfo);
+              validateDOMNesting(null, text2, hostContextDev.ancestorInfo);
             }
-            var textNode = createTextNode(text3, rootContainerInstance);
+            var textNode = createTextNode(text2, rootContainerInstance);
             precacheFiberNode(internalInstanceHandle, textNode);
             return textNode;
           }
@@ -10469,8 +10470,8 @@
             var display = styleProp !== void 0 && styleProp !== null && styleProp.hasOwnProperty("display") ? styleProp.display : null;
             instance.style.display = dangerousStyleValue("display", display);
           }
-          function unhideTextInstance(textInstance, text3) {
-            textInstance.nodeValue = text3;
+          function unhideTextInstance(textInstance, text2) {
+            textInstance.nodeValue = text2;
           }
           function clearContainer(container) {
             if (container.nodeType === ELEMENT_NODE) {
@@ -10487,8 +10488,8 @@
             }
             return instance;
           }
-          function canHydrateTextInstance(instance, text3) {
-            if (text3 === "" || instance.nodeType !== TEXT_NODE) {
+          function canHydrateTextInstance(instance, text2) {
+            if (text2 === "" || instance.nodeType !== TEXT_NODE) {
               return null;
             }
             return instance;
@@ -10567,10 +10568,10 @@
             var isConcurrentMode = (internalInstanceHandle.mode & ConcurrentMode) !== NoMode;
             return diffHydratedProperties(instance, type, props, parentNamespace, rootContainerInstance, isConcurrentMode, shouldWarnDev);
           }
-          function hydrateTextInstance(textInstance, text3, internalInstanceHandle, shouldWarnDev) {
+          function hydrateTextInstance(textInstance, text2, internalInstanceHandle, shouldWarnDev) {
             precacheFiberNode(internalInstanceHandle, textInstance);
             var isConcurrentMode = (internalInstanceHandle.mode & ConcurrentMode) !== NoMode;
-            return diffHydratedText(textInstance, text3);
+            return diffHydratedText(textInstance, text2);
           }
           function hydrateSuspenseInstance(suspenseInstance, internalInstanceHandle) {
             precacheFiberNode(internalInstanceHandle, suspenseInstance);
@@ -10624,14 +10625,14 @@
           function shouldDeleteUnhydratedTailInstances(parentType) {
             return parentType !== "head" && parentType !== "body";
           }
-          function didNotMatchHydratedContainerTextInstance(parentContainer, textInstance, text3, isConcurrentMode) {
+          function didNotMatchHydratedContainerTextInstance(parentContainer, textInstance, text2, isConcurrentMode) {
             var shouldWarnDev = true;
-            checkForUnmatchedText(textInstance.nodeValue, text3, isConcurrentMode, shouldWarnDev);
+            checkForUnmatchedText(textInstance.nodeValue, text2, isConcurrentMode, shouldWarnDev);
           }
-          function didNotMatchHydratedTextInstance(parentType, parentProps, parentInstance, textInstance, text3, isConcurrentMode) {
+          function didNotMatchHydratedTextInstance(parentType, parentProps, parentInstance, textInstance, text2, isConcurrentMode) {
             if (parentProps[SUPPRESS_HYDRATION_WARNING$1] !== true) {
               var shouldWarnDev = true;
-              checkForUnmatchedText(textInstance.nodeValue, text3, isConcurrentMode, shouldWarnDev);
+              checkForUnmatchedText(textInstance.nodeValue, text2, isConcurrentMode, shouldWarnDev);
             }
           }
           function didNotHydrateInstanceWithinContainer(parentContainer, instance) {
@@ -10674,9 +10675,9 @@
               warnForInsertedHydratedElement(parentContainer, type);
             }
           }
-          function didNotFindHydratableTextInstanceWithinContainer(parentContainer, text3) {
+          function didNotFindHydratableTextInstanceWithinContainer(parentContainer, text2) {
             {
-              warnForInsertedHydratedText(parentContainer, text3);
+              warnForInsertedHydratedText(parentContainer, text2);
             }
           }
           function didNotFindHydratableInstanceWithinSuspenseInstance(parentInstance, type, props) {
@@ -10685,10 +10686,10 @@
               if (parentNode !== null) warnForInsertedHydratedElement(parentNode, type);
             }
           }
-          function didNotFindHydratableTextInstanceWithinSuspenseInstance(parentInstance, text3) {
+          function didNotFindHydratableTextInstanceWithinSuspenseInstance(parentInstance, text2) {
             {
               var parentNode = parentInstance.parentNode;
-              if (parentNode !== null) warnForInsertedHydratedText(parentNode, text3);
+              if (parentNode !== null) warnForInsertedHydratedText(parentNode, text2);
             }
           }
           function didNotFindHydratableInstance(parentType, parentProps, parentInstance, type, props, isConcurrentMode) {
@@ -10698,10 +10699,10 @@
               }
             }
           }
-          function didNotFindHydratableTextInstance(parentType, parentProps, parentInstance, text3, isConcurrentMode) {
+          function didNotFindHydratableTextInstance(parentType, parentProps, parentInstance, text2, isConcurrentMode) {
             {
               if (isConcurrentMode || parentProps[SUPPRESS_HYDRATION_WARNING$1] !== true) {
-                warnForInsertedHydratedText(parentInstance, text3);
+                warnForInsertedHydratedText(parentInstance, text2);
               }
             }
           }
@@ -11309,8 +11310,8 @@
                       didNotFindHydratableInstanceWithinContainer(parentContainer, type);
                       break;
                     case HostText:
-                      var text3 = fiber.pendingProps;
-                      didNotFindHydratableTextInstanceWithinContainer(parentContainer, text3);
+                      var text2 = fiber.pendingProps;
+                      didNotFindHydratableTextInstanceWithinContainer(parentContainer, text2);
                       break;
                   }
                   break;
@@ -11391,8 +11392,8 @@
                 return false;
               }
               case HostText: {
-                var text3 = fiber.pendingProps;
-                var textInstance = canHydrateTextInstance(nextInstance, text3);
+                var text2 = fiber.pendingProps;
+                var textInstance = canHydrateTextInstance(nextInstance, text2);
                 if (textInstance !== null) {
                   fiber.stateNode = textInstance;
                   hydrationParentFiber = fiber;
@@ -24599,9 +24600,6 @@
   function easeIn(x) {
     return x * x;
   }
-  function easeOut(x) {
-    return 1 - (x - 1) * (x - 1);
-  }
   function sampleCatmullRom(p0, p1, p2, p3, t) {
     return [
       0.5 * (2 * p1[0] + t * (-p0[0] + p2[0]) + t * t * (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) + t * t * t * (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0])),
@@ -24616,6 +24614,149 @@
     } else {
       return sampleCatmullRom(p1, p2, p3, p3, t * 3 - 2);
     }
+  }
+
+  // src/TypedInText.tsx
+  var import_react = __toESM(require_react());
+  var import_client = __toESM(require_client());
+  function useDialogueNoise() {
+    const [noise, setNoise] = (0, import_react.useState)();
+    (0, import_react.useEffect)(() => {
+      if (noise) return;
+      (async () => {
+        const ac2 = new AudioContext();
+        const file = await fetch("dialogue-noise.wav");
+        const buf = await file.arrayBuffer();
+        const audio = await ac2.decodeAudioData(buf);
+        setNoise(audio);
+      })();
+    }, []);
+    return noise;
+  }
+  function TypedInText(props) {
+    const ref = (0, import_react.useRef)(null);
+    const [charsLoaded, setCharsLoaded] = (0, import_react.useState)(0);
+    const allTextRef = (0, import_react.useRef)("");
+    const delaysRef = (0, import_react.useRef)([]);
+    const rootRef = (0, import_react.useRef)();
+    const dialogueNoise = useDialogueNoise();
+    (0, import_react.useEffect)(() => {
+      setCharsLoaded(0);
+      allTextRef.current = "";
+      delaysRef.current = [];
+      const elem = ref.current;
+      if (!elem) return;
+      elem.style.display = "none";
+      setTimeout(() => {
+        const oldRoot = rootRef.current;
+        if (oldRoot) oldRoot.unmount();
+        rootRef.current = (0, import_client.createRoot)(elem);
+        rootRef.current.render(props.children);
+        elem.style.display = "none";
+      });
+    }, [props.children]);
+    (0, import_react.useEffect)(() => {
+      if (props.forceDone) return;
+      const currentChar = allTextRef.current[charsLoaded - 1] ?? "";
+      setTimeout(
+        () => {
+          if (charsLoaded == allTextRef.current.length && allTextRef.current.length > 0) {
+            props.done?.();
+          } else {
+            setCharsLoaded((l) => l + 1);
+            if (!dialogueNoise) return;
+            const ac2 = new AudioContext();
+            const track = new AudioBufferSourceNode(ac2, {
+              buffer: dialogueNoise,
+              playbackRate: Math.random() * 0.75 + 0.5
+            });
+            const gain = ac2.createGain();
+            gain.gain.setValueAtTime(0.2, 0);
+            track.connect(gain);
+            gain.connect(ac2.destination);
+            track.start();
+          }
+        },
+        charsLoaded === 0 ? 100 : currentChar.match(/\.|\?|\!/g) ? 250 : currentChar.match(/\,/g) ? 100 : delaysRef.current[charsLoaded - 1] ?? 20
+      );
+    }, [charsLoaded, props.forceDone]);
+    (0, import_react.useEffect)(() => {
+      const elem = ref.current;
+      if (!elem) return;
+      let chars = charsLoaded;
+      let walker = document.createTreeWalker(elem, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        if (node._text === void 0) {
+          const text2 = node.textContent ?? "";
+          const isSlow = nodeIsSlow(node);
+          allTextRef.current += text2;
+          node._text = text2;
+          for (let i = 0; i < text2.length; i++) {
+            delaysRef.current.push(isSlow ? Number(isSlow.dataset.delay) : 20);
+          }
+        }
+      }
+      walker = document.createTreeWalker(elem, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const text2 = node._text;
+        if (chars <= 0 && !props.forceDone) {
+          node.textContent = "";
+        } else if (chars < text2.length && !props.forceDone) {
+          node.textContent = text2.slice(0, chars);
+        } else {
+          node.textContent = text2;
+        }
+        chars -= text2.length;
+      }
+      elem.style.display = "";
+    }, [charsLoaded, props.forceDone, props.children]);
+    return /* @__PURE__ */ import_react.default.createElement("div", { ref });
+  }
+  function nodeIsSlow(node) {
+    while (node) {
+      node = node.parentElement;
+      if (node instanceof HTMLElement && node.dataset.slow) {
+        return node;
+      }
+    }
+    return false;
+  }
+  function TypedInTextSequence(props) {
+    const [seqIndex, setSeqIndex] = (0, import_react.useState)(0);
+    const [currentDone, setCurrentDone] = (0, import_react.useState)(false);
+    const [completelyDone, setCompletelyDone] = (0, import_react.useState)(false);
+    (0, import_react.useEffect)(() => {
+      if (completelyDone) return;
+      const listener = (e) => {
+        if (e.key.toUpperCase() === "ENTER") {
+          if (currentDone) {
+            if (seqIndex == props.seq.length - 1) {
+              props.done?.();
+              setCompletelyDone(true);
+            } else if (seqIndex < props.seq.length - 1) {
+              setCurrentDone(false);
+              setSeqIndex(seqIndex + 1);
+            }
+          } else {
+            setCurrentDone(true);
+          }
+        }
+      };
+      document.addEventListener("keydown", listener);
+      return () => document.removeEventListener("keydown", listener);
+    }, [currentDone, seqIndex, completelyDone]);
+    return /* @__PURE__ */ import_react.default.createElement("div", { className: "textbox" }, /* @__PURE__ */ import_react.default.createElement(TypedInText, { forceDone: currentDone, done: () => setCurrentDone(true) }, props.seq[seqIndex]), currentDone && /* @__PURE__ */ import_react.default.createElement("div", { className: "textbox-continue" }, "Press ENTER to continue."));
+  }
+  function TextSeq(props) {
+    return /* @__PURE__ */ import_react.default.createElement("div", { className: "game-text" }, /* @__PURE__ */ import_react.default.createElement(
+      TypedInTextSequence,
+      {
+        done: props.done,
+        seq: props.seq
+      }
+    ));
   }
 
   // src/fabrik.ts
@@ -24698,20 +24839,84 @@
   document.addEventListener("keyup", (e) => {
     keysPressed[e.key] = false;
   });
+  var DEATH_ANIMATION_LENGTH = 100;
+  var PLAYER_VEL = 0.01;
+  var PLAYER_DAMPEN = 0.5;
+  var ATTACK_RADIUS = 0.2;
+  var ATTACK_INTERVAL = 20;
+  var attackCooldown = 0;
+  function runPlayerIter(game2) {
+    const player = game2.player;
+    if (player.deathAnimationTimer === 1) {
+      player.pos = [0, 0];
+      player.vel = [0, 0];
+      player.deathParticles = [];
+    }
+    player.deathAnimationTimer--;
+    if (attackCooldown > 0) attackCooldown--;
+    player.pos[0] += player.vel[0];
+    player.pos[1] += player.vel[1];
+    player.vel[0] *= PLAYER_DAMPEN;
+    player.vel[1] *= PLAYER_DAMPEN;
+    if (keysPressed.w) player.vel[1] += PLAYER_VEL;
+    if (keysPressed.a) player.vel[0] -= PLAYER_VEL;
+    if (keysPressed.s) player.vel[1] -= PLAYER_VEL;
+    if (keysPressed.d) player.vel[0] += PLAYER_VEL;
+    if (keysPressed[" "] && attackCooldown == 0) {
+      attackCooldown = ATTACK_INTERVAL;
+      player.vel[0] *= -1;
+      player.vel[1] *= -1;
+    }
+  }
+  function drawPlayer(game2) {
+    const player = game2.player;
+    if (player.deathAnimationTimer > 0) {
+      for (const p of player.deathParticles) {
+        vec2_exports.add(p.pos, p.pos, p.vel);
+        vec2_exports.scale(p.vel, p.vel, 0.8);
+        if (player.deathAnimationTimer < DEATH_ANIMATION_LENGTH / 2) {
+          vec2_exports.add(p.vel, p.vel, [-p.pos[0] / 30, -p.pos[1] / 30]);
+        }
+        game2.ds.circle(p.pos, 5e-3, [1, 0.7, 0.7, 1]);
+      }
+      return;
+    }
+    const playerSize = Math.sin(game2.t * 10 * Math.PI * 2) * 5e-3 + 0.02;
+    game2.ds.circle(player.pos, playerSize, [1, 0.7, 0.7, 1]);
+    if (isPlayerAttacking()) {
+      game2.ds.circle(player.pos, ATTACK_RADIUS, [1, 0.7, 0.7, 1], 0.1, 0.99);
+    } else {
+      game2.ds.circle(player.pos, ATTACK_RADIUS, [1, 0.7, 0.7, 0.3], 0.01, 0.99);
+    }
+  }
+  function isPlayerAttacking() {
+    return attackCooldown >= ATTACK_INTERVAL;
+  }
 
   // src/bosses/discovery-boss.tsx
   var DISCOVERY_MAX_HP = 25;
-  var discoveryBoss = {
-    pos: vec2_exports.fromValues(0, 0.5),
-    health: DISCOVERY_MAX_HP,
-    damageIndicatorTimer: 0,
-    animationTime: 0,
-    tendrils: [],
-    nextTendril: 0,
-    tendrilIndex: 0,
-    phase: "teleport",
-    nextPhaseTime: 0
-  };
+  function discoveryBoss() {
+    return {
+      isDead: false,
+      pos: [0, 0.5],
+      hp: DISCOVERY_MAX_HP,
+      init(game2) {
+      },
+      iter(game2) {
+      },
+      draw(game2) {
+        this.displayDiscoveryHealthBar(game2.ds);
+        const bossT = mat3_exports.create();
+        mat3_exports.translate(bossT, bossT, this.pos);
+        drawDiscoveryBody(bossT, game2);
+      },
+      displayDiscoveryHealthBar(ds) {
+        const pos1 = [-1, 1];
+        const pos2 = [-1 + 2 * this.hp / DISCOVERY_MAX_HP, 0.95];
+        ds.rect(pos1, pos2, [0.5, 0.8, 1, 1]);
+      }
+    };
+  }
   function discoveryBackground(game2, black) {
     const t2 = game2.t * 0.1;
     const offsetX = Math.cos(t2) * 0.1;
@@ -24724,163 +24929,27 @@
       black ? [0, 0, 0, 0.2] : [0.2, 0.1, 0.1, 0.2]
     );
   }
-
-  // src/TypedInText.tsx
-  var import_react = __toESM(require_react());
-  var import_client = __toESM(require_client());
-  function useDialogueNoise() {
-    const [noise, setNoise] = (0, import_react.useState)();
-    (0, import_react.useEffect)(() => {
-      if (noise) return;
-      (async () => {
-        const ac2 = new AudioContext();
-        const file = await fetch("dialogue-noise.wav");
-        const buf = await file.arrayBuffer();
-        const audio = await ac2.decodeAudioData(buf);
-        setNoise(audio);
-      })();
-    }, []);
-    return noise;
-  }
-  function TypedInText(props) {
-    const ref = (0, import_react.useRef)(null);
-    const [charsLoaded, setCharsLoaded] = (0, import_react.useState)(0);
-    const allTextRef = (0, import_react.useRef)("");
-    const delaysRef = (0, import_react.useRef)([]);
-    const rootRef = (0, import_react.useRef)();
-    const dialogueNoise = useDialogueNoise();
-    (0, import_react.useEffect)(() => {
-      setCharsLoaded(0);
-      allTextRef.current = "";
-      delaysRef.current = [];
-      const elem = ref.current;
-      if (!elem) return;
-      elem.style.display = "none";
-      setTimeout(() => {
-        const oldRoot = rootRef.current;
-        if (oldRoot) oldRoot.unmount();
-        rootRef.current = (0, import_client.createRoot)(elem);
-        rootRef.current.render(props.children);
-        elem.style.display = "none";
-      });
-    }, [props.children]);
-    (0, import_react.useEffect)(() => {
-      if (props.forceDone) return;
-      const currentChar = allTextRef.current[charsLoaded - 1] ?? "";
-      setTimeout(
-        () => {
-          if (charsLoaded == allTextRef.current.length && allTextRef.current.length > 0) {
-            props.done?.();
-          } else {
-            setCharsLoaded((l) => l + 1);
-            if (!dialogueNoise) return;
-            const ac2 = new AudioContext();
-            const track = new AudioBufferSourceNode(ac2, {
-              buffer: dialogueNoise,
-              playbackRate: Math.random() * 0.75 + 0.5
-            });
-            const gain = ac2.createGain();
-            gain.gain.setValueAtTime(0.2, 0);
-            track.connect(gain);
-            gain.connect(ac2.destination);
-            track.start();
-          }
-        },
-        charsLoaded === 0 ? 100 : currentChar.match(/\.|\?|\!/g) ? 250 : currentChar.match(/\,/g) ? 100 : delaysRef.current[charsLoaded - 1] ?? 20
-      );
-    }, [charsLoaded, props.forceDone]);
-    (0, import_react.useEffect)(() => {
-      const elem = ref.current;
-      if (!elem) return;
-      let chars = charsLoaded;
-      let walker = document.createTreeWalker(elem, NodeFilter.SHOW_TEXT);
-      while (walker.nextNode()) {
-        const node = walker.currentNode;
-        if (node._text === void 0) {
-          const text3 = node.textContent ?? "";
-          const isSlow = nodeIsSlow(node);
-          allTextRef.current += text3;
-          node._text = text3;
-          for (let i = 0; i < text3.length; i++) {
-            delaysRef.current.push(isSlow ? Number(isSlow.dataset.delay) : 20);
-          }
-        }
-      }
-      walker = document.createTreeWalker(elem, NodeFilter.SHOW_TEXT);
-      while (walker.nextNode()) {
-        const node = walker.currentNode;
-        const text3 = node._text;
-        if (chars <= 0 && !props.forceDone) {
-          node.textContent = "";
-        } else if (chars < text3.length && !props.forceDone) {
-          node.textContent = text3.slice(0, chars);
-        } else {
-          node.textContent = text3;
-        }
-        chars -= text3.length;
-      }
-      elem.style.display = "";
-    }, [charsLoaded, props.forceDone, props.children]);
-    return /* @__PURE__ */ import_react.default.createElement("div", { ref });
-  }
-  function nodeIsSlow(node) {
-    while (node) {
-      node = node.parentElement;
-      if (node instanceof HTMLElement && node.dataset.slow) {
-        return node;
-      }
+  function drawDiscoveryBody(transform, game2) {
+    const x = mat3_exports.clone(transform);
+    mat3_exports.scale(x, x, vec2_exports.fromValues(0.3, 0.3));
+    for (let i = 0; i < 10; i++) {
+      const angle2 = (i / 10 + Math.random() * 0.1) * Math.PI * 2;
+      const transform2 = mat3_exports.clone(x);
+      mat3_exports.rotate(transform2, transform2, angle2);
+      game2.ds.draw(1, 0, transform2, [1, 1, 1, 0.1]);
     }
-    return false;
-  }
-  function TypedInTextSequence(props) {
-    const [seqIndex, setSeqIndex] = (0, import_react.useState)(0);
-    const [currentDone, setCurrentDone] = (0, import_react.useState)(false);
-    const [completelyDone, setCompletelyDone] = (0, import_react.useState)(false);
-    (0, import_react.useEffect)(() => {
-      if (completelyDone) return;
-      const listener = (e) => {
-        if (e.key.toUpperCase() === "ENTER") {
-          if (currentDone) {
-            if (seqIndex == props.seq.length - 1) {
-              props.done?.();
-              setCompletelyDone(true);
-            } else if (seqIndex < props.seq.length - 1) {
-              setCurrentDone(false);
-              setSeqIndex(seqIndex + 1);
-            }
-          } else {
-            setCurrentDone(true);
-          }
-        }
-      };
-      document.addEventListener("keydown", listener);
-      return () => document.removeEventListener("keydown", listener);
-    }, [currentDone, seqIndex, completelyDone]);
-    return /* @__PURE__ */ import_react.default.createElement("div", { className: "textbox" }, /* @__PURE__ */ import_react.default.createElement(TypedInText, { forceDone: currentDone, done: () => setCurrentDone(true) }, props.seq[seqIndex]), currentDone && /* @__PURE__ */ import_react.default.createElement("div", { className: "textbox-continue" }, "Press ENTER to continue."));
-  }
-  function TextSeq(props) {
-    return /* @__PURE__ */ import_react.default.createElement("div", { className: "game-text" }, /* @__PURE__ */ import_react.default.createElement(
-      TypedInTextSequence,
-      {
-        done: props.done,
-        seq: props.seq
-      }
-    ));
+    const s = 0.75;
+    game2.ds.draw(
+      1,
+      3,
+      x,
+      [-0.25, -0.25, 0.8 + game2.t * Math.PI * 2 / 2, 2],
+      [-s, -s, s, s]
+    );
   }
 
   // src/ecs/entity.tsx
   var import_react2 = __toESM(require_react());
-  function iterEntities(game2) {
-    for (const e of game2.entities) {
-      e.iter(game2);
-    }
-    game2.entities = game2.entities.filter((e) => !e.isDead);
-  }
-  function drawEntities(game2) {
-    for (const e of game2.entities) {
-      e.draw(game2);
-    }
-  }
   function timer(time, f) {
     let startTime = 0;
     return {
@@ -24920,7 +24989,7 @@
       }
     };
   }
-  function text(text3, onDone) {
+  function text(text2, onDone) {
     return {
       isDead: false,
       init(game2) {
@@ -24935,7 +25004,7 @@
                   game2.text.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
                   if (onDone) onDone();
                 },
-                seq: text3
+                seq: text2
               }
             )
           );
@@ -24947,88 +25016,39 @@
       }
     };
   }
+  function drawWithLayer(layer, draw) {
+    let hasDrawn = false;
+    return {
+      drawLayer: layer,
+      isDead: false,
+      init(game2) {
+      },
+      iter(game2) {
+        if (hasDrawn) {
+          this.isDead = true;
+        }
+      },
+      draw(game2) {
+        draw(game2);
+        hasDrawn = true;
+      }
+    };
+  }
 
   // src/bosses/discovery-scenes.tsx
-  function drawDiscoveryBody(transform, game2) {
-    const x = mat3_exports.clone(transform);
-    mat3_exports.scale(x, x, vec2_exports.fromValues(0.3, 0.3));
-    for (let i = 0; i < 10; i++) {
-      const angle2 = (i / 10 + Math.random() * 0.1) * Math.PI * 2;
-      const transform2 = mat3_exports.clone(x);
-      mat3_exports.rotate(transform2, transform2, angle2);
-      game2.ds.draw(1, 0, transform2, [1, 1, 1, 0.1]);
+  function drawExplodedPlayer(ds) {
+    for (const pp of playerPieces) {
+      const t = mat3_exports.create();
+      ds.circle(pp.pos, 4e-3 + Math.random() * 3e-3, [1, 0.7, 0.7, 1]);
     }
-    const s = 0.75;
-    game2.ds.draw(
-      1,
-      3,
-      x,
-      [-0.25, -0.25, 0.8 + game2.t * Math.PI * 2 / 2, 2],
-      [-s, -s, s, s]
-    );
   }
-  function drawPlayerAtOrigin(game2) {
-    const playerSize = Math.sin(game2.t * 10 * Math.PI * 2) * 5e-3 + 0.02;
-    game2.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
-  }
-  var introText = {
-    isDead: false,
-    init(game2) {
-      game2.addEntity(
-        text(
-          [/* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "A thing!"), /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "In our domain!"), /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "In the periphery!")],
-          () => this.isDead = true
-        )
-      );
-    },
-    iter(game2) {
-    },
-    draw(game2) {
-      discoveryBackground(game2, true);
-      drawPlayerAtOrigin(game2);
-    }
-  };
-  var introCutscene = {
-    isDead: false,
-    start: 0,
-    init(game2) {
-      this.start = game2.t;
-      game2.addEntity(
-        timer(8, () => {
-          game2.addEntity(
-            text(
-              [
-                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "It seems very. Peculiar. Odd. Interesting. Enticing. Strange. Weird."),
-                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Perhaps if I...")
-              ],
-              () => this.isDead = true
-            )
-          );
-        })
-      );
-    },
-    iter(game2) {
-    },
-    draw(game2) {
-      discoveryBackground(game2, true);
-      const lt = game2.t - this.start;
-      const bossT = mat3_exports.create();
-      mat3_exports.translate(
-        bossT,
-        bossT,
-        vec2_exports.fromValues(0, ease(easeOut, lt, 3, 8, 1.5, 0.5))
-      );
-      drawDiscoveryBody(bossT, game2);
-      drawPlayerAtOrigin(game2);
-    }
-  };
+  var playerPieces = range(50).map((i) => ({
+    pos: [0, 0],
+    vel: [0, 0]
+  }));
   var attackCutscene = {
     isDead: false,
     start: 0,
-    playerPieces: range(50).map((i) => ({
-      pos: [0, 0],
-      vel: [0, 0]
-    })),
     playerExploded: false,
     discoveryArm: range(10).map((i) => ({
       length: 0.1,
@@ -25045,12 +25065,6 @@
         mat3_exports.scale(t, t, [0.1, 0.1]);
         game2.ds.img(1, t);
       });
-    },
-    drawExplodedPlayer(ds) {
-      for (const pp of this.playerPieces) {
-        const t = mat3_exports.create();
-        ds.circle(pp.pos, 4e-3 + Math.random() * 3e-3, [1, 0.7, 0.7, 1]);
-      }
     },
     init(game2) {
       this.start = game2.t;
@@ -25119,27 +25133,43 @@
       if (t > 4) {
         if (!this.playerExploded) {
           this.playerExploded = true;
-          for (const pp of this.playerPieces) {
+          for (const pp of playerPieces) {
             pp.vel = [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1];
           }
         }
-        this.drawExplodedPlayer(game2.ds);
-        for (const pp of this.playerPieces) {
+        drawExplodedPlayer(game2.ds);
+        for (const pp of playerPieces) {
           vec2_exports.add(pp.pos, pp.pos, pp.vel);
           vec2_exports.mul(pp.vel, pp.vel, [0.9, 0.9]);
         }
       }
     }
   };
+  var bossPhase = {
+    isDead: false,
+    init(game2) {
+      game2.addEntity(discoveryBoss());
+    },
+    iter(game2) {
+      runPlayerIter(game2);
+      game2.addEntity(
+        drawWithLayer(-1, (game3) => {
+          discoveryBackground(game3);
+        })
+      );
+    },
+    draw(game2) {
+      drawPlayer(game2);
+    }
+  };
   var discoveryScenes = sequence([
-    introText,
-    introCutscene,
-    attackCutscene
-    // attack2Cutscene,
+    // introText,
+    // introCutscene,
+    // attackCutscene,
     // playerRegenerateCutscene,
     // playerMoveCutscene,
     // playerAttackCutscene,
-    // bossPhase,
+    bossPhase
     // {},
   ]);
 
@@ -25147,7 +25177,8 @@
   var import_client2 = __toESM(require_client());
 
   // src/ecs/game.ts
-  function makeGame(ds, text3) {
+  function makeGame(ds, text2) {
+    const killHandlers = /* @__PURE__ */ new Map();
     return {
       entities: [],
       player: {
@@ -25163,7 +25194,35 @@
         this.entities.push(entity);
         return entity;
       },
-      text: text3
+      text: text2,
+      onKill(entity, fn) {
+        let handlers = killHandlers.get(entity);
+        if (!handlers) {
+          handlers = [];
+          killHandlers.set(entity, handlers);
+        }
+        handlers.push(fn);
+      },
+      iterEntities() {
+        for (const e of this.entities) {
+          e.iter(this);
+        }
+        for (const e of this.entities) {
+          if (e.isDead) {
+            const handlers = killHandlers.get(e);
+            for (const h of handlers ?? []) {
+              h();
+            }
+          }
+        }
+        this.entities = this.entities.filter((e) => !e.isDead);
+      },
+      drawEntities() {
+        for (const e of this.entities.sort(
+          (a, b) => (a.drawLayer ?? 0) - (b.drawLayer ?? 0)
+        ))
+          e.draw(this);
+      }
     };
   }
 
@@ -25185,8 +25244,8 @@
     const game2 = makeGame(ds, textRoot);
     game2.addEntity(discoveryScenes);
     const loop = () => {
-      iterEntities(game2);
-      drawEntities(game2);
+      game2.iterEntities();
+      game2.drawEntities();
       game2.t += 1 / 60;
       ds.dispatch();
       requestAnimationFrame(loop);
