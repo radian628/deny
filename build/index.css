@@ -1,0 +1,49 @@
+.textbox {
+  border: 3px solid white;
+  color: white;
+  background-color: #121212;
+  padding: 10px;
+  font-size: min(3vw, 3vh);
+  font-family: "Times New Roman", serif;
+  height: min(10vw, 10vh);
+}
+
+.textbox-continue {
+  text-align: right;
+  font-size: min(2vw, 2vh);
+  position: absolute;
+  bottom: min(1vw, 1vh);
+  right: min(1vw, 1vh);
+}
+
+body {
+  display: flex;
+  margin: 0;
+  justify-content: center;
+  align-items: center;
+  background-color: black;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+}
+
+#root {
+  width: min(100vw, 100vh);
+  height: min(100vw, 100vh);
+  position: relative;
+}
+
+.game-canvas {
+  width: min(100vw, 100vh);
+  height: min(100vw, 100vh);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.game-text {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: min(100vw, 100vh);
+}
