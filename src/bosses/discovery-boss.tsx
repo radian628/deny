@@ -1,16 +1,12 @@
 import { mat3, vec2 } from "gl-matrix";
-import {
-  ATTACK_RADIUS,
-  isPlayerAttacking,
-  killPlayer,
-  player,
-} from "../player";
+import { ATTACK_RADIUS, isPlayerAttacking, killPlayer } from "../ecs/player";
 import { drawDiscoveryBody } from "./discovery-scenes";
 import { DrawSystem } from "../gl/draw";
 import { doFabrik, drawFabrikChainSegments, FabrikPoint } from "../fabrik";
 import { range } from "../util";
 import { playSound } from "../sound";
 import { lerp, smoothstep } from "../animation";
+import { Game } from "../ecs/game";
 
 const DISCOVERY_MAX_HP = 25;
 const DISCOVERY_SIZE = 0.3;
@@ -39,7 +35,7 @@ export const discoveryBoss = {
   nextPhaseTime: 0,
 };
 
-function tendrilPhase(gt: number, first: boolean) {
+function tendrilPhase(game: Game, gt: number, first: boolean) {
   const hpFraction = discoveryBoss.health / DISCOVERY_MAX_HP;
   // fire tendrils
   if (gt > discoveryBoss.nextTendril) {
@@ -47,6 +43,7 @@ function tendrilPhase(gt: number, first: boolean) {
       "fart.wav",
       Math.random() * 0.2 + 0.75 + discoveryBoss.tendrilIndex * 0.3
     );
+    discoveryBoss.animationTime -= 0.1;
     if (discoveryBoss.tendrilIndex <= 10) {
       discoveryBoss.nextTendril += 0.05;
       discoveryBoss.tendrilIndex++;
@@ -55,7 +52,7 @@ function tendrilPhase(gt: number, first: boolean) {
       discoveryBoss.tendrilIndex = 0;
       switchToTeleportPhase(gt);
     }
-    const vel = vec2.clone(player.pos);
+    const vel = vec2.clone(game.player.pos);
     vec2.sub(vel, vel, discoveryBoss.pos);
     vec2.normalize(vel, vel);
     vec2.scale(vel, vel, 0.07);
@@ -117,7 +114,7 @@ function switchToTeleportPhase(gt: number) {
   discoveryBoss.phase = "teleport";
 }
 
-function handleTendrils(gt: number, first: boolean) {
+function handleTendrils(game: Game, gt: number, first: boolean) {
   // handle tendril movement
   for (const t of discoveryBoss.tendrils) {
     t.points[0].pos = vec2.clone(discoveryBoss.pos);
@@ -125,7 +122,7 @@ function handleTendrils(gt: number, first: boolean) {
     if (gt > t.attackAt) {
       if (!t.hasLockedOn) {
         t.hasLockedOn = true;
-        const vel = vec2.clone(player.pos);
+        const vel = vec2.clone(game.player.pos);
         vec2.sub(vel, vel, t.target);
         vec2.normalize(vel, vel);
         vec2.scale(vel, vel, 0.07);
@@ -141,14 +138,14 @@ function handleTendrils(gt: number, first: boolean) {
     }
 
     for (const pt of t.points) {
-      if (gt < t.retractAt && vec2.dist(player.pos, pt.pos) < 0.04) {
-        killPlayer();
+      if (gt < t.retractAt && vec2.dist(game.player.pos, pt.pos) < 0.04) {
+        killPlayer(game);
       }
     }
   }
 }
 
-export function runDiscoveryIter(gt: number, first: boolean) {
+export function runDiscoveryIter(game: Game, gt: number, first: boolean) {
   const hpFraction = discoveryBoss.health / DISCOVERY_MAX_HP;
 
   if (first) {
@@ -161,7 +158,8 @@ export function runDiscoveryIter(gt: number, first: boolean) {
   // damage from player
   if (
     isPlayerAttacking() &&
-    vec2.dist(player.pos, discoveryBoss.pos) < ATTACK_RADIUS + DISCOVERY_SIZE
+    vec2.dist(game.player.pos, discoveryBoss.pos) <
+      ATTACK_RADIUS + DISCOVERY_SIZE
   ) {
     discoveryBoss.health--;
     playSound(
@@ -179,12 +177,12 @@ export function runDiscoveryIter(gt: number, first: boolean) {
   }
 
   if (discoveryBoss.phase === "tendrils") {
-    tendrilPhase(gt, first);
+    tendrilPhase(game, gt, first);
   } else if (discoveryBoss.phase === "teleport") {
     teleportPhase(gt, first);
   }
 
-  handleTendrils(gt, first);
+  handleTendrils(game, gt, first);
 }
 
 export function displayDiscovery(ds: DrawSystem, gt: number) {
@@ -243,15 +241,11 @@ export function displayDiscoveryHealthBar(ds: DrawSystem) {
   ds.rect(pos1, pos2, [0.5, 0.8, 1.0, 1.0]);
 }
 
-export function discoveryBackground(
-  ds: DrawSystem,
-  t: number,
-  black?: boolean
-) {
-  const t2 = t * 0.1;
+export function discoveryBackground(game: Game, black?: boolean) {
+  const t2 = game.t * 0.1;
   const offsetX = Math.cos(t2) * 0.1;
   const offsetY = Math.sin(t2) * 0.1;
-  ds.draw(
+  game.ds.draw(
     0,
     2,
     mat3.create(),
@@ -259,3 +253,5 @@ export function discoveryBackground(
     black ? [0, 0, 0, 0.2] : [0.2, 0.1, 0.1, 0.2]
   );
 }
+
+// export function tendril(): Entity {}

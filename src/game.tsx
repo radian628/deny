@@ -4,6 +4,7 @@ import {
   discoveryInitDialogue,
   discoveryScenes,
   drawDiscoveryBody,
+  introText,
 } from "./bosses/discovery-scenes.tsx";
 import {
   doFabrik,
@@ -14,6 +15,8 @@ import {
 import { createRoot } from "react-dom/client";
 import { TypedInTextSequence } from "./TypedInText.tsx";
 import React from "react";
+import { makeGame } from "./ecs/game.ts";
+import { drawEntities, iterEntities, sequence, text } from "./ecs/entity.tsx";
 
 // testing function not for release
 export async function game() {
@@ -38,69 +41,17 @@ export async function game() {
   const ds = await makeDrawSystem(gl);
   if (!ds) throw new Error("no ds");
 
-  let t = 0;
+  const game = makeGame(ds, textRoot);
 
-  let player = {
-    x: 0,
-    y: 0,
-    dx: 0,
-    dy: 0,
-  };
-
-  const keysPressed: Record<string, boolean> = {};
-
-  document.addEventListener("keydown", (e) => {
-    keysPressed[e.key] = true;
-  });
-  document.addEventListener("keyup", (e) => {
-    keysPressed[e.key] = false;
-  });
-
-  const ATTACK_INTERVAL = 20;
-  let attackCooldown = 0;
-  const ATTACK_RADIUS = 0.2;
-
-  const fabrikTest: FabrikPoint[] = [];
-  for (let i = 0; i < 10; i++) {
-    fabrikTest.push({
-      pos: vec2.fromValues(-1 + 0.1 * i, -1 + 0.1 * i),
-      length: Math.sqrt(2) * 0.1,
-    });
-  }
+  game.addEntity(discoveryScenes);
 
   const loop = () => {
-    let x: mat3 = mat3.create();
-    // gl.clearColor(0, 0, 0, 0.1);
-    // gl.clear(gl.COLOR_BUFFER_BIT);
+    iterEntities(game);
+    drawEntities(game);
 
-    let prevPlayer = { ...player };
-
-    if (Math.abs(player.x) >= 1.0) {
-      player.dx = Math.abs(player.dx) * -Math.sign(player.x);
-    }
-    if (Math.abs(player.y) >= 1.0) {
-      player.dy = Math.abs(player.dy) * -Math.sign(player.y);
-    }
-    player.x += player.dx;
-    player.y += player.dy;
-    player.dx *= 0.5;
-    player.dy *= 0.5;
-    if (keysPressed.w) player.dy += 0.01;
-    if (keysPressed.s) player.dy -= 0.01;
-    if (keysPressed.a) player.dx -= 0.01;
-    if (keysPressed.d) player.dx += 0.01;
-    if (attackCooldown > 0) attackCooldown--;
-    if (keysPressed[" "] && attackCooldown == 0) {
-      attackCooldown = ATTACK_INTERVAL;
-      player.dx *= -1;
-      player.dy *= -1;
-    }
-
-    // introCutscene.loop?.(ds, t / 60, () => {});
-    discoveryScenes.loop?.(textRoot, ds, t / 60, t / 60, false, () => {});
+    game.t += 1 / 60;
 
     ds.dispatch();
-    t++;
     requestAnimationFrame(loop);
   };
 

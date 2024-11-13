@@ -648,8 +648,8 @@
           }
           var didWarnAboutMaps = false;
           var userProvidedKeyEscapeRegex = /\/+/g;
-          function escapeUserProvidedKey(text) {
-            return text.replace(userProvidedKeyEscapeRegex, "$&/");
+          function escapeUserProvidedKey(text3) {
+            return text3.replace(userProvidedKeyEscapeRegex, "$&/");
           }
           function getElementKey(element, index) {
             if (typeof element === "object" && element !== null && element.key != null) {
@@ -2033,18 +2033,18 @@
           var localSetImmediate = typeof setImmediate !== "undefined" ? setImmediate : null;
           var isInputPending = typeof navigator !== "undefined" && navigator.scheduling !== void 0 && navigator.scheduling.isInputPending !== void 0 ? navigator.scheduling.isInputPending.bind(navigator.scheduling) : null;
           function advanceTimers(currentTime) {
-            var timer = peek(timerQueue);
-            while (timer !== null) {
-              if (timer.callback === null) {
+            var timer2 = peek(timerQueue);
+            while (timer2 !== null) {
+              if (timer2.callback === null) {
                 pop(timerQueue);
-              } else if (timer.startTime <= currentTime) {
+              } else if (timer2.startTime <= currentTime) {
                 pop(timerQueue);
-                timer.sortIndex = timer.expirationTime;
-                push(taskQueue, timer);
+                timer2.sortIndex = timer2.expirationTime;
+                push(taskQueue, timer2);
               } else {
                 return;
               }
-              timer = peek(timerQueue);
+              timer2 = peek(timerQueue);
             }
           }
           function handleTimeout(currentTime) {
@@ -2387,9 +2387,9 @@
           if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
-          var React3 = require_react();
+          var React4 = require_react();
           var Scheduler = require_scheduler();
-          var ReactSharedInternals = React3.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React4.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           var suppressWarning = false;
           function setSuppressWarning(newSuppressWarning) {
             {
@@ -3996,7 +3996,7 @@
             {
               if (props.value == null) {
                 if (typeof props.children === "object" && props.children !== null) {
-                  React3.Children.forEach(props.children, function(child) {
+                  React4.Children.forEach(props.children, function(child) {
                     if (child == null) {
                       return;
                     }
@@ -4284,15 +4284,15 @@
           var COMMENT_NODE = 8;
           var DOCUMENT_NODE = 9;
           var DOCUMENT_FRAGMENT_NODE = 11;
-          var setTextContent = function(node, text) {
-            if (text) {
+          var setTextContent = function(node, text3) {
+            if (text3) {
               var firstChild = node.firstChild;
               if (firstChild && firstChild === node.lastChild && firstChild.nodeType === TEXT_NODE) {
-                firstChild.nodeValue = text;
+                firstChild.nodeValue = text3;
                 return;
               }
             }
-            node.textContent = text;
+            node.textContent = text3;
           };
           var shorthandToLonghand = {
             animation: ["animationDelay", "animationDirection", "animationDuration", "animationFillMode", "animationIterationCount", "animationName", "animationPlayState", "animationTimingFunction"],
@@ -9468,8 +9468,8 @@
             }
             return domElement;
           }
-          function createTextNode(text, rootContainerElement) {
-            return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text);
+          function createTextNode(text3, rootContainerElement) {
+            return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text3);
           }
           function setInitialProperties(domElement, tag, rawProps, rootContainerElement) {
             var isCustomComponentTag = isCustomComponent(tag, rawProps);
@@ -9913,8 +9913,8 @@
             }
             return updatePayload;
           }
-          function diffHydratedText(textNode, text, isConcurrentMode) {
-            var isDifferent = textNode.nodeValue !== text;
+          function diffHydratedText(textNode, text3, isConcurrentMode) {
+            var isDifferent = textNode.nodeValue !== text3;
             return isDifferent;
           }
           function warnForDeletedHydratableElement(parentNode, child) {
@@ -9944,16 +9944,16 @@
               error("Expected server HTML to contain a matching <%s> in <%s>.", tag, parentNode.nodeName.toLowerCase());
             }
           }
-          function warnForInsertedHydratedText(parentNode, text) {
+          function warnForInsertedHydratedText(parentNode, text3) {
             {
-              if (text === "") {
+              if (text3 === "") {
                 return;
               }
               if (didWarnInvalidHydration) {
                 return;
               }
               didWarnInvalidHydration = true;
-              error('Expected server HTML to contain a matching text node for "%s" in <%s>.', text, parentNode.nodeName.toLowerCase());
+              error('Expected server HTML to contain a matching text node for "%s" in <%s>.', text3, parentNode.nodeName.toLowerCase());
             }
           }
           function restoreControlledState$3(domElement, tag, props) {
@@ -10326,12 +10326,12 @@
           function shouldSetTextContent(type, props) {
             return type === "textarea" || type === "noscript" || typeof props.children === "string" || typeof props.children === "number" || typeof props.dangerouslySetInnerHTML === "object" && props.dangerouslySetInnerHTML !== null && props.dangerouslySetInnerHTML.__html != null;
           }
-          function createTextInstance(text, rootContainerInstance, hostContext, internalInstanceHandle) {
+          function createTextInstance(text3, rootContainerInstance, hostContext, internalInstanceHandle) {
             {
               var hostContextDev = hostContext;
-              validateDOMNesting(null, text, hostContextDev.ancestorInfo);
+              validateDOMNesting(null, text3, hostContextDev.ancestorInfo);
             }
-            var textNode = createTextNode(text, rootContainerInstance);
+            var textNode = createTextNode(text3, rootContainerInstance);
             precacheFiberNode(internalInstanceHandle, textNode);
             return textNode;
           }
@@ -10469,8 +10469,8 @@
             var display = styleProp !== void 0 && styleProp !== null && styleProp.hasOwnProperty("display") ? styleProp.display : null;
             instance.style.display = dangerousStyleValue("display", display);
           }
-          function unhideTextInstance(textInstance, text) {
-            textInstance.nodeValue = text;
+          function unhideTextInstance(textInstance, text3) {
+            textInstance.nodeValue = text3;
           }
           function clearContainer(container) {
             if (container.nodeType === ELEMENT_NODE) {
@@ -10487,8 +10487,8 @@
             }
             return instance;
           }
-          function canHydrateTextInstance(instance, text) {
-            if (text === "" || instance.nodeType !== TEXT_NODE) {
+          function canHydrateTextInstance(instance, text3) {
+            if (text3 === "" || instance.nodeType !== TEXT_NODE) {
               return null;
             }
             return instance;
@@ -10567,10 +10567,10 @@
             var isConcurrentMode = (internalInstanceHandle.mode & ConcurrentMode) !== NoMode;
             return diffHydratedProperties(instance, type, props, parentNamespace, rootContainerInstance, isConcurrentMode, shouldWarnDev);
           }
-          function hydrateTextInstance(textInstance, text, internalInstanceHandle, shouldWarnDev) {
+          function hydrateTextInstance(textInstance, text3, internalInstanceHandle, shouldWarnDev) {
             precacheFiberNode(internalInstanceHandle, textInstance);
             var isConcurrentMode = (internalInstanceHandle.mode & ConcurrentMode) !== NoMode;
-            return diffHydratedText(textInstance, text);
+            return diffHydratedText(textInstance, text3);
           }
           function hydrateSuspenseInstance(suspenseInstance, internalInstanceHandle) {
             precacheFiberNode(internalInstanceHandle, suspenseInstance);
@@ -10624,14 +10624,14 @@
           function shouldDeleteUnhydratedTailInstances(parentType) {
             return parentType !== "head" && parentType !== "body";
           }
-          function didNotMatchHydratedContainerTextInstance(parentContainer, textInstance, text, isConcurrentMode) {
+          function didNotMatchHydratedContainerTextInstance(parentContainer, textInstance, text3, isConcurrentMode) {
             var shouldWarnDev = true;
-            checkForUnmatchedText(textInstance.nodeValue, text, isConcurrentMode, shouldWarnDev);
+            checkForUnmatchedText(textInstance.nodeValue, text3, isConcurrentMode, shouldWarnDev);
           }
-          function didNotMatchHydratedTextInstance(parentType, parentProps, parentInstance, textInstance, text, isConcurrentMode) {
+          function didNotMatchHydratedTextInstance(parentType, parentProps, parentInstance, textInstance, text3, isConcurrentMode) {
             if (parentProps[SUPPRESS_HYDRATION_WARNING$1] !== true) {
               var shouldWarnDev = true;
-              checkForUnmatchedText(textInstance.nodeValue, text, isConcurrentMode, shouldWarnDev);
+              checkForUnmatchedText(textInstance.nodeValue, text3, isConcurrentMode, shouldWarnDev);
             }
           }
           function didNotHydrateInstanceWithinContainer(parentContainer, instance) {
@@ -10674,9 +10674,9 @@
               warnForInsertedHydratedElement(parentContainer, type);
             }
           }
-          function didNotFindHydratableTextInstanceWithinContainer(parentContainer, text) {
+          function didNotFindHydratableTextInstanceWithinContainer(parentContainer, text3) {
             {
-              warnForInsertedHydratedText(parentContainer, text);
+              warnForInsertedHydratedText(parentContainer, text3);
             }
           }
           function didNotFindHydratableInstanceWithinSuspenseInstance(parentInstance, type, props) {
@@ -10685,10 +10685,10 @@
               if (parentNode !== null) warnForInsertedHydratedElement(parentNode, type);
             }
           }
-          function didNotFindHydratableTextInstanceWithinSuspenseInstance(parentInstance, text) {
+          function didNotFindHydratableTextInstanceWithinSuspenseInstance(parentInstance, text3) {
             {
               var parentNode = parentInstance.parentNode;
-              if (parentNode !== null) warnForInsertedHydratedText(parentNode, text);
+              if (parentNode !== null) warnForInsertedHydratedText(parentNode, text3);
             }
           }
           function didNotFindHydratableInstance(parentType, parentProps, parentInstance, type, props, isConcurrentMode) {
@@ -10698,10 +10698,10 @@
               }
             }
           }
-          function didNotFindHydratableTextInstance(parentType, parentProps, parentInstance, text, isConcurrentMode) {
+          function didNotFindHydratableTextInstance(parentType, parentProps, parentInstance, text3, isConcurrentMode) {
             {
               if (isConcurrentMode || parentProps[SUPPRESS_HYDRATION_WARNING$1] !== true) {
-                warnForInsertedHydratedText(parentInstance, text);
+                warnForInsertedHydratedText(parentInstance, text3);
               }
             }
           }
@@ -11309,8 +11309,8 @@
                       didNotFindHydratableInstanceWithinContainer(parentContainer, type);
                       break;
                     case HostText:
-                      var text = fiber.pendingProps;
-                      didNotFindHydratableTextInstanceWithinContainer(parentContainer, text);
+                      var text3 = fiber.pendingProps;
+                      didNotFindHydratableTextInstanceWithinContainer(parentContainer, text3);
                       break;
                   }
                   break;
@@ -11391,8 +11391,8 @@
                 return false;
               }
               case HostText: {
-                var text = fiber.pendingProps;
-                var textInstance = canHydrateTextInstance(nextInstance, text);
+                var text3 = fiber.pendingProps;
+                var textInstance = canHydrateTextInstance(nextInstance, text3);
                 if (textInstance !== null) {
                   fiber.stateNode = textInstance;
                   hydrationParentFiber = fiber;
@@ -23585,6 +23585,46 @@
     }
   });
 
+  // src/gl/gl-lib.ts
+  function createShader(gl, source, type) {
+    const shader = gl.createShader(type);
+    if (!shader) return void 0;
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.log(gl.getShaderInfoLog(shader));
+      return;
+    }
+    return shader;
+  }
+  function createProgram(gl, vertex, fragment) {
+    const prog = gl.createProgram();
+    if (!prog) return void 0;
+    gl.attachShader(prog, vertex);
+    gl.attachShader(prog, fragment);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      gl.getProgramInfoLog(prog);
+      return void 0;
+    }
+    return prog;
+  }
+  function createProgramFromShaderSources(gl, vertex, fragment) {
+    const maybeVShader = createShader(gl, vertex, gl.VERTEX_SHADER);
+    const maybeFShader = createShader(gl, fragment, gl.FRAGMENT_SHADER);
+    if (!maybeVShader || !maybeFShader) return void 0;
+    return createProgram(gl, maybeVShader, maybeFShader);
+  }
+  async function loadImage(link) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        resolve(image);
+      };
+      image.src = link;
+    });
+  }
+
   // node_modules/gl-matrix/esm/common.js
   var common_exports = {};
   __export(common_exports, {
@@ -24324,46 +24364,6 @@
     };
   }();
 
-  // src/gl/gl-lib.ts
-  function createShader(gl, source, type) {
-    const shader = gl.createShader(type);
-    if (!shader) return void 0;
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.log(gl.getShaderInfoLog(shader));
-      return;
-    }
-    return shader;
-  }
-  function createProgram(gl, vertex, fragment) {
-    const prog = gl.createProgram();
-    if (!prog) return void 0;
-    gl.attachShader(prog, vertex);
-    gl.attachShader(prog, fragment);
-    gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      gl.getProgramInfoLog(prog);
-      return void 0;
-    }
-    return prog;
-  }
-  function createProgramFromShaderSources(gl, vertex, fragment) {
-    const maybeVShader = createShader(gl, vertex, gl.VERTEX_SHADER);
-    const maybeFShader = createShader(gl, fragment, gl.FRAGMENT_SHADER);
-    if (!maybeVShader || !maybeFShader) return void 0;
-    return createProgram(gl, maybeVShader, maybeFShader);
-  }
-  async function loadImage(link) {
-    return new Promise((resolve, reject) => {
-      const image = new Image();
-      image.onload = () => {
-        resolve(image);
-      };
-      image.src = link;
-    });
-  }
-
   // src/gl/draw.ts
   var FULLSCREEN_QUAD = new Float32Array([
     -1,
@@ -24585,188 +24585,37 @@
   }
 
   // src/bosses/discovery-scenes.tsx
-  var import_react2 = __toESM(require_react());
+  var import_react3 = __toESM(require_react());
 
   // src/animation.ts
-  function lerp2(t, a, b) {
-    return a * (1 - t) + b * t;
+  function ease(fn, t, from, to, a, b) {
+    const t2 = Math.min(Math.max((t - from) / (to - from), 0), 1);
+    const t3 = fn(t2);
+    return a * (1 - t3) + b * t3;
   }
   function smoothstep(x) {
     return 3 * x * x - 2 * x * x * x;
   }
-  function sceneSequence(scenes) {
-    let sceneIndex = 0;
-    let currentTime = 0;
-    let localT = 0;
-    let first = true;
-    function nextScene(done) {
-      sceneIndex++;
-      localT = currentTime;
-      first = true;
-      if (sceneIndex === scenes.length) done();
+  function easeIn(x) {
+    return x * x;
+  }
+  function easeOut(x) {
+    return 1 - (x - 1) * (x - 1);
+  }
+  function sampleCatmullRom(p0, p1, p2, p3, t) {
+    return [
+      0.5 * (2 * p1[0] + t * (-p0[0] + p2[0]) + t * t * (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) + t * t * t * (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0])),
+      0.5 * (2 * p1[1] + t * (-p0[1] + p2[1]) + t * t * (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) + t * t * t * (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]))
+    ];
+  }
+  function sampleFullCatmullRom(p0, p1, p2, p3, t) {
+    if (t < 1 / 3) {
+      return sampleCatmullRom(p0, p0, p1, p2, t * 3);
+    } else if (t < 2 / 3) {
+      return sampleCatmullRom(p0, p1, p2, p3, t * 3 - 1);
+    } else {
+      return sampleCatmullRom(p1, p2, p3, p3, t * 3 - 2);
     }
-    return {
-      loop: (root, ds, t, gt, _, done) => {
-        currentTime = t;
-        const lt = t - localT;
-        const firstCopy = first;
-        first = false;
-        scenes[sceneIndex].loop?.(
-          root,
-          ds,
-          lt,
-          t,
-          firstCopy,
-          () => nextScene(done)
-        );
-      }
-    };
-  }
-
-  // src/TypedInText.tsx
-  var import_react = __toESM(require_react());
-  var import_client = __toESM(require_client());
-  function useDialogueNoise() {
-    const [noise, setNoise] = (0, import_react.useState)();
-    (0, import_react.useEffect)(() => {
-      if (noise) return;
-      (async () => {
-        const ac2 = new AudioContext();
-        const file = await fetch("dialogue-noise.wav");
-        const buf = await file.arrayBuffer();
-        const audio = await ac2.decodeAudioData(buf);
-        setNoise(audio);
-      })();
-    }, []);
-    return noise;
-  }
-  function TypedInText(props) {
-    const ref = (0, import_react.useRef)(null);
-    const [charsLoaded, setCharsLoaded] = (0, import_react.useState)(0);
-    const allTextRef = (0, import_react.useRef)("");
-    const delaysRef = (0, import_react.useRef)([]);
-    const rootRef = (0, import_react.useRef)();
-    const dialogueNoise = useDialogueNoise();
-    (0, import_react.useEffect)(() => {
-      setCharsLoaded(0);
-      allTextRef.current = "";
-      delaysRef.current = [];
-      const elem = ref.current;
-      if (!elem) return;
-      elem.style.display = "none";
-      setTimeout(() => {
-        const oldRoot = rootRef.current;
-        if (oldRoot) oldRoot.unmount();
-        rootRef.current = (0, import_client.createRoot)(elem);
-        rootRef.current.render(props.children);
-        elem.style.display = "none";
-      });
-    }, [props.children]);
-    (0, import_react.useEffect)(() => {
-      if (props.forceDone) return;
-      const currentChar = allTextRef.current[charsLoaded - 1] ?? "";
-      setTimeout(
-        () => {
-          if (charsLoaded == allTextRef.current.length && allTextRef.current.length > 0) {
-            props.done?.();
-          } else {
-            setCharsLoaded((l) => l + 1);
-            if (!dialogueNoise) return;
-            const ac2 = new AudioContext();
-            const track = new AudioBufferSourceNode(ac2, {
-              buffer: dialogueNoise,
-              playbackRate: Math.random() * 0.75 + 0.5
-            });
-            const gain = ac2.createGain();
-            gain.gain.setValueAtTime(0.2, 0);
-            track.connect(gain);
-            gain.connect(ac2.destination);
-            track.start();
-          }
-        },
-        charsLoaded === 0 ? 100 : currentChar.match(/\.|\?|\!/g) ? 250 : currentChar.match(/\,/g) ? 100 : delaysRef.current[charsLoaded - 1] ?? 20
-      );
-    }, [charsLoaded, props.forceDone]);
-    (0, import_react.useEffect)(() => {
-      const elem = ref.current;
-      if (!elem) return;
-      let chars = charsLoaded;
-      let walker = document.createTreeWalker(elem, NodeFilter.SHOW_TEXT);
-      while (walker.nextNode()) {
-        const node = walker.currentNode;
-        if (node._text === void 0) {
-          const text = node.textContent ?? "";
-          const isSlow = nodeIsSlow(node);
-          allTextRef.current += text;
-          node._text = text;
-          for (let i = 0; i < text.length; i++) {
-            delaysRef.current.push(isSlow ? Number(isSlow.dataset.delay) : 20);
-          }
-        }
-      }
-      walker = document.createTreeWalker(elem, NodeFilter.SHOW_TEXT);
-      while (walker.nextNode()) {
-        const node = walker.currentNode;
-        const text = node._text;
-        if (chars <= 0 && !props.forceDone) {
-          node.textContent = "";
-        } else if (chars < text.length && !props.forceDone) {
-          node.textContent = text.slice(0, chars);
-        } else {
-          node.textContent = text;
-        }
-        chars -= text.length;
-      }
-      elem.style.display = "";
-    }, [charsLoaded, props.forceDone, props.children]);
-    return /* @__PURE__ */ import_react.default.createElement("div", { ref });
-  }
-  function nodeIsSlow(node) {
-    while (node) {
-      node = node.parentElement;
-      if (node instanceof HTMLElement && node.dataset.slow) {
-        return node;
-      }
-    }
-    return false;
-  }
-  function SlowText(props) {
-    return /* @__PURE__ */ import_react.default.createElement("div", { "data-slow": "true", "data-delay": props.delay }, props.children);
-  }
-  function TypedInTextSequence(props) {
-    const [seqIndex, setSeqIndex] = (0, import_react.useState)(0);
-    const [currentDone, setCurrentDone] = (0, import_react.useState)(false);
-    const [completelyDone, setCompletelyDone] = (0, import_react.useState)(false);
-    (0, import_react.useEffect)(() => {
-      if (completelyDone) return;
-      const listener = (e) => {
-        if (e.key.toUpperCase() === "ENTER") {
-          if (currentDone) {
-            if (seqIndex == props.seq.length - 1) {
-              props.done?.();
-              setCompletelyDone(true);
-            } else if (seqIndex < props.seq.length - 1) {
-              setCurrentDone(false);
-              setSeqIndex(seqIndex + 1);
-            }
-          } else {
-            setCurrentDone(true);
-          }
-        }
-      };
-      document.addEventListener("keydown", listener);
-      return () => document.removeEventListener("keydown", listener);
-    }, [currentDone, seqIndex, completelyDone]);
-    return /* @__PURE__ */ import_react.default.createElement("div", { className: "textbox" }, /* @__PURE__ */ import_react.default.createElement(TypedInText, { forceDone: currentDone, done: () => setCurrentDone(true) }, props.seq[seqIndex]), currentDone && /* @__PURE__ */ import_react.default.createElement("div", { className: "textbox-continue" }, "Press ENTER to continue."));
-  }
-  function TextSeq(props) {
-    return /* @__PURE__ */ import_react.default.createElement("div", { className: "game-text" }, /* @__PURE__ */ import_react.default.createElement(
-      TypedInTextSequence,
-      {
-        done: props.done,
-        seq: props.seq
-      }
-    ));
   }
 
   // src/fabrik.ts
@@ -24841,7 +24690,7 @@
     track.start();
   }
 
-  // src/player.ts
+  // src/ecs/player.ts
   var keysPressed = {};
   document.addEventListener("keydown", (e) => {
     keysPressed[e.key] = true;
@@ -24849,80 +24698,9 @@
   document.addEventListener("keyup", (e) => {
     keysPressed[e.key] = false;
   });
-  var player = {
-    pos: vec2_exports.fromValues(0, 0),
-    vel: vec2_exports.fromValues(0, 0),
-    deathAnimationTimer: 0,
-    deathParticles: []
-  };
-  var DEATH_ANIMATION_LENGTH = 100;
-  var PLAYER_VEL = 0.01;
-  var PLAYER_DAMPEN = 0.5;
-  var ATTACK_RADIUS = 0.2;
-  var ATTACK_INTERVAL = 20;
-  var attackCooldown = 0;
-  function runPlayerIter() {
-    if (player.deathAnimationTimer === 1) {
-      player.pos = [0, 0];
-      player.vel = [0, 0];
-      player.deathParticles = [];
-    }
-    player.deathAnimationTimer--;
-    if (attackCooldown > 0) attackCooldown--;
-    player.pos[0] += player.vel[0];
-    player.pos[1] += player.vel[1];
-    player.vel[0] *= PLAYER_DAMPEN;
-    player.vel[1] *= PLAYER_DAMPEN;
-    if (keysPressed.w) player.vel[1] += PLAYER_VEL;
-    if (keysPressed.a) player.vel[0] -= PLAYER_VEL;
-    if (keysPressed.s) player.vel[1] -= PLAYER_VEL;
-    if (keysPressed.d) player.vel[0] += PLAYER_VEL;
-    if (keysPressed[" "] && attackCooldown == 0) {
-      attackCooldown = ATTACK_INTERVAL;
-      player.vel[0] *= -1;
-      player.vel[1] *= -1;
-    }
-  }
-  function drawPlayer(ds, gt) {
-    if (player.deathAnimationTimer > 0) {
-      for (const p of player.deathParticles) {
-        vec2_exports.add(p.pos, p.pos, p.vel);
-        vec2_exports.scale(p.vel, p.vel, 0.8);
-        if (player.deathAnimationTimer < DEATH_ANIMATION_LENGTH / 2) {
-          vec2_exports.add(p.vel, p.vel, [-p.pos[0] / 30, -p.pos[1] / 30]);
-        }
-        ds.circle(p.pos, 5e-3, [1, 0.7, 0.7, 1]);
-      }
-      return;
-    }
-    const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 5e-3 + 0.02;
-    ds.circle(player.pos, playerSize, [1, 0.7, 0.7, 1]);
-    if (isPlayerAttacking()) {
-      ds.circle(player.pos, ATTACK_RADIUS, [1, 0.7, 0.7, 1], 0.1, 0.99);
-    } else {
-      ds.circle(player.pos, ATTACK_RADIUS, [1, 0.7, 0.7, 0.3], 0.01, 0.99);
-    }
-  }
-  function isPlayerAttacking() {
-    return attackCooldown >= ATTACK_INTERVAL;
-  }
-  function killPlayer() {
-    if (player.deathAnimationTimer > 0) return;
-    playSound("click.wav", 2, 1);
-    playSound("player-death.wav", 0.7, 5);
-    player.deathAnimationTimer = DEATH_ANIMATION_LENGTH;
-    for (let i of range(100)) {
-      player.deathParticles.push({
-        pos: vec2_exports.clone(player.pos),
-        vel: [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1]
-      });
-    }
-  }
 
   // src/bosses/discovery-boss.tsx
   var DISCOVERY_MAX_HP = 25;
-  var DISCOVERY_SIZE = 0.3;
-  var DAMAGE_INDICATOR_COOLDOWN = 15;
   var discoveryBoss = {
     pos: vec2_exports.fromValues(0, 0.5),
     health: DISCOVERY_MAX_HP,
@@ -24934,181 +24712,11 @@
     phase: "teleport",
     nextPhaseTime: 0
   };
-  function tendrilPhase(gt, first) {
-    const hpFraction = discoveryBoss.health / DISCOVERY_MAX_HP;
-    if (gt > discoveryBoss.nextTendril) {
-      playSound(
-        "fart.wav",
-        Math.random() * 0.2 + 0.75 + discoveryBoss.tendrilIndex * 0.3
-      );
-      if (discoveryBoss.tendrilIndex <= 10) {
-        discoveryBoss.nextTendril += 0.05;
-        discoveryBoss.tendrilIndex++;
-      } else {
-        discoveryBoss.nextTendril += lerp2(hpFraction, 1, 3);
-        discoveryBoss.tendrilIndex = 0;
-        switchToTeleportPhase(gt);
-      }
-      const vel = vec2_exports.clone(player.pos);
-      vec2_exports.sub(vel, vel, discoveryBoss.pos);
-      vec2_exports.normalize(vel, vel);
-      vec2_exports.scale(vel, vel, 0.07);
-      const initVel = vec2_exports.clone(vel);
-      vec2_exports.scale(initVel, initVel, 1.5);
-      vec2_exports.rotate(
-        initVel,
-        initVel,
-        [0, 0],
-        discoveryBoss.tendrilIndex % 2 ? Math.PI / 2 : -Math.PI / 2
-      );
-      discoveryBoss.tendrils.push({
-        points: range(30).map(
-          (i) => ({
-            length: 0.1,
-            pos: [discoveryBoss.pos[0], discoveryBoss.pos[1] + i % 2 * 0.1]
-          })
-        ),
-        target: vec2_exports.clone(discoveryBoss.pos),
-        vel,
-        initVel,
-        attackAt: gt + 0.15,
-        retractAt: gt + 0.7,
-        deleteAt: gt + 2,
-        hasLockedOn: false
-      });
-    }
-    discoveryBoss.tendrils = discoveryBoss.tendrils.filter(
-      (t) => t.deleteAt > gt
-    );
-  }
-  function switchToTendrilPhase(gt) {
-    discoveryBoss.nextPhaseTime = gt + 10;
-    discoveryBoss.phase = "tendrils";
-    discoveryBoss.nextTendril = gt + 1;
-    discoveryBoss.tendrilIndex = 0;
-  }
-  var nextPos = [0, 0];
-  var hasTeleported = false;
-  function teleportPhase(gt, first) {
-    if (discoveryBoss.nextPhaseTime - gt < 1) {
-      discoveryBoss.pos = nextPos;
-    }
-    if (discoveryBoss.nextPhaseTime < gt) {
-      switchToTendrilPhase(gt);
-    }
-  }
-  function switchToTeleportPhase(gt) {
-    hasTeleported = false;
-    nextPos = [Math.random() - 0.5, Math.random() - 0.5];
-    discoveryBoss.nextPhaseTime = gt + 2;
-    discoveryBoss.phase = "teleport";
-  }
-  function handleTendrils(gt, first) {
-    for (const t of discoveryBoss.tendrils) {
-      t.points[0].pos = vec2_exports.clone(discoveryBoss.pos);
-      doFabrik(t.points, t.target, 10);
-      if (gt > t.attackAt) {
-        if (!t.hasLockedOn) {
-          t.hasLockedOn = true;
-          const vel = vec2_exports.clone(player.pos);
-          vec2_exports.sub(vel, vel, t.target);
-          vec2_exports.normalize(vel, vel);
-          vec2_exports.scale(vel, vel, 0.07);
-          t.vel = vel;
-        }
-        vec2_exports.add(t.target, t.target, t.vel);
-        const rvel = vec2_exports.clone(t.vel);
-        vec2_exports.rotate(rvel, rvel, [0, 0], Math.PI / 2);
-        vec2_exports.scale(rvel, rvel, Math.sin(15 * gt) * 0);
-        vec2_exports.add(t.target, t.target, rvel);
-      } else {
-        vec2_exports.add(t.target, t.target, t.initVel);
-      }
-      for (const pt of t.points) {
-        if (gt < t.retractAt && vec2_exports.dist(player.pos, pt.pos) < 0.04) {
-          killPlayer();
-        }
-      }
-    }
-  }
-  function runDiscoveryIter(gt, first) {
-    const hpFraction = discoveryBoss.health / DISCOVERY_MAX_HP;
-    if (first) {
-      switchToTeleportPhase(gt);
-    }
-    if (isPlayerAttacking() && vec2_exports.dist(player.pos, discoveryBoss.pos) < ATTACK_RADIUS + DISCOVERY_SIZE) {
-      discoveryBoss.health--;
-      playSound(
-        "discovery-hurt.wav",
-        (Math.random() * 0.1 + 0.2) * lerp2(hpFraction, 5, 1),
-        0.3
-      );
-      discoveryBoss.damageIndicatorTimer = DAMAGE_INDICATOR_COOLDOWN;
-    }
-    discoveryBoss.damageIndicatorTimer--;
-    if (discoveryBoss.damageIndicatorTimer <= 0) {
-      discoveryBoss.animationTime += 1 / 60;
-    } else {
-      discoveryBoss.animationTime += Math.random() * 0.2 - 0.1;
-    }
-    if (discoveryBoss.phase === "tendrils") {
-      tendrilPhase(gt, first);
-    } else if (discoveryBoss.phase === "teleport") {
-      teleportPhase(gt, first);
-    }
-    handleTendrils(gt, first);
-  }
-  function displayDiscovery(ds, gt) {
-    const trans = mat3_exports.create();
-    mat3_exports.translate(trans, trans, discoveryBoss.pos);
-    mat3_exports.translate(
-      trans,
-      trans,
-      discoveryBoss.damageIndicatorTimer > 0 ? [Math.random() * 0.02 - 0.01, Math.random() * 0.02 - 0.01] : [0, 0]
-    );
-    mat3_exports.scale(trans, trans, [
-      discoveryBoss.phase === "teleport" ? smoothstep(
-        Math.max(
-          Math.min(1, 8 * Math.abs(discoveryBoss.nextPhaseTime - gt - 1) - 7),
-          0
-        )
-      ) : 1,
-      1
-    ]);
-    drawDiscoveryBody(ds, trans, discoveryBoss.animationTime);
-    if (discoveryBoss.phase !== "teleport")
-      ds.circle(
-        discoveryBoss.pos,
-        DISCOVERY_SIZE,
-        [0.7, 0.7, 1, 0.3],
-        0.01,
-        0.99
-      );
-    for (const t of discoveryBoss.tendrils) {
-      drawFabrikChainSegments(t.points, (trans2, pointPos, i) => {
-        mat3_exports.scale(trans2, trans2, [0.1, 0.1]);
-        let alpha = 4 * vec2_exports.dist(pointPos, discoveryBoss.pos) - 1;
-        if (gt > t.retractAt) {
-          const timeSinceRetraction = gt - t.retractAt;
-          alpha = Math.min(
-            alpha,
-            1 - Math.max(0, timeSinceRetraction * 30 - i * 0.1)
-          );
-        }
-        ds.img(1, trans2, [1, 1, 1, alpha]);
-      });
-    }
-  }
-  function displayDiscoveryHealthBar(ds) {
-    const pos1 = [-1, 1];
-    const pos2 = [-1 + 2 * discoveryBoss.health / DISCOVERY_MAX_HP, 0.95];
-    ds.rect(pos1, pos2, [0.5, 0.8, 1, 1]);
-  }
-  function discoveryBackground(ds, t, black) {
-    const t2 = t * 0.1;
+  function discoveryBackground(game2, black) {
+    const t2 = game2.t * 0.1;
     const offsetX = Math.cos(t2) * 0.1;
     const offsetY = Math.sin(t2) * 0.1;
-    ds.draw(
+    game2.ds.draw(
       0,
       2,
       mat3_exports.create(),
@@ -25117,101 +24725,449 @@
     );
   }
 
+  // src/TypedInText.tsx
+  var import_react = __toESM(require_react());
+  var import_client = __toESM(require_client());
+  function useDialogueNoise() {
+    const [noise, setNoise] = (0, import_react.useState)();
+    (0, import_react.useEffect)(() => {
+      if (noise) return;
+      (async () => {
+        const ac2 = new AudioContext();
+        const file = await fetch("dialogue-noise.wav");
+        const buf = await file.arrayBuffer();
+        const audio = await ac2.decodeAudioData(buf);
+        setNoise(audio);
+      })();
+    }, []);
+    return noise;
+  }
+  function TypedInText(props) {
+    const ref = (0, import_react.useRef)(null);
+    const [charsLoaded, setCharsLoaded] = (0, import_react.useState)(0);
+    const allTextRef = (0, import_react.useRef)("");
+    const delaysRef = (0, import_react.useRef)([]);
+    const rootRef = (0, import_react.useRef)();
+    const dialogueNoise = useDialogueNoise();
+    (0, import_react.useEffect)(() => {
+      setCharsLoaded(0);
+      allTextRef.current = "";
+      delaysRef.current = [];
+      const elem = ref.current;
+      if (!elem) return;
+      elem.style.display = "none";
+      setTimeout(() => {
+        const oldRoot = rootRef.current;
+        if (oldRoot) oldRoot.unmount();
+        rootRef.current = (0, import_client.createRoot)(elem);
+        rootRef.current.render(props.children);
+        elem.style.display = "none";
+      });
+    }, [props.children]);
+    (0, import_react.useEffect)(() => {
+      if (props.forceDone) return;
+      const currentChar = allTextRef.current[charsLoaded - 1] ?? "";
+      setTimeout(
+        () => {
+          if (charsLoaded == allTextRef.current.length && allTextRef.current.length > 0) {
+            props.done?.();
+          } else {
+            setCharsLoaded((l) => l + 1);
+            if (!dialogueNoise) return;
+            const ac2 = new AudioContext();
+            const track = new AudioBufferSourceNode(ac2, {
+              buffer: dialogueNoise,
+              playbackRate: Math.random() * 0.75 + 0.5
+            });
+            const gain = ac2.createGain();
+            gain.gain.setValueAtTime(0.2, 0);
+            track.connect(gain);
+            gain.connect(ac2.destination);
+            track.start();
+          }
+        },
+        charsLoaded === 0 ? 100 : currentChar.match(/\.|\?|\!/g) ? 250 : currentChar.match(/\,/g) ? 100 : delaysRef.current[charsLoaded - 1] ?? 20
+      );
+    }, [charsLoaded, props.forceDone]);
+    (0, import_react.useEffect)(() => {
+      const elem = ref.current;
+      if (!elem) return;
+      let chars = charsLoaded;
+      let walker = document.createTreeWalker(elem, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        if (node._text === void 0) {
+          const text3 = node.textContent ?? "";
+          const isSlow = nodeIsSlow(node);
+          allTextRef.current += text3;
+          node._text = text3;
+          for (let i = 0; i < text3.length; i++) {
+            delaysRef.current.push(isSlow ? Number(isSlow.dataset.delay) : 20);
+          }
+        }
+      }
+      walker = document.createTreeWalker(elem, NodeFilter.SHOW_TEXT);
+      while (walker.nextNode()) {
+        const node = walker.currentNode;
+        const text3 = node._text;
+        if (chars <= 0 && !props.forceDone) {
+          node.textContent = "";
+        } else if (chars < text3.length && !props.forceDone) {
+          node.textContent = text3.slice(0, chars);
+        } else {
+          node.textContent = text3;
+        }
+        chars -= text3.length;
+      }
+      elem.style.display = "";
+    }, [charsLoaded, props.forceDone, props.children]);
+    return /* @__PURE__ */ import_react.default.createElement("div", { ref });
+  }
+  function nodeIsSlow(node) {
+    while (node) {
+      node = node.parentElement;
+      if (node instanceof HTMLElement && node.dataset.slow) {
+        return node;
+      }
+    }
+    return false;
+  }
+  function TypedInTextSequence(props) {
+    const [seqIndex, setSeqIndex] = (0, import_react.useState)(0);
+    const [currentDone, setCurrentDone] = (0, import_react.useState)(false);
+    const [completelyDone, setCompletelyDone] = (0, import_react.useState)(false);
+    (0, import_react.useEffect)(() => {
+      if (completelyDone) return;
+      const listener = (e) => {
+        if (e.key.toUpperCase() === "ENTER") {
+          if (currentDone) {
+            if (seqIndex == props.seq.length - 1) {
+              props.done?.();
+              setCompletelyDone(true);
+            } else if (seqIndex < props.seq.length - 1) {
+              setCurrentDone(false);
+              setSeqIndex(seqIndex + 1);
+            }
+          } else {
+            setCurrentDone(true);
+          }
+        }
+      };
+      document.addEventListener("keydown", listener);
+      return () => document.removeEventListener("keydown", listener);
+    }, [currentDone, seqIndex, completelyDone]);
+    return /* @__PURE__ */ import_react.default.createElement("div", { className: "textbox" }, /* @__PURE__ */ import_react.default.createElement(TypedInText, { forceDone: currentDone, done: () => setCurrentDone(true) }, props.seq[seqIndex]), currentDone && /* @__PURE__ */ import_react.default.createElement("div", { className: "textbox-continue" }, "Press ENTER to continue."));
+  }
+  function TextSeq(props) {
+    return /* @__PURE__ */ import_react.default.createElement("div", { className: "game-text" }, /* @__PURE__ */ import_react.default.createElement(
+      TypedInTextSequence,
+      {
+        done: props.done,
+        seq: props.seq
+      }
+    ));
+  }
+
+  // src/ecs/entity.tsx
+  var import_react2 = __toESM(require_react());
+  function iterEntities(game2) {
+    for (const e of game2.entities) {
+      e.iter(game2);
+    }
+    game2.entities = game2.entities.filter((e) => !e.isDead);
+  }
+  function drawEntities(game2) {
+    for (const e of game2.entities) {
+      e.draw(game2);
+    }
+  }
+  function timer(time, f) {
+    let startTime = 0;
+    return {
+      isDead: false,
+      init(game2) {
+        startTime = game2.t;
+      },
+      iter(game2) {
+        if (game2.t > startTime + time) {
+          f();
+          this.isDead = true;
+        }
+      },
+      draw() {
+      }
+    };
+  }
+  function sequence(entities) {
+    let entityIndex = 0;
+    return {
+      isDead: false,
+      init(game2) {
+        entities[0].init(game2);
+      },
+      iter(game2) {
+        if (!entities[entityIndex].isDead) {
+          entities[entityIndex].iter(game2);
+        } else if (entityIndex === entities.length - 1) {
+          this.isDead = true;
+        } else {
+          entityIndex++;
+          entities[entityIndex].init(game2);
+        }
+      },
+      draw(game2) {
+        entities[entityIndex].draw(game2);
+      }
+    };
+  }
+  function text(text3, onDone) {
+    return {
+      isDead: false,
+      init(game2) {
+        game2.text.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+        setTimeout(() => {
+          game2.text.render(
+            /* @__PURE__ */ import_react2.default.createElement(
+              TextSeq,
+              {
+                done: () => {
+                  this.isDead = true;
+                  game2.text.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+                  if (onDone) onDone();
+                },
+                seq: text3
+              }
+            )
+          );
+        });
+      },
+      iter(game2) {
+      },
+      draw(game2) {
+      }
+    };
+  }
+
   // src/bosses/discovery-scenes.tsx
-  function drawDiscoveryBody(ds, transform, t) {
+  function drawDiscoveryBody(transform, game2) {
     const x = mat3_exports.clone(transform);
     mat3_exports.scale(x, x, vec2_exports.fromValues(0.3, 0.3));
     for (let i = 0; i < 10; i++) {
       const angle2 = (i / 10 + Math.random() * 0.1) * Math.PI * 2;
       const transform2 = mat3_exports.clone(x);
       mat3_exports.rotate(transform2, transform2, angle2);
-      ds.draw(1, 0, transform2, [1, 1, 1, 0.1]);
+      game2.ds.draw(1, 0, transform2, [1, 1, 1, 0.1]);
     }
     const s = 0.75;
-    ds.draw(
+    game2.ds.draw(
       1,
       3,
       x,
-      [-0.25, -0.25, 0.8 + t * Math.PI * 2 / 2, 2],
+      [-0.25, -0.25, 0.8 + game2.t * Math.PI * 2 / 2, 2],
       [-s, -s, s, s]
     );
   }
-  var discoveryArm = range(10).map((i) => ({
-    length: 0.1,
-    pos: vec2_exports.fromValues(0, 0.5 + 0.1 * (i % 2))
-  }));
-  var playerPieces = range(50).map((i) => ({
-    pos: [0, 0],
-    vel: [0, 0]
-  }));
-  var playerAttackCutscene = {
-    loop(root, ds, t, gt, first, done) {
-      discoveryBackground(ds, t, true);
+  function drawPlayerAtOrigin(game2) {
+    const playerSize = Math.sin(game2.t * 10 * Math.PI * 2) * 5e-3 + 0.02;
+    game2.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+  }
+  var introText = {
+    isDead: false,
+    init(game2) {
+      game2.addEntity(
+        text(
+          [/* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "A thing!"), /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "In our domain!"), /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "In the periphery!")],
+          () => this.isDead = true
+        )
+      );
+    },
+    iter(game2) {
+    },
+    draw(game2) {
+      discoveryBackground(game2, true);
+      drawPlayerAtOrigin(game2);
+    }
+  };
+  var introCutscene = {
+    isDead: false,
+    start: 0,
+    init(game2) {
+      this.start = game2.t;
+      game2.addEntity(
+        timer(8, () => {
+          game2.addEntity(
+            text(
+              [
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "It seems very. Peculiar. Odd. Interesting. Enticing. Strange. Weird."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Perhaps if I...")
+              ],
+              () => this.isDead = true
+            )
+          );
+        })
+      );
+    },
+    iter(game2) {
+    },
+    draw(game2) {
+      discoveryBackground(game2, true);
+      const lt = game2.t - this.start;
       const bossT = mat3_exports.create();
       mat3_exports.translate(
         bossT,
         bossT,
-        vec2_exports.fromValues(
-          0 + Math.random() * 0.01 - 5e-3,
-          0.5 + Math.random() * 0.01 - 5e-3
-        )
+        vec2_exports.fromValues(0, ease(easeOut, lt, 3, 8, 1.5, 0.5))
       );
-      drawDiscoveryBody(ds, bossT, 0.1);
-      runPlayerIter();
-      drawPlayer(ds, gt);
-      if (first) {
-        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
-        setTimeout(() => {
-          root.render(
-            /* @__PURE__ */ import_react2.default.createElement(
-              TextSeq,
-              {
-                done,
-                seq: [
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Oh..."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "It... intersected me."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "It was rather..."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Well, it entered my corpuscule and intermixed with my organelles and I felt it coil and twist and tear into a system of roots plunging its needle-like tips into every facet of every caked on layer of my tender flesh and"),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Hm."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "That is."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Quite."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Questionable. Unsettling."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Enticing."),
-                  /* @__PURE__ */ import_react2.default.createElement(SlowText, { delay: 300 }, /* @__PURE__ */ import_react2.default.createElement("em", null, "Dangerous. . .")),
-                  /* @__PURE__ */ import_react2.default.createElement(SlowText, { delay: 200 }, "I cannot allow such a being to live.")
-                ]
-              }
+      drawDiscoveryBody(bossT, game2);
+      drawPlayerAtOrigin(game2);
+    }
+  };
+  var attackCutscene = {
+    isDead: false,
+    start: 0,
+    playerPieces: range(50).map((i) => ({
+      pos: [0, 0],
+      vel: [0, 0]
+    })),
+    playerExploded: false,
+    discoveryArm: range(10).map((i) => ({
+      length: 0.1,
+      pos: vec2_exports.fromValues(0, 0.5 + 0.1 * (i % 2))
+    })),
+    drawDiscoveryArm(game2) {
+      for (const { length: length2, pos } of this.discoveryArm.slice(1, -1)) {
+        vec2_exports.add(pos, pos, [
+          Math.random() * 0.01 - 5e-3,
+          Math.random() * 0.01 - 5e-3
+        ]);
+      }
+      drawFabrikChainSegments(this.discoveryArm, (t) => {
+        mat3_exports.scale(t, t, [0.1, 0.1]);
+        game2.ds.img(1, t);
+      });
+    },
+    drawExplodedPlayer(ds) {
+      for (const pp of this.playerPieces) {
+        const t = mat3_exports.create();
+        ds.circle(pp.pos, 4e-3 + Math.random() * 3e-3, [1, 0.7, 0.7, 1]);
+      }
+    },
+    init(game2) {
+      this.start = game2.t;
+      game2.addEntity(
+        timer(6, () => {
+          game2.addEntity(
+            text(
+              [
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Oh..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I appear to have."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Exploded it!"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "That is rather unfortunate."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I was quite excited to sample the flesh of this strange, nondescript, quivering blob.")
+              ],
+              () => this.isDead = true
             )
           );
-        });
+        })
+      );
+    },
+    iter(game2) {
+    },
+    draw(game2) {
+      const t = game2.t - this.start;
+      const gt = game2.t;
+      discoveryBackground(game2, true);
+      const bossT = mat3_exports.create();
+      mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
+      drawDiscoveryBody(bossT, game2);
+      if (t < 4) {
+        const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 5e-3 + 0.02;
+        game2.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+      }
+      if (t > 0 && t < 4)
+        doFabrik(
+          this.discoveryArm,
+          sampleFullCatmullRom(
+            [0, 0.5],
+            [0.5, 0.6],
+            [0.3, -0.2],
+            [0, 0],
+            ease(easeIn, t, 0, 4, 0, 1)
+          ),
+          10
+        );
+      if (t > 4 && t < 5)
+        doFabrik(
+          this.discoveryArm,
+          sampleFullCatmullRom(
+            [0, 0],
+            [0.3, 0.1],
+            [0.4, 0.4],
+            [0, 0.5],
+            ease(smoothstep, t, 4, 5, 0, 1)
+          ),
+          10
+        );
+      if (t > 5) {
+        for (const da of this.discoveryArm) {
+          vec2_exports.sub(da.pos, da.pos, [0, 0.5]);
+          vec2_exports.mul(da.pos, da.pos, [0.9, 0.9]);
+          vec2_exports.add(da.pos, da.pos, [0, 0.5]);
+        }
+      }
+      this.drawDiscoveryArm(game2);
+      if (t > 4) {
+        if (!this.playerExploded) {
+          this.playerExploded = true;
+          for (const pp of this.playerPieces) {
+            pp.vel = [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1];
+          }
+        }
+        this.drawExplodedPlayer(game2.ds);
+        for (const pp of this.playerPieces) {
+          vec2_exports.add(pp.pos, pp.pos, pp.vel);
+          vec2_exports.mul(pp.vel, pp.vel, [0.9, 0.9]);
+        }
       }
     }
   };
-  var bossPhase = {
-    loop(root, ds, t, gt, first, done) {
-      if (first) root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
-      discoveryBackground(ds, t);
-      runDiscoveryIter(gt, first);
-      displayDiscovery(ds, gt);
-      runPlayerIter();
-      drawPlayer(ds, gt);
-      displayDiscoveryHealthBar(ds);
-    }
-  };
-  var discoveryScenes = sceneSequence([
-    // introText,
-    // introCutscene,
-    // attackCutscene,
+  var discoveryScenes = sequence([
+    introText,
+    introCutscene,
+    attackCutscene
     // attack2Cutscene,
     // playerRegenerateCutscene,
     // playerMoveCutscene,
-    playerAttackCutscene,
-    bossPhase,
-    {}
+    // playerAttackCutscene,
+    // bossPhase,
+    // {},
   ]);
 
   // src/game.tsx
   var import_client2 = __toESM(require_client());
+
+  // src/ecs/game.ts
+  function makeGame(ds, text3) {
+    return {
+      entities: [],
+      player: {
+        pos: [0, 0],
+        vel: [0, 0],
+        deathAnimationTimer: 0,
+        deathParticles: []
+      },
+      t: 0,
+      ds,
+      addEntity(entity) {
+        entity.init(this);
+        this.entities.push(entity);
+        return entity;
+      },
+      text: text3
+    };
+  }
+
+  // src/game.tsx
   async function game() {
     const canvas = document.createElement("canvas");
     document.getElementById("root").appendChild(canvas);
@@ -25226,57 +25182,13 @@
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     const ds = await makeDrawSystem(gl);
     if (!ds) throw new Error("no ds");
-    let t = 0;
-    let player2 = {
-      x: 0,
-      y: 0,
-      dx: 0,
-      dy: 0
-    };
-    const keysPressed2 = {};
-    document.addEventListener("keydown", (e) => {
-      keysPressed2[e.key] = true;
-    });
-    document.addEventListener("keyup", (e) => {
-      keysPressed2[e.key] = false;
-    });
-    const ATTACK_INTERVAL2 = 20;
-    let attackCooldown2 = 0;
-    const ATTACK_RADIUS2 = 0.2;
-    const fabrikTest = [];
-    for (let i = 0; i < 10; i++) {
-      fabrikTest.push({
-        pos: vec2_exports.fromValues(-1 + 0.1 * i, -1 + 0.1 * i),
-        length: Math.sqrt(2) * 0.1
-      });
-    }
+    const game2 = makeGame(ds, textRoot);
+    game2.addEntity(discoveryScenes);
     const loop = () => {
-      let x = mat3_exports.create();
-      let prevPlayer = { ...player2 };
-      if (Math.abs(player2.x) >= 1) {
-        player2.dx = Math.abs(player2.dx) * -Math.sign(player2.x);
-      }
-      if (Math.abs(player2.y) >= 1) {
-        player2.dy = Math.abs(player2.dy) * -Math.sign(player2.y);
-      }
-      player2.x += player2.dx;
-      player2.y += player2.dy;
-      player2.dx *= 0.5;
-      player2.dy *= 0.5;
-      if (keysPressed2.w) player2.dy += 0.01;
-      if (keysPressed2.s) player2.dy -= 0.01;
-      if (keysPressed2.a) player2.dx -= 0.01;
-      if (keysPressed2.d) player2.dx += 0.01;
-      if (attackCooldown2 > 0) attackCooldown2--;
-      if (keysPressed2[" "] && attackCooldown2 == 0) {
-        attackCooldown2 = ATTACK_INTERVAL2;
-        player2.dx *= -1;
-        player2.dy *= -1;
-      }
-      discoveryScenes.loop?.(textRoot, ds, t / 60, t / 60, false, () => {
-      });
+      iterEntities(game2);
+      drawEntities(game2);
+      game2.t += 1 / 60;
       ds.dispatch();
-      t++;
       requestAnimationFrame(loop);
     };
     loop();
