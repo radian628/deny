@@ -24591,8 +24591,34 @@
   function lerp2(t, a, b) {
     return a * (1 - t) + b * t;
   }
+  function ease(fn, t, from, to, a, b) {
+    const t2 = Math.min(Math.max((t - from) / (to - from), 0), 1);
+    const t3 = fn(t2);
+    return a * (1 - t3) + b * t3;
+  }
   function smoothstep(x) {
     return 3 * x * x - 2 * x * x * x;
+  }
+  function easeIn(x) {
+    return x * x;
+  }
+  function easeOut(x) {
+    return 1 - (x - 1) * (x - 1);
+  }
+  function sampleCatmullRom(p0, p1, p2, p3, t) {
+    return [
+      0.5 * (2 * p1[0] + t * (-p0[0] + p2[0]) + t * t * (2 * p0[0] - 5 * p1[0] + 4 * p2[0] - p3[0]) + t * t * t * (-p0[0] + 3 * p1[0] - 3 * p2[0] + p3[0])),
+      0.5 * (2 * p1[1] + t * (-p0[1] + p2[1]) + t * t * (2 * p0[1] - 5 * p1[1] + 4 * p2[1] - p3[1]) + t * t * t * (-p0[1] + 3 * p1[1] - 3 * p2[1] + p3[1]))
+    ];
+  }
+  function sampleFullCatmullRom(p0, p1, p2, p3, t) {
+    if (t < 1 / 3) {
+      return sampleCatmullRom(p0, p0, p1, p2, t * 3);
+    } else if (t < 2 / 3) {
+      return sampleCatmullRom(p0, p1, p2, p3, t * 3 - 1);
+    } else {
+      return sampleCatmullRom(p1, p2, p3, p3, t * 3 - 2);
+    }
   }
   function sceneSequence(scenes) {
     let sceneIndex = 0;
@@ -25136,6 +25162,58 @@
       [-s, -s, s, s]
     );
   }
+  var introText = {
+    loop(root, ds, t, gt, f, done) {
+      discoveryBackground(ds, t, true);
+      if (f)
+        setTimeout(() => {
+          root.render(
+            /* @__PURE__ */ import_react2.default.createElement(
+              TextSeq,
+              {
+                done,
+                seq: [/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "A thing!"), /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "In our domain!"), /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "In the periphery!")]
+              }
+            )
+          );
+        }, 3e3);
+      const playerSize = Math.sin(t * 10 * Math.PI * 2) * 5e-3 + 0.02;
+      ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+    }
+  };
+  var introCutscene = {
+    loop(root, ds, t, gt, f, done) {
+      discoveryBackground(ds, t, true);
+      if (f) {
+        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+      }
+      const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 5e-3 + 0.02;
+      ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+      const bossT = mat3_exports.create();
+      mat3_exports.translate(
+        bossT,
+        bossT,
+        vec2_exports.fromValues(0, ease(easeOut, t, 3, 8, 1.5, 0.5))
+      );
+      drawDiscoveryBody(ds, bossT, gt);
+      if (f) {
+        setTimeout(() => {
+          root.render(
+            /* @__PURE__ */ import_react2.default.createElement(
+              TextSeq,
+              {
+                done,
+                seq: [
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "It seems very. Peculiar. Odd. Interesting. Enticing. Strange. Weird."),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Perhaps if I...")
+                ]
+              }
+            )
+          );
+        }, 8e3);
+      }
+    }
+  };
   var discoveryArm = range(10).map((i) => ({
     length: 0.1,
     pos: vec2_exports.fromValues(0, 0.5 + 0.1 * (i % 2))
@@ -25144,6 +25222,224 @@
     pos: [0, 0],
     vel: [0, 0]
   }));
+  var playerExploded = false;
+  function drawExplodedPlayer(ds) {
+    for (const pp of playerPieces) {
+      const t = mat3_exports.create();
+      ds.circle(pp.pos, 4e-3 + Math.random() * 3e-3, [1, 0.7, 0.7, 1]);
+    }
+  }
+  function drawDiscoveryArm(ds) {
+    for (const { length: length2, pos } of discoveryArm.slice(1, -1)) {
+      vec2_exports.add(pos, pos, [
+        Math.random() * 0.01 - 5e-3,
+        Math.random() * 0.01 - 5e-3
+      ]);
+    }
+    drawFabrikChainSegments(discoveryArm, (t) => {
+      mat3_exports.scale(t, t, [0.1, 0.1]);
+      ds.img(1, t);
+    });
+  }
+  var attackCutscene = {
+    loop(root, ds, t, gt, f, done) {
+      discoveryBackground(ds, t, true);
+      if (f) {
+        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+      }
+      const bossT = mat3_exports.create();
+      mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
+      drawDiscoveryBody(ds, bossT, gt);
+      if (t < 4) {
+        const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 5e-3 + 0.02;
+        ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+      }
+      if (t > 0 && t < 4)
+        doFabrik(
+          discoveryArm,
+          sampleFullCatmullRom(
+            [0, 0.5],
+            [0.5, 0.6],
+            [0.3, -0.2],
+            [0, 0],
+            ease(easeIn, t, 0, 4, 0, 1)
+          ),
+          10
+        );
+      if (t > 4 && t < 5)
+        doFabrik(
+          discoveryArm,
+          sampleFullCatmullRom(
+            [0, 0],
+            [0.3, 0.1],
+            [0.4, 0.4],
+            [0, 0.5],
+            ease(smoothstep, t, 4, 5, 0, 1)
+          ),
+          10
+        );
+      if (t > 5) {
+        for (const da of discoveryArm) {
+          vec2_exports.sub(da.pos, da.pos, [0, 0.5]);
+          vec2_exports.mul(da.pos, da.pos, [0.9, 0.9]);
+          vec2_exports.add(da.pos, da.pos, [0, 0.5]);
+        }
+      }
+      drawDiscoveryArm(ds);
+      if (t > 4) {
+        if (!playerExploded) {
+          playerExploded = true;
+          for (const pp of playerPieces) {
+            pp.vel = [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1];
+          }
+        }
+        drawExplodedPlayer(ds);
+        for (const pp of playerPieces) {
+          vec2_exports.add(pp.pos, pp.pos, pp.vel);
+          vec2_exports.mul(pp.vel, pp.vel, [0.9, 0.9]);
+        }
+      }
+      if (t > 6) {
+        done();
+      }
+    }
+  };
+  var attack2Cutscene = {
+    loop(root, ds, t, gt, first, done) {
+      discoveryBackground(ds, t, true);
+      const bossT = mat3_exports.create();
+      mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
+      drawDiscoveryBody(ds, bossT, gt);
+      drawExplodedPlayer(ds);
+      if (first) {
+        setTimeout(() => {
+          root.render(
+            /* @__PURE__ */ import_react2.default.createElement(
+              TextSeq,
+              {
+                done,
+                seq: [
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Oh..."),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "I appear to have."),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Exploded it!"),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "That is rather unfortunate."),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "I was quite excited to sample the flesh of this strange, nondescript, quivering blob.")
+                ]
+              }
+            )
+          );
+        }, 0);
+      }
+    }
+  };
+  var playerRegenerateCutscene = {
+    loop(root, ds, t, gt, first, done) {
+      discoveryBackground(ds, t, true);
+      if (first) {
+        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+        setTimeout(() => {
+          root.render(
+            /* @__PURE__ */ import_react2.default.createElement(
+              TextSeq,
+              {
+                done,
+                seq: [
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "..."),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "How utterly scrumptuous!"),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Most of this type of creature disappear much akin to a transient froth of bubbles upon being prodded with my appendages!"),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "But this one..."),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Perhaps it is more similar to the bubbles of oil dancing atop a bowl of water, its recoalescence inevitable following its dispersal into an unstable emulsion!"),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "It is."),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Rather."),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Strange? Unusual? ", /* @__PURE__ */ import_react2.default.createElement("em", null, "Concerning?"))
+                ]
+              }
+            )
+          );
+        }, 5e3);
+      }
+      for (const pp of playerPieces) {
+        vec2_exports.add(pp.pos, pp.pos, pp.vel);
+        vec2_exports.mul(pp.vel, pp.vel, [0.9, 0.9]);
+      }
+      if (t > 1) {
+        for (const pp of playerPieces) {
+          vec2_exports.mul(pp.pos, pp.pos, [0.97, 0.97]);
+        }
+      }
+      if (t > 3) {
+        const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 5e-3 + 0.02;
+        ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+      }
+      const bossT = mat3_exports.create();
+      mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
+      drawDiscoveryBody(ds, bossT, gt);
+      drawExplodedPlayer(ds);
+    }
+  };
+  var playerHasntMovedYet = true;
+  var showWASDTutorial = true;
+  var showAttackTutorial = false;
+  var playerMoveCutscene = {
+    loop(root, ds, t, gt, first, done) {
+      discoveryBackground(ds, t, true);
+      if (first) {
+        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+      }
+      const bossT = mat3_exports.create();
+      mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
+      drawDiscoveryBody(ds, bossT, gt);
+      const tutorialBrightness = Math.sin(gt * 10) * 0.3 + 0.7;
+      if (showWASDTutorial) {
+        const wasdTutorialScale = mat3_exports.create();
+        mat3_exports.translate(wasdTutorialScale, wasdTutorialScale, [0, -0.2]);
+        mat3_exports.scale(wasdTutorialScale, wasdTutorialScale, [0.2, 0.2]);
+        ds.img(2, wasdTutorialScale, [1, 1, 1, tutorialBrightness]);
+      }
+      if (showAttackTutorial) {
+        const attackTutorialScale = mat3_exports.create();
+        mat3_exports.translate(attackTutorialScale, attackTutorialScale, [0, -0.2]);
+        mat3_exports.scale(attackTutorialScale, attackTutorialScale, [0.2, 0.2]);
+        ds.img(3, attackTutorialScale, [1, 1, 1, tutorialBrightness]);
+        const arrowTransform = mat3_exports.create();
+        mat3_exports.translate(arrowTransform, arrowTransform, [0, 0.1]);
+        mat3_exports.scale(arrowTransform, arrowTransform, [0.1, 0.1]);
+        mat3_exports.rotate(arrowTransform, arrowTransform, Math.PI / 2);
+        ds.img(4, arrowTransform, [1, 1, 1, tutorialBrightness]);
+      }
+      runPlayerIter();
+      drawPlayer(ds, gt);
+      if (isPlayerAttacking() && showAttackTutorial && vec2_exports.dist(player.pos, [0, 0.5]) < ATTACK_RADIUS + 0.3) {
+        playSound("discovery-hurt.wav", Math.random() * 0.1 + 0.2);
+        done();
+      }
+      if ((player.pos[0] !== 0 || player.pos[1] !== 0) && playerHasntMovedYet) {
+        playerHasntMovedYet = false;
+        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+        setTimeout(() => {
+          showWASDTutorial = false;
+        }, 1500);
+        setTimeout(() => {
+          root.render(
+            /* @__PURE__ */ import_react2.default.createElement(
+              TextSeq,
+              {
+                done: () => {
+                  root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+                  showAttackTutorial = true;
+                },
+                seq: [
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "..."),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "It moves!"),
+                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Even after I destroyed it with my appendage!")
+                ]
+              }
+            )
+          );
+        }, 3e3);
+      }
+    }
+  };
   var playerAttackCutscene = {
     loop(root, ds, t, gt, first, done) {
       discoveryBackground(ds, t, true);
@@ -25199,12 +25495,12 @@
     }
   };
   var discoveryScenes = sceneSequence([
-    // introText,
-    // introCutscene,
-    // attackCutscene,
-    // attack2Cutscene,
-    // playerRegenerateCutscene,
-    // playerMoveCutscene,
+    introText,
+    introCutscene,
+    attackCutscene,
+    attack2Cutscene,
+    playerRegenerateCutscene,
+    playerMoveCutscene,
     playerAttackCutscene,
     bossPhase,
     {}

@@ -444,12 +444,12 @@ const bossPhase: Scene = {
 };
 
 export const discoveryScenes = sceneSequence([
-  // introText,
-  // introCutscene,
-  // attackCutscene,
-  // attack2Cutscene,
-  // playerRegenerateCutscene,
-  // playerMoveCutscene,
+  introText,
+  introCutscene,
+  attackCutscene,
+  attack2Cutscene,
+  playerRegenerateCutscene,
+  playerMoveCutscene,
   playerAttackCutscene,
   bossPhase,
   {},
