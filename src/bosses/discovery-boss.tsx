@@ -12,6 +12,17 @@ const DISCOVERY_MAX_HP = 25;
 const DISCOVERY_SIZE = 0.3;
 const DAMAGE_INDICATOR_COOLDOWN = 15;
 
+// interface DiscoveryTendril implements Entity {
+
+// }
+
+// export function discoveryTendril(): Entity {
+//   return {
+//     isDead: false,
+//     segments:
+//   }
+// }
+
 export function discoveryBoss(): Entity {
   return {
     isDead: false,
