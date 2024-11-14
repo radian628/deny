@@ -24893,61 +24893,6 @@
     return attackCooldown >= ATTACK_INTERVAL;
   }
 
-  // src/bosses/discovery-boss.tsx
-  var DISCOVERY_MAX_HP = 25;
-  function discoveryBoss() {
-    return {
-      isDead: false,
-      pos: [0, 0.5],
-      hp: DISCOVERY_MAX_HP,
-      init(game2) {
-      },
-      iter(game2) {
-      },
-      draw(game2) {
-        this.displayDiscoveryHealthBar(game2.ds);
-        const bossT = mat3_exports.create();
-        mat3_exports.translate(bossT, bossT, this.pos);
-        drawDiscoveryBody(bossT, game2);
-      },
-      displayDiscoveryHealthBar(ds) {
-        const pos1 = [-1, 1];
-        const pos2 = [-1 + 2 * this.hp / DISCOVERY_MAX_HP, 0.95];
-        ds.rect(pos1, pos2, [0.5, 0.8, 1, 1]);
-      }
-    };
-  }
-  function discoveryBackground(game2, black) {
-    const t2 = game2.t * 0.1;
-    const offsetX = Math.cos(t2) * 0.1;
-    const offsetY = Math.sin(t2) * 0.1;
-    game2.ds.draw(
-      0,
-      2,
-      mat3_exports.create(),
-      [0.64 + offsetX, -0.75 + offsetY, 20, 0.4],
-      black ? [0, 0, 0, 0.2] : [0.2, 0.1, 0.1, 0.2]
-    );
-  }
-  function drawDiscoveryBody(transform, game2) {
-    const x = mat3_exports.clone(transform);
-    mat3_exports.scale(x, x, vec2_exports.fromValues(0.3, 0.3));
-    for (let i = 0; i < 10; i++) {
-      const angle2 = (i / 10 + Math.random() * 0.1) * Math.PI * 2;
-      const transform2 = mat3_exports.clone(x);
-      mat3_exports.rotate(transform2, transform2, angle2);
-      game2.ds.draw(1, 0, transform2, [1, 1, 1, 0.1]);
-    }
-    const s = 0.75;
-    game2.ds.draw(
-      1,
-      3,
-      x,
-      [-0.25, -0.25, 0.8 + game2.t * Math.PI * 2 / 2, 2],
-      [-s, -s, s, s]
-    );
-  }
-
   // src/ecs/entity.tsx
   var import_react2 = __toESM(require_react());
   function timer(time, f) {
@@ -24961,6 +24906,26 @@
         if (game2.t > startTime + time) {
           f();
           this.isDead = true;
+        }
+      },
+      draw() {
+      }
+    };
+  }
+  function interval(delay, count, f) {
+    let startTime = 0;
+    let i = 0;
+    return {
+      isDead: false,
+      init(game2) {
+        startTime = game2.t;
+      },
+      iter(game2) {
+        if (game2.t > startTime + delay) {
+          f(i);
+          startTime = game2.t;
+          i++;
+          if (i === count) this.isDead = true;
         }
       },
       draw() {
@@ -25033,6 +24998,132 @@
         hasDrawn = true;
       }
     };
+  }
+
+  // src/bosses/discovery-boss.tsx
+  var DISCOVERY_MAX_HP = 25;
+  var DiscoveryTendril = class {
+    speed;
+    timeToDelete;
+    timeToAttack;
+    dir;
+    target;
+    points;
+    startTime = 0;
+    angleOffset;
+    isDead = false;
+    constructor(params) {
+      this.speed = params.speed;
+      this.timeToDelete = params.timeToDelete;
+      this.timeToAttack = params.timeToAttack;
+      this.dir = vec2_exports.clone(params.startPos);
+      this.points = range(30).map((i) => ({
+        pos: [params.startPos[0], params.startPos[1] + i % 2 * 0.1],
+        length: 0.1
+      }));
+      this.angleOffset = params.angleOffset;
+      this.target = vec2_exports.clone(params.startPos);
+    }
+    init(game2) {
+      this.startTime = game2.t;
+      vec2_exports.sub(this.dir, game2.player.pos, this.dir);
+      vec2_exports.normalize(this.dir, this.dir);
+      vec2_exports.scale(this.dir, this.dir, this.speed);
+      vec2_exports.rotate(this.dir, this.dir, [0, 0], this.angleOffset);
+      game2.addEntity(
+        timer(this.timeToAttack, () => {
+          vec2_exports.sub(this.dir, game2.player.pos, this.target);
+          vec2_exports.normalize(this.dir, this.dir);
+          vec2_exports.scale(this.dir, this.dir, this.speed);
+        })
+      );
+      game2.addEntity(
+        timer(this.timeToDelete, () => {
+          this.isDead = true;
+        })
+      );
+    }
+    iter(game2) {
+      const t = game2.t - this.startTime;
+      doFabrik(this.points, this.target, 10);
+      vec2_exports.add(this.target, this.target, this.dir);
+    }
+    draw(game2) {
+      drawFabrikChainSegments(this.points, (trans, pos, i) => {
+        mat3_exports.scale(trans, trans, [0.1, 0.1]);
+        game2.ds.img(1, trans);
+      });
+    }
+  };
+  function discoveryBoss() {
+    let framesUntilAttack = 0;
+    return {
+      isDead: false,
+      pos: [0, 0.5],
+      hp: DISCOVERY_MAX_HP,
+      init(game2) {
+      },
+      iter(game2) {
+        framesUntilAttack--;
+        if (framesUntilAttack <= 0) {
+          framesUntilAttack = 300;
+          game2.addEntity(
+            interval(0.07, 16, (i) => {
+              game2.addEntity(
+                new DiscoveryTendril({
+                  speed: 0.08,
+                  timeToDelete: 0.8,
+                  timeToAttack: 0.15,
+                  startPos: vec2_exports.clone(this.pos),
+                  angleOffset: Math.PI / 2 * (2 * (i % 2) - 1)
+                })
+              );
+            })
+          );
+        }
+      },
+      draw(game2) {
+        this.displayDiscoveryHealthBar(game2.ds);
+        const bossT = mat3_exports.create();
+        mat3_exports.translate(bossT, bossT, this.pos);
+        drawDiscoveryBody(bossT, game2);
+      },
+      displayDiscoveryHealthBar(ds) {
+        const pos1 = [-1, 1];
+        const pos2 = [-1 + 2 * this.hp / DISCOVERY_MAX_HP, 0.95];
+        ds.rect(pos1, pos2, [0.5, 0.8, 1, 1]);
+      }
+    };
+  }
+  function discoveryBackground(game2, black) {
+    const t2 = game2.t * 0.1;
+    const offsetX = Math.cos(t2) * 0.1;
+    const offsetY = Math.sin(t2) * 0.1;
+    game2.ds.draw(
+      0,
+      2,
+      mat3_exports.create(),
+      [0.64 + offsetX, -0.75 + offsetY, 20, 0.4],
+      black ? [0, 0, 0, 0.2] : [0.2, 0.1, 0.1, 0.2]
+    );
+  }
+  function drawDiscoveryBody(transform, game2) {
+    const x = mat3_exports.clone(transform);
+    mat3_exports.scale(x, x, vec2_exports.fromValues(0.3, 0.3));
+    for (let i = 0; i < 10; i++) {
+      const angle2 = (i / 10 + Math.random() * 0.1) * Math.PI * 2;
+      const transform2 = mat3_exports.clone(x);
+      mat3_exports.rotate(transform2, transform2, angle2);
+      game2.ds.draw(1, 0, transform2, [1, 1, 1, 0.1]);
+    }
+    const s = 0.75;
+    game2.ds.draw(
+      1,
+      3,
+      x,
+      [-0.25, -0.25, 0.8 + game2.t * Math.PI * 2 / 2, 2],
+      [-s, -s, s, s]
+    );
   }
 
   // src/bosses/discovery-scenes.tsx

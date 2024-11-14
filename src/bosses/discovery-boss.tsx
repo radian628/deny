@@ -6,30 +6,108 @@ import { range } from "../util";
 import { playSound } from "../sound";
 import { lerp, smoothstep } from "../animation";
 import { Game } from "../ecs/game";
-import { Entity } from "../ecs/entity";
+import { Entity, interval, timer } from "../ecs/entity";
 
 const DISCOVERY_MAX_HP = 25;
 const DISCOVERY_SIZE = 0.3;
 const DAMAGE_INDICATOR_COOLDOWN = 15;
 
-// interface DiscoveryTendril implements Entity {
+class DiscoveryTendril implements Entity {
+  speed: number;
+  timeToDelete: number;
+  timeToAttack: number;
+  dir: vec2;
+  target: vec2;
+  points: FabrikPoint[];
+  startTime = 0;
+  angleOffset: number;
+  isDead = false;
 
-// }
+  constructor(params: {
+    speed: number;
+    timeToDelete: number;
+    timeToAttack: number;
+    startPos: vec2;
+    angleOffset: number;
+  }) {
+    this.speed = params.speed;
+    this.timeToDelete = params.timeToDelete;
+    this.timeToAttack = params.timeToAttack;
+    this.dir = vec2.clone(params.startPos);
+    this.points = range(30).map((i) => ({
+      pos: [params.startPos[0], params.startPos[1] + (i % 2) * 0.1],
+      length: 0.1,
+    }));
+    this.angleOffset = params.angleOffset;
+    this.target = vec2.clone(params.startPos);
+  }
 
-// export function discoveryTendril(): Entity {
-//   return {
-//     isDead: false,
-//     segments:
-//   }
-// }
+  init(game: Game) {
+    this.startTime = game.t;
+
+    // target the player, offset by an angle
+    vec2.sub(this.dir, game.player.pos, this.dir);
+    vec2.normalize(this.dir, this.dir);
+    vec2.scale(this.dir, this.dir, this.speed);
+    vec2.rotate(this.dir, this.dir, [0, 0], this.angleOffset);
+
+    game.addEntity(
+      timer(this.timeToAttack, () => {
+        vec2.sub(this.dir, game.player.pos, this.target);
+        vec2.normalize(this.dir, this.dir);
+        vec2.scale(this.dir, this.dir, this.speed);
+      })
+    );
+    game.addEntity(
+      timer(this.timeToDelete, () => {
+        this.isDead = true;
+      })
+    );
+  }
+
+  iter(game: Game) {
+    const t = game.t - this.startTime;
+
+    doFabrik(this.points, this.target, 10);
+
+    vec2.add(this.target, this.target, this.dir);
+  }
+
+  draw(game: Game) {
+    drawFabrikChainSegments(this.points, (trans, pos, i) => {
+      mat3.scale(trans, trans, [0.1, 0.1]);
+      game.ds.img(1, trans);
+    });
+  }
+}
 
 export function discoveryBoss(): Entity {
+  let framesUntilAttack = 0;
   return {
     isDead: false,
     pos: [0, 0.5] as vec2,
     hp: DISCOVERY_MAX_HP,
+
     init(game: Game) {},
-    iter(game: Game) {},
+    iter(game: Game) {
+      framesUntilAttack--;
+      if (framesUntilAttack <= 0) {
+        framesUntilAttack = 300;
+        game.addEntity(
+          interval(0.07, 16, (i) => {
+            game.addEntity(
+              new DiscoveryTendril({
+                speed: 0.08,
+                timeToDelete: 0.8,
+                timeToAttack: 0.15,
+                startPos: vec2.clone(this.pos),
+                angleOffset: (Math.PI / 2) * (2 * (i % 2) - 1),
+              })
+            );
+          })
+        );
+      }
+    },
     draw(game: Game) {
       this.displayDiscoveryHealthBar(game.ds);
 
