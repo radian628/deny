@@ -3,7 +3,6 @@ import React from "react";
 import { testGL } from "./test-gl";
 import { createRoot } from "react-dom/client";
 import { TypedInText, TypedInTextSequence } from "./TypedInText";
-import { discoveryInitDialogue } from "./bosses/discovery";
 import { game } from "./game";
 import { glMatrix } from "gl-matrix";
 import { playSound } from "./sound";

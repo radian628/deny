@@ -649,8 +649,8 @@
           }
           var didWarnAboutMaps = false;
           var userProvidedKeyEscapeRegex = /\/+/g;
-          function escapeUserProvidedKey(text) {
-            return text.replace(userProvidedKeyEscapeRegex, "$&/");
+          function escapeUserProvidedKey(text2) {
+            return text2.replace(userProvidedKeyEscapeRegex, "$&/");
           }
           function getElementKey(element, index) {
             if (typeof element === "object" && element !== null && element.key != null) {
@@ -2034,18 +2034,18 @@
           var localSetImmediate = typeof setImmediate !== "undefined" ? setImmediate : null;
           var isInputPending = typeof navigator !== "undefined" && navigator.scheduling !== void 0 && navigator.scheduling.isInputPending !== void 0 ? navigator.scheduling.isInputPending.bind(navigator.scheduling) : null;
           function advanceTimers(currentTime) {
-            var timer = peek(timerQueue);
-            while (timer !== null) {
-              if (timer.callback === null) {
+            var timer2 = peek(timerQueue);
+            while (timer2 !== null) {
+              if (timer2.callback === null) {
                 pop(timerQueue);
-              } else if (timer.startTime <= currentTime) {
+              } else if (timer2.startTime <= currentTime) {
                 pop(timerQueue);
-                timer.sortIndex = timer.expirationTime;
-                push(taskQueue, timer);
+                timer2.sortIndex = timer2.expirationTime;
+                push(taskQueue, timer2);
               } else {
                 return;
               }
-              timer = peek(timerQueue);
+              timer2 = peek(timerQueue);
             }
           }
           function handleTimeout(currentTime) {
@@ -2388,9 +2388,9 @@
           if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
-          var React3 = require_react();
+          var React5 = require_react();
           var Scheduler = require_scheduler();
-          var ReactSharedInternals = React3.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React5.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           var suppressWarning = false;
           function setSuppressWarning(newSuppressWarning) {
             {
@@ -3997,7 +3997,7 @@
             {
               if (props.value == null) {
                 if (typeof props.children === "object" && props.children !== null) {
-                  React3.Children.forEach(props.children, function(child) {
+                  React5.Children.forEach(props.children, function(child) {
                     if (child == null) {
                       return;
                     }
@@ -4285,15 +4285,15 @@
           var COMMENT_NODE = 8;
           var DOCUMENT_NODE = 9;
           var DOCUMENT_FRAGMENT_NODE = 11;
-          var setTextContent = function(node, text) {
-            if (text) {
+          var setTextContent = function(node, text2) {
+            if (text2) {
               var firstChild = node.firstChild;
               if (firstChild && firstChild === node.lastChild && firstChild.nodeType === TEXT_NODE) {
-                firstChild.nodeValue = text;
+                firstChild.nodeValue = text2;
                 return;
               }
             }
-            node.textContent = text;
+            node.textContent = text2;
           };
           var shorthandToLonghand = {
             animation: ["animationDelay", "animationDirection", "animationDuration", "animationFillMode", "animationIterationCount", "animationName", "animationPlayState", "animationTimingFunction"],
@@ -9469,8 +9469,8 @@
             }
             return domElement;
           }
-          function createTextNode(text, rootContainerElement) {
-            return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text);
+          function createTextNode(text2, rootContainerElement) {
+            return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text2);
           }
           function setInitialProperties(domElement, tag, rawProps, rootContainerElement) {
             var isCustomComponentTag = isCustomComponent(tag, rawProps);
@@ -9914,8 +9914,8 @@
             }
             return updatePayload;
           }
-          function diffHydratedText(textNode, text, isConcurrentMode) {
-            var isDifferent = textNode.nodeValue !== text;
+          function diffHydratedText(textNode, text2, isConcurrentMode) {
+            var isDifferent = textNode.nodeValue !== text2;
             return isDifferent;
           }
           function warnForDeletedHydratableElement(parentNode, child) {
@@ -9945,16 +9945,16 @@
               error("Expected server HTML to contain a matching <%s> in <%s>.", tag, parentNode.nodeName.toLowerCase());
             }
           }
-          function warnForInsertedHydratedText(parentNode, text) {
+          function warnForInsertedHydratedText(parentNode, text2) {
             {
-              if (text === "") {
+              if (text2 === "") {
                 return;
               }
               if (didWarnInvalidHydration) {
                 return;
               }
               didWarnInvalidHydration = true;
-              error('Expected server HTML to contain a matching text node for "%s" in <%s>.', text, parentNode.nodeName.toLowerCase());
+              error('Expected server HTML to contain a matching text node for "%s" in <%s>.', text2, parentNode.nodeName.toLowerCase());
             }
           }
           function restoreControlledState$3(domElement, tag, props) {
@@ -10327,12 +10327,12 @@
           function shouldSetTextContent(type, props) {
             return type === "textarea" || type === "noscript" || typeof props.children === "string" || typeof props.children === "number" || typeof props.dangerouslySetInnerHTML === "object" && props.dangerouslySetInnerHTML !== null && props.dangerouslySetInnerHTML.__html != null;
           }
-          function createTextInstance(text, rootContainerInstance, hostContext, internalInstanceHandle) {
+          function createTextInstance(text2, rootContainerInstance, hostContext, internalInstanceHandle) {
             {
               var hostContextDev = hostContext;
-              validateDOMNesting(null, text, hostContextDev.ancestorInfo);
+              validateDOMNesting(null, text2, hostContextDev.ancestorInfo);
             }
-            var textNode = createTextNode(text, rootContainerInstance);
+            var textNode = createTextNode(text2, rootContainerInstance);
             precacheFiberNode(internalInstanceHandle, textNode);
             return textNode;
           }
@@ -10470,8 +10470,8 @@
             var display = styleProp !== void 0 && styleProp !== null && styleProp.hasOwnProperty("display") ? styleProp.display : null;
             instance.style.display = dangerousStyleValue("display", display);
           }
-          function unhideTextInstance(textInstance, text) {
-            textInstance.nodeValue = text;
+          function unhideTextInstance(textInstance, text2) {
+            textInstance.nodeValue = text2;
           }
           function clearContainer(container) {
             if (container.nodeType === ELEMENT_NODE) {
@@ -10488,8 +10488,8 @@
             }
             return instance;
           }
-          function canHydrateTextInstance(instance, text) {
-            if (text === "" || instance.nodeType !== TEXT_NODE) {
+          function canHydrateTextInstance(instance, text2) {
+            if (text2 === "" || instance.nodeType !== TEXT_NODE) {
               return null;
             }
             return instance;
@@ -10568,10 +10568,10 @@
             var isConcurrentMode = (internalInstanceHandle.mode & ConcurrentMode) !== NoMode;
             return diffHydratedProperties(instance, type, props, parentNamespace, rootContainerInstance, isConcurrentMode, shouldWarnDev);
           }
-          function hydrateTextInstance(textInstance, text, internalInstanceHandle, shouldWarnDev) {
+          function hydrateTextInstance(textInstance, text2, internalInstanceHandle, shouldWarnDev) {
             precacheFiberNode(internalInstanceHandle, textInstance);
             var isConcurrentMode = (internalInstanceHandle.mode & ConcurrentMode) !== NoMode;
-            return diffHydratedText(textInstance, text);
+            return diffHydratedText(textInstance, text2);
           }
           function hydrateSuspenseInstance(suspenseInstance, internalInstanceHandle) {
             precacheFiberNode(internalInstanceHandle, suspenseInstance);
@@ -10625,14 +10625,14 @@
           function shouldDeleteUnhydratedTailInstances(parentType) {
             return parentType !== "head" && parentType !== "body";
           }
-          function didNotMatchHydratedContainerTextInstance(parentContainer, textInstance, text, isConcurrentMode) {
+          function didNotMatchHydratedContainerTextInstance(parentContainer, textInstance, text2, isConcurrentMode) {
             var shouldWarnDev = true;
-            checkForUnmatchedText(textInstance.nodeValue, text, isConcurrentMode, shouldWarnDev);
+            checkForUnmatchedText(textInstance.nodeValue, text2, isConcurrentMode, shouldWarnDev);
           }
-          function didNotMatchHydratedTextInstance(parentType, parentProps, parentInstance, textInstance, text, isConcurrentMode) {
+          function didNotMatchHydratedTextInstance(parentType, parentProps, parentInstance, textInstance, text2, isConcurrentMode) {
             if (parentProps[SUPPRESS_HYDRATION_WARNING$1] !== true) {
               var shouldWarnDev = true;
-              checkForUnmatchedText(textInstance.nodeValue, text, isConcurrentMode, shouldWarnDev);
+              checkForUnmatchedText(textInstance.nodeValue, text2, isConcurrentMode, shouldWarnDev);
             }
           }
           function didNotHydrateInstanceWithinContainer(parentContainer, instance) {
@@ -10675,9 +10675,9 @@
               warnForInsertedHydratedElement(parentContainer, type);
             }
           }
-          function didNotFindHydratableTextInstanceWithinContainer(parentContainer, text) {
+          function didNotFindHydratableTextInstanceWithinContainer(parentContainer, text2) {
             {
-              warnForInsertedHydratedText(parentContainer, text);
+              warnForInsertedHydratedText(parentContainer, text2);
             }
           }
           function didNotFindHydratableInstanceWithinSuspenseInstance(parentInstance, type, props) {
@@ -10686,10 +10686,10 @@
               if (parentNode !== null) warnForInsertedHydratedElement(parentNode, type);
             }
           }
-          function didNotFindHydratableTextInstanceWithinSuspenseInstance(parentInstance, text) {
+          function didNotFindHydratableTextInstanceWithinSuspenseInstance(parentInstance, text2) {
             {
               var parentNode = parentInstance.parentNode;
-              if (parentNode !== null) warnForInsertedHydratedText(parentNode, text);
+              if (parentNode !== null) warnForInsertedHydratedText(parentNode, text2);
             }
           }
           function didNotFindHydratableInstance(parentType, parentProps, parentInstance, type, props, isConcurrentMode) {
@@ -10699,10 +10699,10 @@
               }
             }
           }
-          function didNotFindHydratableTextInstance(parentType, parentProps, parentInstance, text, isConcurrentMode) {
+          function didNotFindHydratableTextInstance(parentType, parentProps, parentInstance, text2, isConcurrentMode) {
             {
               if (isConcurrentMode || parentProps[SUPPRESS_HYDRATION_WARNING$1] !== true) {
-                warnForInsertedHydratedText(parentInstance, text);
+                warnForInsertedHydratedText(parentInstance, text2);
               }
             }
           }
@@ -11310,8 +11310,8 @@
                       didNotFindHydratableInstanceWithinContainer(parentContainer, type);
                       break;
                     case HostText:
-                      var text = fiber.pendingProps;
-                      didNotFindHydratableTextInstanceWithinContainer(parentContainer, text);
+                      var text2 = fiber.pendingProps;
+                      didNotFindHydratableTextInstanceWithinContainer(parentContainer, text2);
                       break;
                   }
                   break;
@@ -11392,8 +11392,8 @@
                 return false;
               }
               case HostText: {
-                var text = fiber.pendingProps;
-                var textInstance = canHydrateTextInstance(nextInstance, text);
+                var text2 = fiber.pendingProps;
+                var textInstance = canHydrateTextInstance(nextInstance, text2);
                 if (textInstance !== null) {
                   fiber.stateNode = textInstance;
                   hydrationParentFiber = fiber;
@@ -23586,6 +23586,46 @@
     }
   });
 
+  // src/gl/gl-lib.ts
+  function createShader(gl, source, type) {
+    const shader = gl.createShader(type);
+    if (!shader) return void 0;
+    gl.shaderSource(shader, source);
+    gl.compileShader(shader);
+    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
+      console.log(gl.getShaderInfoLog(shader));
+      return;
+    }
+    return shader;
+  }
+  function createProgram(gl, vertex, fragment) {
+    const prog = gl.createProgram();
+    if (!prog) return void 0;
+    gl.attachShader(prog, vertex);
+    gl.attachShader(prog, fragment);
+    gl.linkProgram(prog);
+    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
+      gl.getProgramInfoLog(prog);
+      return void 0;
+    }
+    return prog;
+  }
+  function createProgramFromShaderSources(gl, vertex, fragment) {
+    const maybeVShader = createShader(gl, vertex, gl.VERTEX_SHADER);
+    const maybeFShader = createShader(gl, fragment, gl.FRAGMENT_SHADER);
+    if (!maybeVShader || !maybeFShader) return void 0;
+    return createProgram(gl, maybeVShader, maybeFShader);
+  }
+  async function loadImage(link) {
+    return new Promise((resolve, reject) => {
+      const image = new Image();
+      image.onload = () => {
+        resolve(image);
+      };
+      image.src = link;
+    });
+  }
+
   // node_modules/gl-matrix/esm/common.js
   var common_exports = {};
   __export(common_exports, {
@@ -24325,46 +24365,6 @@
     };
   }();
 
-  // src/gl/gl-lib.ts
-  function createShader(gl, source, type) {
-    const shader = gl.createShader(type);
-    if (!shader) return void 0;
-    gl.shaderSource(shader, source);
-    gl.compileShader(shader);
-    if (!gl.getShaderParameter(shader, gl.COMPILE_STATUS)) {
-      console.log(gl.getShaderInfoLog(shader));
-      return;
-    }
-    return shader;
-  }
-  function createProgram(gl, vertex, fragment) {
-    const prog = gl.createProgram();
-    if (!prog) return void 0;
-    gl.attachShader(prog, vertex);
-    gl.attachShader(prog, fragment);
-    gl.linkProgram(prog);
-    if (!gl.getProgramParameter(prog, gl.LINK_STATUS)) {
-      gl.getProgramInfoLog(prog);
-      return void 0;
-    }
-    return prog;
-  }
-  function createProgramFromShaderSources(gl, vertex, fragment) {
-    const maybeVShader = createShader(gl, vertex, gl.VERTEX_SHADER);
-    const maybeFShader = createShader(gl, fragment, gl.FRAGMENT_SHADER);
-    if (!maybeVShader || !maybeFShader) return void 0;
-    return createProgram(gl, maybeVShader, maybeFShader);
-  }
-  async function loadImage(link) {
-    return new Promise((resolve, reject) => {
-      const image = new Image();
-      image.onload = () => {
-        resolve(image);
-      };
-      image.src = link;
-    });
-  }
-
   // src/gl/draw.ts
   var FULLSCREEN_QUAD = new Float32Array([
     -1,
@@ -24395,7 +24395,8 @@
       "eyeball.png",
       "wasd.png",
       "attack.png",
-      "arrow.png"
+      "arrow.png",
+      "inverted-eyeball.png"
     ];
     const images = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D_ARRAY, images);
@@ -24586,12 +24587,9 @@
   }
 
   // src/bosses/discovery-scenes.tsx
-  var import_react2 = __toESM(require_react());
+  var import_react4 = __toESM(require_react());
 
   // src/animation.ts
-  function lerp2(t, a, b) {
-    return a * (1 - t) + b * t;
-  }
   function ease(fn, t, from, to, a, b) {
     const t2 = Math.min(Math.max((t - from) / (to - from), 0), 1);
     const t3 = fn(t2);
@@ -24602,9 +24600,6 @@
   }
   function easeIn(x) {
     return x * x;
-  }
-  function easeOut(x) {
-    return 1 - (x - 1) * (x - 1);
   }
   function sampleCatmullRom(p0, p1, p2, p3, t) {
     return [
@@ -24621,32 +24616,24 @@
       return sampleCatmullRom(p1, p2, p3, p3, t * 3 - 2);
     }
   }
-  function sceneSequence(scenes) {
-    let sceneIndex = 0;
-    let currentTime = 0;
-    let localT = 0;
-    let first = true;
-    function nextScene(done) {
-      sceneIndex++;
-      localT = currentTime;
-      first = true;
-      if (sceneIndex === scenes.length) done();
-    }
-    return {
-      loop: (root, ds, t, gt, _, done) => {
-        currentTime = t;
-        const lt = t - localT;
-        const firstCopy = first;
-        first = false;
-        scenes[sceneIndex].loop?.(
-          root,
-          ds,
-          lt,
-          t,
-          firstCopy,
-          () => nextScene(done)
-        );
+  function keyframes(values) {
+    return (x) => {
+      if (x < values[0][0]) return values[0][1];
+      for (let i = 0; i < values.length - 1; i++) {
+        let currValue = values[i];
+        let nextValue = values[i + 1];
+        if (x >= currValue[0] && x < nextValue[0]) {
+          return ease(
+            currValue[2] ?? smoothstep,
+            x,
+            currValue[0],
+            nextValue[0],
+            currValue[1],
+            nextValue[1]
+          );
+        }
       }
+      return values[values.length - 1][1];
     };
   }
 
@@ -24722,11 +24709,11 @@
       while (walker.nextNode()) {
         const node = walker.currentNode;
         if (node._text === void 0) {
-          const text = node.textContent ?? "";
+          const text2 = node.textContent ?? "";
           const isSlow = nodeIsSlow(node);
-          allTextRef.current += text;
-          node._text = text;
-          for (let i = 0; i < text.length; i++) {
+          allTextRef.current += text2;
+          node._text = text2;
+          for (let i = 0; i < text2.length; i++) {
             delaysRef.current.push(isSlow ? Number(isSlow.dataset.delay) : 20);
           }
         }
@@ -24734,15 +24721,15 @@
       walker = document.createTreeWalker(elem, NodeFilter.SHOW_TEXT);
       while (walker.nextNode()) {
         const node = walker.currentNode;
-        const text = node._text;
+        const text2 = node._text;
         if (chars <= 0 && !props.forceDone) {
           node.textContent = "";
-        } else if (chars < text.length && !props.forceDone) {
-          node.textContent = text.slice(0, chars);
+        } else if (chars < text2.length && !props.forceDone) {
+          node.textContent = text2.slice(0, chars);
         } else {
-          node.textContent = text;
+          node.textContent = text2;
         }
-        chars -= text.length;
+        chars -= text2.length;
       }
       elem.style.display = "";
     }, [charsLoaded, props.forceDone, props.children]);
@@ -24868,75 +24855,116 @@
     track.start();
   }
 
-  // src/player.ts
+  // src/ecs/player.ts
   var keysPressed = {};
   document.addEventListener("keydown", (e) => {
-    keysPressed[e.key] = true;
+    keysPressed[e.key.toLowerCase()] = true;
   });
   document.addEventListener("keyup", (e) => {
-    keysPressed[e.key] = false;
+    keysPressed[e.key.toLowerCase()] = false;
   });
-  var player = {
-    pos: vec2_exports.fromValues(0, 0),
-    vel: vec2_exports.fromValues(0, 0),
-    deathAnimationTimer: 0,
-    deathParticles: []
-  };
   var DEATH_ANIMATION_LENGTH = 100;
   var PLAYER_VEL = 0.01;
   var PLAYER_DAMPEN = 0.5;
   var ATTACK_RADIUS = 0.2;
   var ATTACK_INTERVAL = 20;
-  var attackCooldown = 0;
-  function runPlayerIter() {
+  function runPlayerIter(game2) {
+    const player = game2.player;
     if (player.deathAnimationTimer === 1) {
       player.pos = [0, 0];
       player.vel = [0, 0];
       player.deathParticles = [];
     }
     player.deathAnimationTimer--;
-    if (attackCooldown > 0) attackCooldown--;
+    if (player.attackCooldown > 0) player.attackCooldown--;
     player.pos[0] += player.vel[0];
     player.pos[1] += player.vel[1];
     player.vel[0] *= PLAYER_DAMPEN;
     player.vel[1] *= PLAYER_DAMPEN;
+    const playerVelMul = 0.2;
     if (keysPressed.w) player.vel[1] += PLAYER_VEL;
     if (keysPressed.a) player.vel[0] -= PLAYER_VEL;
     if (keysPressed.s) player.vel[1] -= PLAYER_VEL;
     if (keysPressed.d) player.vel[0] += PLAYER_VEL;
-    if (keysPressed[" "] && attackCooldown == 0) {
-      attackCooldown = ATTACK_INTERVAL;
+    if (keysPressed[" "] && player.attackCooldown == 0) {
+      player.attackCooldown = ATTACK_INTERVAL;
       player.vel[0] *= -1;
       player.vel[1] *= -1;
     }
+    for (let i = 0; i < 2; i++) {
+      if (player.pos[i] > 1) {
+        player.vel[i] = Math.abs(player.vel[i]) * -1;
+      }
+      if (player.pos[i] < -1) {
+        player.vel[i] = Math.abs(player.vel[i]);
+      }
+    }
+    player.justDied = false;
   }
-  function drawPlayer(ds, gt) {
+  function drawPlayer(game2) {
+    const player = game2.player;
     if (player.deathAnimationTimer > 0) {
+      const factor = 1 - player.deathAnimationTimer / DEATH_ANIMATION_LENGTH;
+      const trans = mat3_exports.create();
+      game2.ds.draw(
+        0,
+        5,
+        trans,
+        [1, 0.6, 0.6, 0.1],
+        [
+          keyframes([
+            [0, 0],
+            [0.8, 0],
+            [1, Math.sqrt(2) - 0]
+          ])(factor),
+          0.01,
+          0,
+          0
+        ]
+      );
+      game2.ds.draw(
+        0,
+        5,
+        trans,
+        [0, 0, 0, 1],
+        [
+          keyframes([
+            [0, 0],
+            [0.8, 0],
+            [1, Math.sqrt(2) + 0.5]
+          ])(factor),
+          0.01,
+          0,
+          0
+        ]
+      );
       for (const p of player.deathParticles) {
         vec2_exports.add(p.pos, p.pos, p.vel);
         vec2_exports.scale(p.vel, p.vel, 0.8);
         if (player.deathAnimationTimer < DEATH_ANIMATION_LENGTH / 2) {
           vec2_exports.add(p.vel, p.vel, [-p.pos[0] / 30, -p.pos[1] / 30]);
         }
-        ds.circle(p.pos, 5e-3, [1, 0.7, 0.7, 1]);
+        game2.ds.circle(p.pos, 5e-3, [1, 0.7, 0.7, 1]);
       }
       return;
     }
-    const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 5e-3 + 0.02;
-    ds.circle(player.pos, playerSize, [1, 0.7, 0.7, 1]);
-    if (isPlayerAttacking()) {
-      ds.circle(player.pos, ATTACK_RADIUS, [1, 0.7, 0.7, 1], 0.1, 0.99);
+    const playerSize = Math.sin(game2.t * 10 * Math.PI * 2) * 5e-3 + 0.02;
+    game2.ds.circle(player.pos, playerSize, [1, 0.7, 0.7, 1]);
+    if (isPlayerAttacking(game2)) {
+      game2.ds.circle(player.pos, ATTACK_RADIUS, [1, 0.7, 0.7, 1], 0.1, 0.99);
     } else {
-      ds.circle(player.pos, ATTACK_RADIUS, [1, 0.7, 0.7, 0.3], 0.01, 0.99);
+      game2.ds.circle(player.pos, ATTACK_RADIUS, [1, 0.7, 0.7, 0.3], 0.01, 0.99);
     }
   }
-  function isPlayerAttacking() {
-    return attackCooldown >= ATTACK_INTERVAL;
+  function isPlayerAttacking(game2) {
+    return game2.player.attackCooldown >= ATTACK_INTERVAL;
   }
-  function killPlayer() {
+  function killPlayer(game2) {
+    const player = game2.player;
     if (player.deathAnimationTimer > 0) return;
-    playSound("click.wav", 2, 1);
-    playSound("player-death.wav", 0.7, 5);
+    player.justDied = true;
+    playSound("click.wav", 1, 4);
+    playSound("player-death.wav", 0.25, 1);
     player.deathAnimationTimer = DEATH_ANIMATION_LENGTH;
     for (let i of range(100)) {
       player.deathParticles.push({
@@ -24946,196 +24974,542 @@
     }
   }
 
-  // src/bosses/discovery-boss.tsx
-  var DISCOVERY_MAX_HP = 25;
-  var DISCOVERY_SIZE = 0.3;
-  var DAMAGE_INDICATOR_COOLDOWN = 15;
-  var discoveryBoss = {
-    pos: vec2_exports.fromValues(0, 0.5),
-    health: DISCOVERY_MAX_HP,
-    damageIndicatorTimer: 0,
-    animationTime: 0,
-    tendrils: [],
-    nextTendril: 0,
-    tendrilIndex: 0,
-    phase: "teleport",
-    nextPhaseTime: 0
-  };
-  function tendrilPhase(gt, first) {
-    const hpFraction = discoveryBoss.health / DISCOVERY_MAX_HP;
-    if (gt > discoveryBoss.nextTendril) {
-      playSound(
-        "fart.wav",
-        Math.random() * 0.2 + 0.75 + discoveryBoss.tendrilIndex * 0.3
-      );
-      if (discoveryBoss.tendrilIndex <= 10) {
-        discoveryBoss.nextTendril += 0.05;
-        discoveryBoss.tendrilIndex++;
-      } else {
-        discoveryBoss.nextTendril += lerp2(hpFraction, 1, 3);
-        discoveryBoss.tendrilIndex = 0;
-        switchToTeleportPhase(gt);
-      }
-      const vel = vec2_exports.clone(player.pos);
-      vec2_exports.sub(vel, vel, discoveryBoss.pos);
-      vec2_exports.normalize(vel, vel);
-      vec2_exports.scale(vel, vel, 0.07);
-      const initVel = vec2_exports.clone(vel);
-      vec2_exports.scale(initVel, initVel, 1.5);
-      vec2_exports.rotate(
-        initVel,
-        initVel,
-        [0, 0],
-        discoveryBoss.tendrilIndex % 2 ? Math.PI / 2 : -Math.PI / 2
-      );
-      discoveryBoss.tendrils.push({
-        points: range(30).map(
-          (i) => ({
-            length: 0.1,
-            pos: [discoveryBoss.pos[0], discoveryBoss.pos[1] + i % 2 * 0.1]
-          })
-        ),
-        target: vec2_exports.clone(discoveryBoss.pos),
-        vel,
-        initVel,
-        attackAt: gt + 0.15,
-        retractAt: gt + 0.7,
-        deleteAt: gt + 2,
-        hasLockedOn: false
-      });
-    }
-    discoveryBoss.tendrils = discoveryBoss.tendrils.filter(
-      (t) => t.deleteAt > gt
-    );
-  }
-  function switchToTendrilPhase(gt) {
-    discoveryBoss.nextPhaseTime = gt + 10;
-    discoveryBoss.phase = "tendrils";
-    discoveryBoss.nextTendril = gt + 1;
-    discoveryBoss.tendrilIndex = 0;
-  }
-  var nextPos = [0, 0];
-  var hasTeleported = false;
-  function teleportPhase(gt, first) {
-    if (discoveryBoss.nextPhaseTime - gt < 1) {
-      discoveryBoss.pos = nextPos;
-    }
-    if (discoveryBoss.nextPhaseTime < gt) {
-      switchToTendrilPhase(gt);
-    }
-  }
-  function switchToTeleportPhase(gt) {
-    hasTeleported = false;
-    nextPos = [Math.random() - 0.5, Math.random() - 0.5];
-    discoveryBoss.nextPhaseTime = gt + 2;
-    discoveryBoss.phase = "teleport";
-  }
-  function handleTendrils(gt, first) {
-    for (const t of discoveryBoss.tendrils) {
-      t.points[0].pos = vec2_exports.clone(discoveryBoss.pos);
-      doFabrik(t.points, t.target, 10);
-      if (gt > t.attackAt) {
-        if (!t.hasLockedOn) {
-          t.hasLockedOn = true;
-          const vel = vec2_exports.clone(player.pos);
-          vec2_exports.sub(vel, vel, t.target);
-          vec2_exports.normalize(vel, vel);
-          vec2_exports.scale(vel, vel, 0.07);
-          t.vel = vel;
+  // src/ecs/entity.tsx
+  var import_react2 = __toESM(require_react());
+  function timer(time, f) {
+    let startTime = 0;
+    return {
+      isDead: false,
+      init(game2) {
+        startTime = game2.t;
+      },
+      iter(game2) {
+        if (game2.t > startTime + time) {
+          f?.();
+          this.isDead = true;
         }
-        vec2_exports.add(t.target, t.target, t.vel);
-        const rvel = vec2_exports.clone(t.vel);
-        vec2_exports.rotate(rvel, rvel, [0, 0], Math.PI / 2);
-        vec2_exports.scale(rvel, rvel, Math.sin(15 * gt) * 0);
-        vec2_exports.add(t.target, t.target, rvel);
-      } else {
-        vec2_exports.add(t.target, t.target, t.initVel);
+      },
+      draw() {
       }
-      for (const pt of t.points) {
-        if (gt < t.retractAt && vec2_exports.dist(player.pos, pt.pos) < 0.04) {
-          killPlayer();
+    };
+  }
+  function multiTimer(f) {
+    let gen;
+    let currEntity;
+    return {
+      isDead: false,
+      init(game2) {
+        gen = f(game2);
+      },
+      iter(game2) {
+        if (!currEntity || currEntity.isDead) {
+          const iter = gen.next();
+          if (iter.done) {
+            this.isDead = true;
+          } else {
+            currEntity = iter.value;
+            game2.addEntity(currEntity);
+          }
         }
+      },
+      draw(game2) {
       }
-    }
+    };
   }
-  function runDiscoveryIter(gt, first) {
-    const hpFraction = discoveryBoss.health / DISCOVERY_MAX_HP;
-    if (first) {
-      switchToTeleportPhase(gt);
-    }
-    if (isPlayerAttacking() && vec2_exports.dist(player.pos, discoveryBoss.pos) < ATTACK_RADIUS + DISCOVERY_SIZE) {
-      discoveryBoss.health--;
-      playSound(
-        "discovery-hurt.wav",
-        (Math.random() * 0.1 + 0.2) * lerp2(hpFraction, 5, 1),
-        0.3
-      );
-      discoveryBoss.damageIndicatorTimer = DAMAGE_INDICATOR_COOLDOWN;
-    }
-    discoveryBoss.damageIndicatorTimer--;
-    if (discoveryBoss.damageIndicatorTimer <= 0) {
-      discoveryBoss.animationTime += 1 / 60;
-    } else {
-      discoveryBoss.animationTime += Math.random() * 0.2 - 0.1;
-    }
-    if (discoveryBoss.phase === "tendrils") {
-      tendrilPhase(gt, first);
-    } else if (discoveryBoss.phase === "teleport") {
-      teleportPhase(gt, first);
-    }
-    handleTendrils(gt, first);
+  function sequence(entities) {
+    let entityIndex = 0;
+    return {
+      isDead: false,
+      init(game2) {
+        entities[0].init(game2);
+      },
+      iter(game2) {
+        if (!entities[entityIndex].isDead) {
+          entities[entityIndex].iter(game2);
+        } else if (entityIndex === entities.length - 1) {
+          this.isDead = true;
+        } else {
+          entityIndex++;
+          entities[entityIndex].init(game2);
+        }
+      },
+      draw(game2) {
+        entities[entityIndex].draw(game2);
+      }
+    };
   }
-  function displayDiscovery(ds, gt) {
-    const trans = mat3_exports.create();
-    mat3_exports.translate(trans, trans, discoveryBoss.pos);
-    mat3_exports.translate(
-      trans,
-      trans,
-      discoveryBoss.damageIndicatorTimer > 0 ? [Math.random() * 0.02 - 0.01, Math.random() * 0.02 - 0.01] : [0, 0]
-    );
-    mat3_exports.scale(trans, trans, [
-      discoveryBoss.phase === "teleport" ? smoothstep(
-        Math.max(
-          Math.min(1, 8 * Math.abs(discoveryBoss.nextPhaseTime - gt - 1) - 7),
-          0
-        )
-      ) : 1,
-      1
-    ]);
-    drawDiscoveryBody(ds, trans, discoveryBoss.animationTime);
-    if (discoveryBoss.phase !== "teleport")
-      ds.circle(
-        discoveryBoss.pos,
-        DISCOVERY_SIZE,
-        [0.7, 0.7, 1, 0.3],
-        0.01,
-        0.99
-      );
-    for (const t of discoveryBoss.tendrils) {
-      drawFabrikChainSegments(t.points, (trans2, pointPos, i) => {
-        mat3_exports.scale(trans2, trans2, [0.1, 0.1]);
-        let alpha = 4 * vec2_exports.dist(pointPos, discoveryBoss.pos) - 1;
-        if (gt > t.retractAt) {
-          const timeSinceRetraction = gt - t.retractAt;
-          alpha = Math.min(
-            alpha,
-            1 - Math.max(0, timeSinceRetraction * 30 - i * 0.1)
+  function text(text2, onDone) {
+    return {
+      isDead: false,
+      init(game2) {
+        game2.text.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+        setTimeout(() => {
+          game2.text.render(
+            /* @__PURE__ */ import_react2.default.createElement(
+              TextSeq,
+              {
+                done: () => {
+                  this.isDead = true;
+                  game2.text.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+                  if (onDone) onDone();
+                },
+                seq: text2
+              }
+            )
           );
+        });
+      },
+      iter(game2) {
+      },
+      draw(game2) {
+      }
+    };
+  }
+  function drawWithLayer(layer, draw) {
+    let hasDrawn = false;
+    return {
+      drawLayer: layer,
+      isDead: false,
+      init(game2) {
+      },
+      iter(game2) {
+        if (hasDrawn) {
+          this.isDead = true;
         }
-        ds.img(1, trans2, [1, 1, 1, alpha]);
+      },
+      draw(game2) {
+        draw(game2);
+        hasDrawn = true;
+      }
+    };
+  }
+
+  // src/bosses/discovery-boss.tsx
+  var import_react3 = __toESM(require_react());
+  var DISCOVERY_MAX_HP = 16;
+  var DiscoveryTendril = class {
+    speed;
+    timeToDelete;
+    timeToAttack;
+    dir;
+    target;
+    points;
+    startTime = 0;
+    angleOffset;
+    isDead = false;
+    absAngle;
+    creator;
+    constructor(params) {
+      this.speed = params.speed;
+      this.timeToDelete = params.timeToDelete;
+      this.timeToAttack = params.timeToAttack;
+      this.dir = vec2_exports.clone(params.startPos);
+      this.points = range(30).map((i) => ({
+        pos: [params.startPos[0], params.startPos[1] + i % 2 * 0.1],
+        length: 0.1
+      }));
+      this.angleOffset = params.angleOffset;
+      this.target = vec2_exports.clone(params.startPos);
+      this.creator = params.creator;
+      this.absAngle = params.absAngle ?? false;
+    }
+    init(game2) {
+      this.startTime = game2.t;
+      game2.onPlayerDead(this, () => {
+        this.isDead = true;
+      });
+      if (this.absAngle) {
+        this.dir = [1, 0];
+      } else {
+        vec2_exports.sub(this.dir, game2.player.pos, this.dir);
+        vec2_exports.normalize(this.dir, this.dir);
+      }
+      vec2_exports.scale(this.dir, this.dir, this.speed);
+      vec2_exports.rotate(this.dir, this.dir, [0, 0], this.angleOffset);
+      game2.addEntity(
+        timer(this.timeToAttack, () => {
+          vec2_exports.sub(this.dir, game2.player.pos, this.target);
+          vec2_exports.normalize(this.dir, this.dir);
+          vec2_exports.scale(this.dir, this.dir, this.speed);
+        })
+      );
+      game2.addEntity(
+        timer(this.timeToDelete, () => {
+          this.isDead = true;
+        })
+      );
+    }
+    iter(game2) {
+      if (this.creator.stopAttacking) this.isDead = true;
+      const t = game2.t - this.startTime;
+      doFabrik(this.points, this.target, 10);
+      vec2_exports.add(this.target, this.target, this.dir);
+      for (const p of this.points) {
+        const distToPlayer = vec2_exports.dist(p.pos, game2.player.pos);
+        if (distToPlayer < 0.06) {
+          killPlayer(game2);
+        }
+      }
+    }
+    draw(game2) {
+      drawFabrikChainSegments(this.points, (trans, pos, i) => {
+        mat3_exports.scale(trans, trans, [0.1, 0.1]);
+        game2.ds.img(1, trans, [
+          0.5,
+          1,
+          1.6,
+          ease((x) => x, vec2_exports.dist(pos, this.points[0].pos), 0, 0.3, -1, 1)
+        ]);
       });
     }
-  }
-  function displayDiscoveryHealthBar(ds) {
-    const pos1 = [-1, 1];
-    const pos2 = [-1 + 2 * discoveryBoss.health / DISCOVERY_MAX_HP, 0.95];
-    ds.rect(pos1, pos2, [0.5, 0.8, 1, 1]);
-  }
-  function discoveryBackground(ds, t, black) {
-    const t2 = t * 0.1;
+  };
+  var LineDamageIndicator = class {
+    isDead = false;
+    start;
+    end;
+    lifetime;
+    startTime = 0;
+    constructor(start, end, lifetime) {
+      this.start = start;
+      this.end = end;
+      this.lifetime = lifetime;
+    }
+    init(game2) {
+      this.startTime = game2.t;
+    }
+    iter(game2) {
+      if (game2.t > this.startTime + this.lifetime) {
+        this.isDead = true;
+      }
+    }
+    draw(game2) {
+      const length2 = vec2_exports.dist(this.start, this.end);
+      const angle2 = Math.atan2(
+        this.end[1] - this.start[1],
+        this.end[0] - this.start[0]
+      );
+      const t = mat3_exports.create();
+      mat3_exports.translate(t, t, this.start);
+      mat3_exports.rotate(t, t, angle2);
+      mat3_exports.scale(t, t, [length2 * 0.5, 5e-3]);
+      mat3_exports.translate(t, t, [1, 0]);
+      game2.ds.draw(0, 4, t, [0.4, 0.7, 1, 0.5]);
+    }
+  };
+  var DiscoveryBoss = class {
+    isDead = false;
+    pos = [0, 0.5];
+    hp = DISCOVERY_MAX_HP;
+    state = {
+      type: "teleport",
+      startTime: 0,
+      duration: 2
+    };
+    isBeingDamaged = false;
+    mainAttackSequence;
+    isRunningMainAttackSequence = true;
+    stopAttacking = false;
+    switchToTeleportState(game2, overrideDelay) {
+      const delay = overrideDelay ?? ease((x) => x, this.hp, DISCOVERY_MAX_HP, 0, 1, 0.5);
+      this.state = {
+        type: "teleport",
+        startTime: game2.t,
+        duration: delay
+      };
+      const boss = this;
+      game2.addEntity(
+        timer(this.state.duration / 2, () => {
+          if (this.state.type === "teleport") {
+            const randAngle = Math.random() * Math.PI * 2;
+            this.pos = [Math.cos(randAngle) * 0.4, Math.sin(randAngle) * 0.4];
+          } else {
+            this.pos = [0, 0];
+          }
+        })
+      );
+      game2.generator(function* () {
+        playSound("dialogue-noise.wav", 0.8);
+        yield timer(boss.state.duration * 0.9);
+        playSound("dialogue-noise.wav", 1.2);
+      });
+      return timer(delay);
+    }
+    switchToDeathTeleportState(game2) {
+      const boss = this;
+      this.state = {
+        type: "death-teleport",
+        startTime: game2.t,
+        duration: 2
+      };
+      game2.generator(function* () {
+        playSound("dialogue-noise.wav", 0.8);
+        yield timer(boss.state.duration * 0.9);
+        playSound("dialogue-noise.wav", 1.2);
+      });
+      game2.addEntity(
+        text([/* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Oh no."), /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Oh no oh no oh no oh no.")], () => {
+          game2.generator(function* () {
+            yield timer(1);
+            boss.state = {
+              type: "idle",
+              startTime: game2.t,
+              duration: Infinity
+            };
+            game2.addEntity(
+              text([
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Wait"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "What is this?"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Oh."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "So you never intended to destroy me."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Even if it appeared that way."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "It was only... a merging."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Fascinating."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How incredibly fascinating."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Your permanence in the face of resistance surpassed even my expectations."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "You are but a crude slick of oil on a puddle that comes back into our world seemingly by its own nature but."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "The pattern you diffract."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Is"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Nonetheless beautiful.", /* @__PURE__ */ import_react3.default.createElement(SlowText, { delay: 1200 }, " ")),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "However..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I witness that the others are already reacting to your presence."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "To, even, my seemingly altered presence."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Good luck."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "You ", /* @__PURE__ */ import_react3.default.createElement("em", null, "will"), " prevail."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "But the question is:"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How long will it take?"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How long will we drag our feet?"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How long will we ignore what you have to offer to ease our pain?"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I suppose that was more like three questions."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Now be on your way."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I have..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "A lot... to mull over.")
+              ])
+            );
+          });
+        })
+      );
+      return timer(boss.state.duration);
+    }
+    switchToZigzagState(game2) {
+      this.state = {
+        type: "zigzag",
+        startTime: game2.t,
+        duration: 2
+      };
+      const boss = this;
+      game2.generator(function* () {
+        yield timer(1);
+        for (const i of range(8)) {
+          if (boss.state.type !== "zigzag") return;
+          playSound("fart.wav", i * 0.3 + 1);
+          game2.addEntity(
+            new DiscoveryTendril({
+              speed: 0.08,
+              timeToDelete: 0.8,
+              timeToAttack: 0.15,
+              startPos: vec2_exports.clone(boss.pos),
+              angleOffset: Math.PI / 2 * (2 * (i % 2) - 1),
+              creator: boss
+            })
+          );
+          yield timer(0.07);
+        }
+      });
+      return timer(2);
+    }
+    switchToSlowZigzagState(game2) {
+      this.state = {
+        type: "slow-zigzag",
+        startTime: game2.t,
+        duration: 8
+      };
+      const boss = this;
+      game2.generator(function* () {
+        for (const i of range(10)) {
+          for (const mul3 of [-1, 1]) {
+            const angle2 = mul3 * 0.6 + Math.atan2(
+              game2.player.pos[1] - boss.pos[1],
+              game2.player.pos[0] - boss.pos[0]
+            );
+            const end = [
+              boss.pos[0] + Math.cos(angle2) * 3,
+              boss.pos[1] + Math.sin(angle2) * 3
+            ];
+            game2.addEntity(
+              new LineDamageIndicator(vec2_exports.clone(boss.pos), end, 0.1)
+            );
+          }
+          yield timer(0.1);
+        }
+        const angleBase = Math.atan2(
+          game2.player.pos[1] - boss.pos[1],
+          game2.player.pos[0] - boss.pos[0]
+        );
+        let angleAllowance = 0.6;
+        const createBoundaries = () => {
+          for (const mul3 of [-1, 1]) {
+            game2.addEntity(
+              new DiscoveryTendril({
+                speed: 0.07,
+                timeToDelete: 1,
+                timeToAttack: Infinity,
+                startPos: vec2_exports.clone(boss.pos),
+                angleOffset: angleBase + mul3 * angleAllowance,
+                creator: boss,
+                absAngle: true
+              })
+            );
+          }
+        };
+        createBoundaries();
+        yield timer(0.5);
+        for (const i of range(5)) {
+          if (boss.state.type !== "slow-zigzag") return;
+          playSound("fart.wav", i * 0.3 + 1);
+          game2.addEntity(
+            new DiscoveryTendril({
+              speed: 0.12,
+              timeToDelete: 0.6,
+              timeToAttack: 0.2,
+              startPos: vec2_exports.clone(boss.pos),
+              angleOffset: Math.PI / 2 * (i % 2 * 2 - 1),
+              creator: boss
+            })
+          );
+          createBoundaries();
+          angleAllowance -= 0.07;
+          yield timer(1);
+        }
+      });
+      return timer(8);
+    }
+    switchToRadialState(game2) {
+      this.state = {
+        type: "radial",
+        startTime: game2.t,
+        duration: 4
+      };
+      const boss = this;
+      game2.generator(function* () {
+        yield timer(1);
+        for (const i of range(31)) {
+          if (boss.state.type !== "radial") return;
+          playSound("fart.wav", i * 0.06 + 1);
+          const angle2 = 5 * (Math.PI / 31) * 2 * i;
+          game2.addEntity(
+            new LineDamageIndicator(
+              vec2_exports.clone(boss.pos),
+              [
+                boss.pos[0] + Math.cos(angle2) * 2,
+                boss.pos[1] + Math.sin(angle2) * 2
+              ],
+              1
+            )
+          );
+          game2.addEntity(
+            timer(0.25, () => {
+              game2.addEntity(
+                new DiscoveryTendril({
+                  speed: 0.05,
+                  timeToDelete: 1,
+                  timeToAttack: 2,
+                  startPos: vec2_exports.clone(boss.pos),
+                  angleOffset: angle2,
+                  absAngle: true,
+                  creator: boss
+                })
+              );
+            })
+          );
+          yield timer(0.035);
+        }
+      });
+      return timer(4);
+    }
+    resetMainAttackSequence() {
+      const boss = this;
+      this.mainAttackSequence = multiTimer(function* (game2) {
+        let firstIter = true;
+        while (true) {
+          yield boss.switchToTeleportState(game2, firstIter ? 2 : void 0);
+          yield boss.switchToZigzagState(game2);
+          yield boss.switchToTeleportState(game2);
+          yield boss.switchToSlowZigzagState(game2);
+          yield boss.switchToTeleportState(game2);
+          yield boss.switchToRadialState(game2);
+          firstIter = false;
+        }
+      });
+    }
+    constructor() {
+      this.resetMainAttackSequence();
+    }
+    init(game2) {
+      this.mainAttackSequence.init(game2);
+      this.state.startTime = game2.t;
+      game2.onPlayerDead(this, () => {
+        this.hp = DISCOVERY_MAX_HP;
+        this.resetMainAttackSequence();
+        this.mainAttackSequence.init(game2);
+      });
+    }
+    iter(game2) {
+      if (this.isRunningMainAttackSequence) this.mainAttackSequence?.iter(game2);
+      if (isPlayerAttacking(game2) && vec2_exports.dist(game2.player.pos, this.pos) < ATTACK_RADIUS + 0.3 && this.state.type !== "death-teleport" && this.state.type !== "idle" && this.state.type !== "teleport") {
+        this.hp--;
+        this.isBeingDamaged = true;
+        game2.addEntity(
+          timer(0.1, () => {
+            this.isBeingDamaged = false;
+          })
+        );
+        playSound("click.wav", Math.random() * 0.2 + 0.9);
+      }
+      if (this.hp === 0) {
+        this.isRunningMainAttackSequence = false;
+        this.switchToDeathTeleportState(game2);
+        this.stopAttacking = true;
+        this.hp = -1e-5;
+      }
+    }
+    draw(game2) {
+      this.displayDiscoveryHealthBar(game2.ds);
+      const bossT = mat3_exports.create();
+      mat3_exports.translate(bossT, bossT, this.pos);
+      if (this.state.type === "teleport" || this.state.type === "death-teleport") {
+        const teleportTime = (game2.t - this.state.startTime) / this.state.duration;
+        mat3_exports.scale(bossT, bossT, [
+          keyframes([
+            [0, 1],
+            [0.1, 0],
+            [0.9, 0],
+            [1, 1]
+          ])(teleportTime),
+          1
+        ]);
+      }
+      drawDiscoveryBody(
+        bossT,
+        game2,
+        this.isBeingDamaged || this.state.type === "death-teleport",
+        this.state.type === "idle" ? 0.4 : 1,
+        this.isBeingDamaged || this.state.type === "idle" ? 5 : 1
+      );
+    }
+    displayDiscoveryHealthBar(ds) {
+      const pos1 = [-1, 1];
+      const pos2 = [-1 + 2 * this.hp / DISCOVERY_MAX_HP, 0.95];
+      ds.rect(pos1, pos2, [0.5, 0.8, 1, 1]);
+    }
+  };
+  function discoveryBackground(game2, black) {
+    const t2 = game2.t * 0.1;
     const offsetX = Math.cos(t2) * 0.1;
     const offsetY = Math.sin(t2) * 0.1;
-    ds.draw(
+    game2.ds.draw(
       0,
       2,
       mat3_exports.create(),
@@ -25143,121 +25517,96 @@
       black ? [0, 0, 0, 0.2] : [0.2, 0.1, 0.1, 0.2]
     );
   }
-
-  // src/bosses/discovery-scenes.tsx
-  function drawDiscoveryBody(ds, transform, t) {
+  function drawDiscoveryBody(transform, game2, isBeingDamaged, speed, texture) {
     const x = mat3_exports.clone(transform);
     mat3_exports.scale(x, x, vec2_exports.fromValues(0.3, 0.3));
     for (let i = 0; i < 10; i++) {
       const angle2 = (i / 10 + Math.random() * 0.1) * Math.PI * 2;
       const transform2 = mat3_exports.clone(x);
       mat3_exports.rotate(transform2, transform2, angle2);
-      ds.draw(1, 0, transform2, [1, 1, 1, 0.1]);
+      game2.ds.draw(texture ?? 1, 0, transform2, [1, 1, 1, 0.1]);
     }
     const s = 0.75;
-    ds.draw(
-      1,
+    game2.ds.draw(
+      texture ?? 1,
       3,
       x,
-      [-0.25, -0.25, 0.8 + t * Math.PI * 2 / 2, 2],
+      [
+        -0.25,
+        -0.25,
+        0.8 + (game2.t * Math.PI * 2 * (speed ?? 1) + (isBeingDamaged ? Math.random() : 0)) / 2,
+        2
+      ],
       [-s, -s, s, s]
     );
   }
-  var introText = {
-    loop(root, ds, t, gt, f, done) {
-      discoveryBackground(ds, t, true);
-      if (f)
-        setTimeout(() => {
-          root.render(
-            /* @__PURE__ */ import_react2.default.createElement(
-              TextSeq,
-              {
-                done,
-                seq: [/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "A thing!"), /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "In our domain!"), /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "In the periphery!")]
-              }
-            )
-          );
-        }, 3e3);
-      const playerSize = Math.sin(t * 10 * Math.PI * 2) * 5e-3 + 0.02;
-      ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
-    }
-  };
-  var introCutscene = {
-    loop(root, ds, t, gt, f, done) {
-      discoveryBackground(ds, t, true);
-      if (f) {
-        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
-      }
-      const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 5e-3 + 0.02;
-      ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
-      const bossT = mat3_exports.create();
-      mat3_exports.translate(
-        bossT,
-        bossT,
-        vec2_exports.fromValues(0, ease(easeOut, t, 3, 8, 1.5, 0.5))
-      );
-      drawDiscoveryBody(ds, bossT, gt);
-      if (f) {
-        setTimeout(() => {
-          root.render(
-            /* @__PURE__ */ import_react2.default.createElement(
-              TextSeq,
-              {
-                done,
-                seq: [
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "It seems very. Peculiar. Odd. Interesting. Enticing. Strange. Weird."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Perhaps if I...")
-                ]
-              }
-            )
-          );
-        }, 8e3);
-      }
-    }
-  };
-  var discoveryArm = range(10).map((i) => ({
-    length: 0.1,
-    pos: vec2_exports.fromValues(0, 0.5 + 0.1 * (i % 2))
-  }));
-  var playerPieces = range(50).map((i) => ({
-    pos: [0, 0],
-    vel: [0, 0]
-  }));
-  var playerExploded = false;
+
+  // src/bosses/discovery-scenes.tsx
   function drawExplodedPlayer(ds) {
     for (const pp of playerPieces) {
       const t = mat3_exports.create();
       ds.circle(pp.pos, 4e-3 + Math.random() * 3e-3, [1, 0.7, 0.7, 1]);
     }
   }
-  function drawDiscoveryArm(ds) {
-    for (const { length: length2, pos } of discoveryArm.slice(1, -1)) {
-      vec2_exports.add(pos, pos, [
-        Math.random() * 0.01 - 5e-3,
-        Math.random() * 0.01 - 5e-3
-      ]);
-    }
-    drawFabrikChainSegments(discoveryArm, (t) => {
-      mat3_exports.scale(t, t, [0.1, 0.1]);
-      ds.img(1, t);
-    });
-  }
+  var playerPieces = range(50).map((i) => ({
+    pos: [0, 0],
+    vel: [0, 0]
+  }));
   var attackCutscene = {
-    loop(root, ds, t, gt, f, done) {
-      discoveryBackground(ds, t, true);
-      if (f) {
-        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
+    isDead: false,
+    start: 0,
+    playerExploded: false,
+    discoveryArm: range(10).map((i) => ({
+      length: 0.1,
+      pos: vec2_exports.fromValues(0, 0.5 + 0.1 * (i % 2))
+    })),
+    drawDiscoveryArm(game2) {
+      for (const { length: length2, pos } of this.discoveryArm.slice(1, -1)) {
+        vec2_exports.add(pos, pos, [
+          Math.random() * 0.01 - 5e-3,
+          Math.random() * 0.01 - 5e-3
+        ]);
       }
+      drawFabrikChainSegments(this.discoveryArm, (t) => {
+        mat3_exports.scale(t, t, [0.1, 0.1]);
+        game2.ds.img(1, t);
+      });
+    },
+    init(game2) {
+      this.start = game2.t;
+      game2.addEntity(
+        timer(6, () => {
+          game2.addEntity(
+            text(
+              [
+                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Oh..."),
+                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "I appear to have."),
+                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Exploded it!"),
+                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "That is rather unfortunate."),
+                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "I was quite excited to sample the flesh of this strange, nondescript, quivering blob.")
+              ],
+              () => this.isDead = true
+            )
+          );
+        })
+      );
+    },
+    iter(game2) {
+    },
+    draw(game2) {
+      const t = game2.t - this.start;
+      const gt = game2.t;
+      discoveryBackground(game2, true);
       const bossT = mat3_exports.create();
       mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
-      drawDiscoveryBody(ds, bossT, gt);
+      drawDiscoveryBody(bossT, game2);
       if (t < 4) {
         const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 5e-3 + 0.02;
-        ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+        game2.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
       }
       if (t > 0 && t < 4)
         doFabrik(
-          discoveryArm,
+          this.discoveryArm,
           sampleFullCatmullRom(
             [0, 0.5],
             [0.5, 0.6],
@@ -25269,7 +25618,7 @@
         );
       if (t > 4 && t < 5)
         doFabrik(
-          discoveryArm,
+          this.discoveryArm,
           sampleFullCatmullRom(
             [0, 0],
             [0.3, 0.1],
@@ -25280,235 +25629,131 @@
           10
         );
       if (t > 5) {
-        for (const da of discoveryArm) {
+        for (const da of this.discoveryArm) {
           vec2_exports.sub(da.pos, da.pos, [0, 0.5]);
           vec2_exports.mul(da.pos, da.pos, [0.9, 0.9]);
           vec2_exports.add(da.pos, da.pos, [0, 0.5]);
         }
       }
-      drawDiscoveryArm(ds);
+      this.drawDiscoveryArm(game2);
       if (t > 4) {
-        if (!playerExploded) {
-          playerExploded = true;
+        if (!this.playerExploded) {
+          this.playerExploded = true;
           for (const pp of playerPieces) {
             pp.vel = [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1];
           }
         }
-        drawExplodedPlayer(ds);
+        drawExplodedPlayer(game2.ds);
         for (const pp of playerPieces) {
           vec2_exports.add(pp.pos, pp.pos, pp.vel);
           vec2_exports.mul(pp.vel, pp.vel, [0.9, 0.9]);
         }
       }
-      if (t > 6) {
-        done();
-      }
-    }
-  };
-  var attack2Cutscene = {
-    loop(root, ds, t, gt, first, done) {
-      discoveryBackground(ds, t, true);
-      const bossT = mat3_exports.create();
-      mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
-      drawDiscoveryBody(ds, bossT, gt);
-      drawExplodedPlayer(ds);
-      if (first) {
-        setTimeout(() => {
-          root.render(
-            /* @__PURE__ */ import_react2.default.createElement(
-              TextSeq,
-              {
-                done,
-                seq: [
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Oh..."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "I appear to have."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Exploded it!"),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "That is rather unfortunate."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "I was quite excited to sample the flesh of this strange, nondescript, quivering blob.")
-                ]
-              }
-            )
-          );
-        }, 0);
-      }
-    }
-  };
-  var playerRegenerateCutscene = {
-    loop(root, ds, t, gt, first, done) {
-      discoveryBackground(ds, t, true);
-      if (first) {
-        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
-        setTimeout(() => {
-          root.render(
-            /* @__PURE__ */ import_react2.default.createElement(
-              TextSeq,
-              {
-                done,
-                seq: [
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "..."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "How utterly scrumptuous!"),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Most of this type of creature disappear much akin to a transient froth of bubbles upon being prodded with my appendages!"),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "But this one..."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Perhaps it is more similar to the bubbles of oil dancing atop a bowl of water, its recoalescence inevitable following its dispersal into an unstable emulsion!"),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "It is."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Rather."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Strange? Unusual? ", /* @__PURE__ */ import_react2.default.createElement("em", null, "Concerning?"))
-                ]
-              }
-            )
-          );
-        }, 5e3);
-      }
-      for (const pp of playerPieces) {
-        vec2_exports.add(pp.pos, pp.pos, pp.vel);
-        vec2_exports.mul(pp.vel, pp.vel, [0.9, 0.9]);
-      }
-      if (t > 1) {
-        for (const pp of playerPieces) {
-          vec2_exports.mul(pp.pos, pp.pos, [0.97, 0.97]);
-        }
-      }
-      if (t > 3) {
-        const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 5e-3 + 0.02;
-        ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
-      }
-      const bossT = mat3_exports.create();
-      mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
-      drawDiscoveryBody(ds, bossT, gt);
-      drawExplodedPlayer(ds);
-    }
-  };
-  var playerHasntMovedYet = true;
-  var showWASDTutorial = true;
-  var showAttackTutorial = false;
-  var playerMoveCutscene = {
-    loop(root, ds, t, gt, first, done) {
-      discoveryBackground(ds, t, true);
-      if (first) {
-        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
-      }
-      const bossT = mat3_exports.create();
-      mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
-      drawDiscoveryBody(ds, bossT, gt);
-      const tutorialBrightness = Math.sin(gt * 10) * 0.3 + 0.7;
-      if (showWASDTutorial) {
-        const wasdTutorialScale = mat3_exports.create();
-        mat3_exports.translate(wasdTutorialScale, wasdTutorialScale, [0, -0.2]);
-        mat3_exports.scale(wasdTutorialScale, wasdTutorialScale, [0.2, 0.2]);
-        ds.img(2, wasdTutorialScale, [1, 1, 1, tutorialBrightness]);
-      }
-      if (showAttackTutorial) {
-        const attackTutorialScale = mat3_exports.create();
-        mat3_exports.translate(attackTutorialScale, attackTutorialScale, [0, -0.2]);
-        mat3_exports.scale(attackTutorialScale, attackTutorialScale, [0.2, 0.2]);
-        ds.img(3, attackTutorialScale, [1, 1, 1, tutorialBrightness]);
-        const arrowTransform = mat3_exports.create();
-        mat3_exports.translate(arrowTransform, arrowTransform, [0, 0.1]);
-        mat3_exports.scale(arrowTransform, arrowTransform, [0.1, 0.1]);
-        mat3_exports.rotate(arrowTransform, arrowTransform, Math.PI / 2);
-        ds.img(4, arrowTransform, [1, 1, 1, tutorialBrightness]);
-      }
-      runPlayerIter();
-      drawPlayer(ds, gt);
-      if (isPlayerAttacking() && showAttackTutorial && vec2_exports.dist(player.pos, [0, 0.5]) < ATTACK_RADIUS + 0.3) {
-        playSound("discovery-hurt.wav", Math.random() * 0.1 + 0.2);
-        done();
-      }
-      if ((player.pos[0] !== 0 || player.pos[1] !== 0) && playerHasntMovedYet) {
-        playerHasntMovedYet = false;
-        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
-        setTimeout(() => {
-          showWASDTutorial = false;
-        }, 1500);
-        setTimeout(() => {
-          root.render(
-            /* @__PURE__ */ import_react2.default.createElement(
-              TextSeq,
-              {
-                done: () => {
-                  root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
-                  showAttackTutorial = true;
-                },
-                seq: [
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "..."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "It moves!"),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Even after I destroyed it with my appendage!")
-                ]
-              }
-            )
-          );
-        }, 3e3);
-      }
-    }
-  };
-  var playerAttackCutscene = {
-    loop(root, ds, t, gt, first, done) {
-      discoveryBackground(ds, t, true);
-      const bossT = mat3_exports.create();
-      mat3_exports.translate(
-        bossT,
-        bossT,
-        vec2_exports.fromValues(
-          0 + Math.random() * 0.01 - 5e-3,
-          0.5 + Math.random() * 0.01 - 5e-3
-        )
-      );
-      drawDiscoveryBody(ds, bossT, 0.1);
-      runPlayerIter();
-      drawPlayer(ds, gt);
-      if (first) {
-        root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
-        setTimeout(() => {
-          root.render(
-            /* @__PURE__ */ import_react2.default.createElement(
-              TextSeq,
-              {
-                done,
-                seq: [
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Oh..."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "It... intersected me."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "It was rather..."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Well, it entered my corpuscule and intermixed with my organelles and I felt it coil and twist and tear into a system of roots plunging its needle-like tips into every facet of every caked on layer of my tender flesh and"),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Hm."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "That is."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Quite."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Questionable. Unsettling."),
-                  /* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null, "Enticing."),
-                  /* @__PURE__ */ import_react2.default.createElement(SlowText, { delay: 300 }, /* @__PURE__ */ import_react2.default.createElement("em", null, "Dangerous. . .")),
-                  /* @__PURE__ */ import_react2.default.createElement(SlowText, { delay: 200 }, "I cannot allow such a being to live.")
-                ]
-              }
-            )
-          );
-        });
-      }
     }
   };
   var bossPhase = {
-    loop(root, ds, t, gt, first, done) {
-      if (first) root.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
-      discoveryBackground(ds, t);
-      runDiscoveryIter(gt, first);
-      displayDiscovery(ds, gt);
-      runPlayerIter();
-      drawPlayer(ds, gt);
-      displayDiscoveryHealthBar(ds);
+    isDead: false,
+    init(game2) {
+      game2.addEntity(new DiscoveryBoss());
+    },
+    iter(game2) {
+      runPlayerIter(game2);
+      game2.addEntity(
+        drawWithLayer(-1, (game3) => {
+          discoveryBackground(game3);
+        })
+      );
+    },
+    draw(game2) {
+      drawPlayer(game2);
     }
   };
-  var discoveryScenes = sceneSequence([
-    introText,
-    introCutscene,
-    attackCutscene,
-    attack2Cutscene,
-    playerRegenerateCutscene,
-    playerMoveCutscene,
-    playerAttackCutscene,
-    bossPhase,
-    {}
+  var discoveryScenes = sequence([
+    // introText,
+    // introCutscene,
+    // attackCutscene,
+    // playerRegenerateCutscene,
+    // playerMoveCutscene,
+    // playerAttackCutscene,
+    bossPhase
+    // {},
   ]);
 
   // src/game.tsx
   var import_client2 = __toESM(require_client());
+
+  // src/ecs/game.ts
+  function makeGame(ds, text2) {
+    const killHandlers = /* @__PURE__ */ new Map();
+    const playerDeadHandlers = /* @__PURE__ */ new Map();
+    return {
+      entities: [],
+      player: {
+        pos: [0, 0],
+        vel: [0, 0],
+        deathAnimationTimer: 0,
+        deathParticles: [],
+        attackCooldown: 0,
+        justDied: false
+      },
+      t: 0,
+      ds,
+      addEntity(entity) {
+        entity.init(this);
+        this.entities.push(entity);
+        return entity;
+      },
+      text: text2,
+      onKill(entity, fn) {
+        let handlers = killHandlers.get(entity);
+        if (!handlers) {
+          handlers = [];
+          killHandlers.set(entity, handlers);
+        }
+        handlers.push(fn);
+      },
+      onPlayerDead(entity, fn) {
+        let handlers = playerDeadHandlers.get(entity);
+        if (!handlers) {
+          handlers = [];
+          playerDeadHandlers.set(entity, handlers);
+        }
+        handlers.push(fn);
+      },
+      iterEntities() {
+        for (const e of this.entities) {
+          e.iter(this);
+        }
+        if (this.player.justDied) {
+          for (const [_, handlers] of playerDeadHandlers.entries()) {
+            for (const h of handlers) h();
+          }
+        }
+        for (const e of this.entities) {
+          if (e.isDead) {
+            const handlers = killHandlers.get(e);
+            for (const h of handlers ?? []) {
+              h();
+            }
+            killHandlers.delete(e);
+            playerDeadHandlers.delete(e);
+          }
+        }
+        this.entities = this.entities.filter((e) => !e.isDead);
+      },
+      drawEntities() {
+        for (const e of this.entities.sort(
+          (a, b) => (a.drawLayer ?? 0) - (b.drawLayer ?? 0)
+        ))
+          e.draw(this);
+      },
+      generator(gen) {
+        this.addEntity(multiTimer(gen));
+      }
+    };
+  }
+
+  // src/game.tsx
   async function game() {
     const canvas = document.createElement("canvas");
     document.getElementById("root").appendChild(canvas);
@@ -25523,57 +25768,13 @@
     gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
     const ds = await makeDrawSystem(gl);
     if (!ds) throw new Error("no ds");
-    let t = 0;
-    let player2 = {
-      x: 0,
-      y: 0,
-      dx: 0,
-      dy: 0
-    };
-    const keysPressed2 = {};
-    document.addEventListener("keydown", (e) => {
-      keysPressed2[e.key] = true;
-    });
-    document.addEventListener("keyup", (e) => {
-      keysPressed2[e.key] = false;
-    });
-    const ATTACK_INTERVAL2 = 20;
-    let attackCooldown2 = 0;
-    const ATTACK_RADIUS2 = 0.2;
-    const fabrikTest = [];
-    for (let i = 0; i < 10; i++) {
-      fabrikTest.push({
-        pos: vec2_exports.fromValues(-1 + 0.1 * i, -1 + 0.1 * i),
-        length: Math.sqrt(2) * 0.1
-      });
-    }
+    const game2 = makeGame(ds, textRoot);
+    game2.addEntity(discoveryScenes);
     const loop = () => {
-      let x = mat3_exports.create();
-      let prevPlayer = { ...player2 };
-      if (Math.abs(player2.x) >= 1) {
-        player2.dx = Math.abs(player2.dx) * -Math.sign(player2.x);
-      }
-      if (Math.abs(player2.y) >= 1) {
-        player2.dy = Math.abs(player2.dy) * -Math.sign(player2.y);
-      }
-      player2.x += player2.dx;
-      player2.y += player2.dy;
-      player2.dx *= 0.5;
-      player2.dy *= 0.5;
-      if (keysPressed2.w) player2.dy += 0.01;
-      if (keysPressed2.s) player2.dy -= 0.01;
-      if (keysPressed2.a) player2.dx -= 0.01;
-      if (keysPressed2.d) player2.dx += 0.01;
-      if (attackCooldown2 > 0) attackCooldown2--;
-      if (keysPressed2[" "] && attackCooldown2 == 0) {
-        attackCooldown2 = ATTACK_INTERVAL2;
-        player2.dx *= -1;
-        player2.dy *= -1;
-      }
-      discoveryScenes.loop?.(textRoot, ds, t / 60, t / 60, false, () => {
-      });
+      game2.iterEntities();
+      game2.drawEntities();
+      game2.t += 1 / 60;
       ds.dispatch();
-      t++;
       requestAnimationFrame(loop);
     };
     loop();

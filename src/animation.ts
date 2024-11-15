@@ -90,28 +90,26 @@ export interface Scene {
   ) => void;
 }
 
-export function sceneSequence(scenes: Scene[]) {
-  let sceneIndex = 0;
-  let currentTime = 0;
-  let localT = 0;
-  let first = true;
+export function keyframes(
+  values: ([number, number] | [number, number, (x: number) => number])[]
+) {
+  return (x: number): number => {
+    if (x < values[0][0]) return values[0][1];
+    for (let i = 0; i < values.length - 1; i++) {
+      let currValue = values[i];
+      let nextValue = values[i + 1];
 
-  function nextScene(done: () => void) {
-    sceneIndex++;
-    localT = currentTime;
-    first = true;
-    if (sceneIndex === scenes.length) done();
-  }
-
-  return {
-    loop: (root, ds, t, gt, _, done) => {
-      currentTime = t;
-      const lt = t - localT;
-      const firstCopy = first;
-      first = false;
-      scenes[sceneIndex].loop?.(root, ds, lt, t, firstCopy, () =>
-        nextScene(done)
-      );
-    },
+      if (x >= currValue[0] && x < nextValue[0]) {
+        return ease(
+          currValue[2] ?? smoothstep,
+          x,
+          currValue[0],
+          nextValue[0],
+          currValue[1],
+          nextValue[1]
+        );
+      }
+    }
+    return values[values.length - 1][1];
   };
 }

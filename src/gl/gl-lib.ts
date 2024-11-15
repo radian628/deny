@@ -81,6 +81,7 @@ export function makeUniformSetter(
     type: `${N}${"f" | "i" | "ui"}`,
     ...data: UDimToArray<N, number>
   ) => {
+    // @ts-expect-error yeah theres no way im typechecking this
     gl["uniform" + type](data);
   };
 }

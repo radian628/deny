@@ -111,6 +111,18 @@ void rotateFractal() {
 
 
 
+#define DEATH_COLOR params
+#define DEATH_SIZE params2.x
+#define DEATH_BLUR params2.y
+
+void death() {
+  vec4 col = DEATH_COLOR;
+  float dist = length(texcoord * 2.0 - 1.0);
+  col.a = clamp((dist - DEATH_SIZE) / DEATH_BLUR + 1.0, 0.0, 1.0) * col.a;
+  fragColor = col;
+}
+
+
 
 
 void main(void) {
@@ -128,6 +140,8 @@ void main(void) {
     rotateFractal();
   } else if (effect_index == 4u) {
     rect();
+  } else if (effect_index == 5u) {
+    death();
   } else {
     discard;
   }
