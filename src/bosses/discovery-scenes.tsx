@@ -458,12 +458,12 @@ const bossPhase = {
 };
 
 export const discoveryScenes = sequence([
-  // introText,
-  // introCutscene,
-  // attackCutscene,
-  // playerRegenerateCutscene,
-  // playerMoveCutscene,
-  // playerAttackCutscene,
+  introText,
+  introCutscene,
+  attackCutscene,
+  playerRegenerateCutscene,
+  playerMoveCutscene,
+  playerAttackCutscene,
   bossPhase,
   // {},
 ]);
