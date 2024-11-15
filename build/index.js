@@ -24864,8 +24864,7 @@
     keysPressed[e.key.toLowerCase()] = false;
   });
   var DEATH_ANIMATION_LENGTH = 1.8;
-  var PLAYER_ACCEL = 20;
-  var PLAYER_DAMPEN = 867e-21;
+  var PLAYER_ACCEL = 60;
   var ATTACK_RADIUS = 0.2;
   var ATTACK_INTERVAL = 0.33333;
   var isPlayerDying = true;
@@ -24882,9 +24881,9 @@
     if (player.attackCooldown > 0) player.attackCooldown -= game2.dt;
     player.pos[0] += player.vel[0] * game2.dt;
     player.pos[1] += player.vel[1] * game2.dt;
-    player.vel[0] *= PLAYER_DAMPEN ** game2.dt;
-    player.vel[1] *= PLAYER_DAMPEN ** game2.dt;
-    const playerStepSize = PLAYER_ACCEL * game2.dt;
+    player.vel[0] *= 0;
+    player.vel[1] *= 0;
+    const playerStepSize = PLAYER_ACCEL * 1 / 60;
     if (keysPressed.arrowup) player.vel[1] += playerStepSize;
     if (keysPressed.arrowleft) player.vel[0] -= playerStepSize;
     if (keysPressed.arrowdown) player.vel[1] -= playerStepSize;
@@ -24896,7 +24895,6 @@
     }
     const spd = vec2_exports.length(player.vel);
     avgVel = 0.95 * avgVel + 0.05 * spd;
-    console.log(avgVel);
     for (let i = 0; i < 2; i++) {
       if (player.pos[i] > 1) {
         player.vel[i] = Math.abs(player.vel[i]) * -1;
@@ -25185,9 +25183,9 @@
       drawFabrikChainSegments(this.points, (trans, pos, i) => {
         mat3_exports.scale(trans, trans, [0.1, 0.1]);
         game2.ds.img(1, trans, [
-          0.5,
-          1,
-          1.6,
+          0.8,
+          1.3,
+          2.2,
           ease((x) => x, vec2_exports.dist(pos, this.points[0].pos), 0, 0.3, -1, 1)
         ]);
       });
@@ -25738,7 +25736,6 @@
         this.entities = this.entities.filter((e) => !e.isDead);
       },
       drawEntities() {
-        this.t = performance.now() / 1e3 - initT;
         for (const e of this.entities.sort(
           (a, b) => (a.drawLayer ?? 0) - (b.drawLayer ?? 0)
         ))
@@ -25767,20 +25764,13 @@
     if (!ds) throw new Error("no ds");
     const game2 = makeGame(ds, textRoot);
     game2.addEntity(discoveryScenes);
-    let loopCount = 0;
-    let drawLoopCount = 0;
     const loop = () => {
-      loopCount++;
       game2.iterEntities();
-    };
-    const drawLoop = () => {
-      drawLoopCount++;
       game2.drawEntities();
       ds.dispatch();
-      requestAnimationFrame(drawLoop);
+      requestAnimationFrame(loop);
     };
-    setInterval(loop, 1e3 / 60);
-    drawLoop();
+    loop();
   }
 
   // src/index.tsx

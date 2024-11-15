@@ -108,9 +108,9 @@ class DiscoveryTendril implements Entity {
     drawFabrikChainSegments(this.points, (trans, pos, i) => {
       mat3.scale(trans, trans, [0.1, 0.1]);
       game.ds.img(1, trans, [
-        0.5,
-        1,
-        1.6,
+        0.8,
+        1.3,
+        2.2,
         ease((x) => x, vec2.dist(pos, this.points[0].pos), 0, 0.3, -1, 1),
       ]);
     });
