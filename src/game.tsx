@@ -44,15 +44,22 @@ export async function game() {
 
   game.addEntity(discoveryScenes);
 
+  let loopCount = 0;
+  let drawLoopCount = 0;
+
   const loop = () => {
+    loopCount++;
     game.iterEntities();
-    game.drawEntities();
-
-    game.t += 1 / 60;
-
-    ds.dispatch();
-    requestAnimationFrame(loop);
+    // setTimeout(loop, 1000 / 60);
   };
 
-  loop();
+  const drawLoop = () => {
+    drawLoopCount++;
+    game.drawEntities();
+    ds.dispatch();
+    requestAnimationFrame(drawLoop);
+  };
+
+  setInterval(loop, 1000 / 60);
+  drawLoop();
 }

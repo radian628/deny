@@ -92,7 +92,9 @@ class DiscoveryTendril implements Entity {
 
     doFabrik(this.points, this.target, 10);
 
-    vec2.add(this.target, this.target, this.dir);
+    const step = vec2.clone(this.dir);
+    vec2.scale(step, step, game.dt);
+    vec2.add(this.target, this.target, step);
 
     for (const p of this.points) {
       const distToPlayer = vec2.dist(p.pos, game.player.pos);
@@ -114,38 +116,6 @@ class DiscoveryTendril implements Entity {
     });
   }
 }
-
-export type DiscoveryBossState =
-  | {
-      type: "zigzag";
-      startTime: number;
-      duration: number;
-    }
-  | {
-      type: "teleport";
-      startTime: number;
-      duration: number;
-    }
-  | {
-      type: "radial";
-      startTime: number;
-      duration: number;
-    }
-  | {
-      type: "death-teleport";
-      startTime: number;
-      duration: number;
-    }
-  | {
-      type: "idle";
-      startTime: number;
-      duration: number;
-    }
-  | {
-      type: "slow-zigzag";
-      startTime: number;
-      duration: number;
-    };
 
 export class LineDamageIndicator implements Entity {
   isDead = false;
@@ -189,257 +159,228 @@ export class DiscoveryBoss implements Entity, StopAttackable {
   isDead = false;
   pos = [0, 0.5] as vec2;
   hp = DISCOVERY_MAX_HP;
-  state: DiscoveryBossState = {
-    type: "teleport",
-    startTime: 0,
-    duration: 2,
-  };
   isBeingDamaged = false;
+  isVibrating = false;
   mainAttackSequence?: Entity;
   isRunningMainAttackSequence = true;
   stopAttacking = false;
+  hasBeenDefeated = false;
+  animation:
+    | { type: "standard" }
+    | { type: "teleport"; start: number; duration: number }
+    | { type: "converted" } = { type: "standard" };
 
-  switchToTeleportState(game: Game, overrideDelay?: number) {
+  isImmuneToDamage = false;
+
+  *switchToTeleportState(game: Game, overrideDelay?: number) {
     const delay =
       overrideDelay ?? ease((x) => x, this.hp, DISCOVERY_MAX_HP, 0, 1, 0.5);
-    this.state = {
+    this.animation = {
       type: "teleport",
-      startTime: game.t,
+      start: game.t,
       duration: delay,
     };
-    const boss = this;
-    game.addEntity(
-      timer(this.state.duration / 2, () => {
-        if (this.state.type === "teleport") {
-          const randAngle = Math.random() * Math.PI * 2;
-          this.pos = [Math.cos(randAngle) * 0.4, Math.sin(randAngle) * 0.4];
-        } else {
-          this.pos = [0, 0];
-        }
-      })
-    );
-    game.generator(function* () {
-      playSound("dialogue-noise.wav", 0.8);
-      yield timer(boss.state.duration * 0.9);
-      playSound("dialogue-noise.wav", 1.2);
-    });
-    return timer(delay);
+    this.isImmuneToDamage = true;
+
+    playSound("dialogue-noise.wav", 0.8);
+
+    yield timer(delay * 0.5);
+
+    const randAngle = Math.random() * Math.PI * 2;
+    this.pos = [Math.cos(randAngle) * 0.4, Math.sin(randAngle) * 0.4];
+
+    yield timer(delay * 0.4);
+
+    playSound("dialogue-noise.wav", 1.2);
+
+    yield timer(delay * 0.1);
+
+    this.animation = { type: "standard" };
+    this.isImmuneToDamage = false;
   }
 
-  switchToDeathTeleportState(game: Game) {
-    const boss = this;
-    this.state = {
-      type: "death-teleport",
-      startTime: game.t,
+  *switchToDefeatState(game: Game) {
+    this.isImmuneToDamage = true;
+    this.hasBeenDefeated = true;
+    this.isVibrating = true;
+    this.isRunningMainAttackSequence = false;
+    this.animation = {
+      type: "teleport",
+      start: game.t,
       duration: 2,
     };
-    game.generator(function* () {
-      playSound("dialogue-noise.wav", 0.8);
-      yield timer(boss.state.duration * 0.9);
-      playSound("dialogue-noise.wav", 1.2);
-    });
-    game.addEntity(
-      text([<>Oh no.</>, <>Oh no oh no oh no oh no.</>], () => {
-        game.generator(function* () {
-          yield timer(1);
-          boss.state = {
-            type: "idle",
-            startTime: game.t,
-            duration: Infinity,
-          };
-          game.addEntity(
-            text([
-              <>Wait</>,
-              <>What is this?</>,
-              <>Oh.</>,
-              <>So you never intended to destroy me.</>,
-              <>Even if it appeared that way.</>,
-              <>It was only... a merging.</>,
-              <>...</>,
-              <>Fascinating.</>,
-              <>How incredibly fascinating.</>,
-              <>
-                Your permanence in the face of resistance surpassed even my
-                expectations.
-              </>,
-              <>
-                You are but a crude slick of oil on a puddle that comes back
-                into our world seemingly by its own nature but.
-              </>,
-              <>The pattern you diffract.</>,
-              <>Is</>,
-              <>
-                Nonetheless beautiful.<SlowText delay={1200}> </SlowText>
-              </>,
-              <>However...</>,
-              <>
-                I witness that the others are already reacting to your presence.
-              </>,
-              <>To, even, my seemingly altered presence.</>,
-              <>Good luck.</>,
-              <>
-                You <em>will</em> prevail.
-              </>,
-              <>But the question is:</>,
-              <>How long will it take?</>,
-              <>How long will we drag our feet?</>,
-              <>
-                How long will we ignore what you have to offer to ease our pain?
-              </>,
-              <>...</>,
-              <>I suppose that was more like three questions.</>,
-              <>...</>,
-              <>Now be on your way.</>,
-              <>I have...</>,
-              <>A lot... to mull over.</>,
-            ])
+
+    playSound("dialogue-noise.wav", 0.8);
+    yield timer(1);
+    this.pos = [0, 0];
+    yield timer(1);
+    playSound("dialogue-noise.wav", 1.2);
+
+    yield text([
+      <>Oh no.</>,
+      <>Oh no oh no oh no oh no OH NO OH NO OH NO.</>,
+      <>What is this feeling?</>,
+      <>What have you... done to me?</>,
+      <>
+        Your essence seeps into the multitudinous pores that surround myself.
+      </>,
+      <>It poisons the very bedrock of my being.</>,
+    ]);
+    yield timer(1);
+    this.animation = { type: "converted" };
+    yield timer(1);
+    this.isVibrating = false;
+
+    yield text([
+      <>Wait</>,
+      <>What is this?</>,
+      <>Oh.</>,
+      <>So you never intended to destroy me.</>,
+      <>Even if it appeared that way.</>,
+      <>It was only... a merging.</>,
+      <>...</>,
+      <>Fascinating.</>,
+      <>How incredibly fascinating.</>,
+      <>
+        Your permanence in the face of resistance surpassed even my
+        expectations.
+      </>,
+      <>
+        You are but a crude slick of oil on a puddle that comes back into our
+        world seemingly by its own nature but.
+      </>,
+      <>The pattern you diffract.</>,
+      <>Is</>,
+      <>
+        Nonetheless beautiful.<SlowText delay={1200}> </SlowText>
+      </>,
+      <>However...</>,
+      <>I witness that the others are already reacting to your presence.</>,
+      <>To, even, my seemingly altered presence.</>,
+      <>Good luck.</>,
+      <>
+        You <em>will</em> prevail.
+      </>,
+      <>But the question is:</>,
+      <>How long will it take?</>,
+      <>How long will we drag our feet?</>,
+      <>How long will we ignore what you have to offer to ease our pain?</>,
+      <>...</>,
+      <>I suppose that was more like three questions.</>,
+      <>...</>,
+      <>Now be on your way.</>,
+      <>I have...</>,
+      <>A lot... to mull over.</>,
+    ]);
+  }
+
+  *switchToZigzagState(game: Game) {
+    yield timer(1.0);
+    for (const i of range(8)) {
+      playSound("fart.wav", i * 0.3 + 1);
+      game.addEntity(
+        new DiscoveryTendril({
+          speed: 0.08 * 60,
+          timeToDelete: 0.8,
+          timeToAttack: 0.15,
+          startPos: vec2.clone(this.pos),
+          angleOffset: (Math.PI / 2) * (2 * (i % 2) - 1),
+          creator: this,
+        })
+      );
+      yield timer(0.07);
+    }
+  }
+
+  *switchToSlowZigzagState(game: Game) {
+    for (const i of range(10)) {
+      for (const mul of [-1, 1]) {
+        const angle =
+          mul * 0.6 +
+          Math.atan2(
+            game.player.pos[1] - this.pos[1],
+            game.player.pos[0] - this.pos[0]
           );
-        });
-      })
+        const end: vec2 = [
+          this.pos[0] + Math.cos(angle) * 3,
+          this.pos[1] + Math.sin(angle) * 3,
+        ];
+        game.addEntity(new LineDamageIndicator(vec2.clone(this.pos), end, 0.1));
+      }
+      yield timer(0.1);
+    }
+    const angleBase = Math.atan2(
+      game.player.pos[1] - this.pos[1],
+      game.player.pos[0] - this.pos[0]
     );
-    return timer(boss.state.duration);
-  }
-
-  switchToZigzagState(game: Game) {
-    this.state = {
-      type: "zigzag",
-      startTime: game.t,
-      duration: 2,
-    };
-    const boss = this;
-    game.generator(function* () {
-      yield timer(1.0);
-      for (const i of range(8)) {
-        if (boss.state.type !== "zigzag") return;
-        playSound("fart.wav", i * 0.3 + 1);
+    let angleAllowance = 0.6;
+    const createBoundaries = () => {
+      for (const mul of [-1, 1]) {
         game.addEntity(
           new DiscoveryTendril({
-            speed: 0.08,
-            timeToDelete: 0.8,
-            timeToAttack: 0.15,
-            startPos: vec2.clone(boss.pos),
-            angleOffset: (Math.PI / 2) * (2 * (i % 2) - 1),
-            creator: boss,
+            speed: 0.07 * 60,
+            timeToDelete: 1.0,
+            timeToAttack: Infinity,
+            startPos: vec2.clone(this.pos),
+            angleOffset: angleBase + mul * angleAllowance,
+            creator: this,
+            absAngle: true,
           })
         );
-        yield timer(0.07);
       }
-    });
-
-    return timer(2);
+    };
+    createBoundaries();
+    yield timer(0.5);
+    for (const i of range(5)) {
+      playSound("fart.wav", i * 0.3 + 1);
+      game.addEntity(
+        new DiscoveryTendril({
+          speed: 0.12 * 60,
+          timeToDelete: 0.6,
+          timeToAttack: 0.2,
+          startPos: vec2.clone(this.pos),
+          angleOffset: (Math.PI / 2) * ((i % 2) * 2 - 1),
+          creator: this,
+        })
+      );
+      createBoundaries();
+      angleAllowance -= 0.07;
+      yield timer(1.0);
+    }
   }
 
-  switchToSlowZigzagState(game: Game) {
-    this.state = {
-      type: "slow-zigzag",
-      startTime: game.t,
-      duration: 8,
-    };
-    const boss = this;
-    game.generator(function* () {
-      for (const i of range(10)) {
-        for (const mul of [-1, 1]) {
-          const angle =
-            mul * 0.6 +
-            Math.atan2(
-              game.player.pos[1] - boss.pos[1],
-              game.player.pos[0] - boss.pos[0]
-            );
-          const end: vec2 = [
-            boss.pos[0] + Math.cos(angle) * 3,
-            boss.pos[1] + Math.sin(angle) * 3,
-          ];
-          game.addEntity(
-            new LineDamageIndicator(vec2.clone(boss.pos), end, 0.1)
-          );
-        }
-        yield timer(0.1);
-      }
-      const angleBase = Math.atan2(
-        game.player.pos[1] - boss.pos[1],
-        game.player.pos[0] - boss.pos[0]
+  *switchToRadialState(game: Game) {
+    yield timer(1.0);
+    for (const i of range(31)) {
+      playSound("fart.wav", i * 0.06 + 1);
+      const angle = 5 * (Math.PI / 31) * 2 * i;
+      game.addEntity(
+        new LineDamageIndicator(
+          vec2.clone(this.pos),
+          [
+            this.pos[0] + Math.cos(angle) * 2,
+            this.pos[1] + Math.sin(angle) * 2,
+          ],
+          1
+        )
       );
-      let angleAllowance = 0.6;
-      const createBoundaries = () => {
-        for (const mul of [-1, 1]) {
+      game.addEntity(
+        timer(0.25, () => {
           game.addEntity(
             new DiscoveryTendril({
-              speed: 0.07,
-              timeToDelete: 1.0,
-              timeToAttack: Infinity,
-              startPos: vec2.clone(boss.pos),
-              angleOffset: angleBase + mul * angleAllowance,
-              creator: boss,
+              speed: 0.05 * 60,
+              timeToDelete: 1,
+              timeToAttack: 2,
+              startPos: vec2.clone(this.pos),
+              angleOffset: angle,
               absAngle: true,
+              creator: this,
             })
           );
-        }
-      };
-      createBoundaries();
-      yield timer(0.5);
-      for (const i of range(5)) {
-        if (boss.state.type !== "slow-zigzag") return;
-        playSound("fart.wav", i * 0.3 + 1);
-        game.addEntity(
-          new DiscoveryTendril({
-            speed: 0.12,
-            timeToDelete: 0.6,
-            timeToAttack: 0.2,
-            startPos: vec2.clone(boss.pos),
-            angleOffset: (Math.PI / 2) * ((i % 2) * 2 - 1),
-            creator: boss,
-          })
-        );
-        createBoundaries();
-        angleAllowance -= 0.07;
-        yield timer(1.0);
-      }
-    });
-    return timer(8);
-  }
-
-  switchToRadialState(game: Game) {
-    this.state = {
-      type: "radial",
-      startTime: game.t,
-      duration: 4,
-    };
-    const boss = this;
-    game.generator(function* () {
-      yield timer(1.0);
-      for (const i of range(31)) {
-        if (boss.state.type !== "radial") return;
-        playSound("fart.wav", i * 0.06 + 1);
-        const angle = 5 * (Math.PI / 31) * 2 * i;
-        game.addEntity(
-          new LineDamageIndicator(
-            vec2.clone(boss.pos),
-            [
-              boss.pos[0] + Math.cos(angle) * 2,
-              boss.pos[1] + Math.sin(angle) * 2,
-            ],
-            1
-          )
-        );
-        game.addEntity(
-          timer(0.25, () => {
-            game.addEntity(
-              new DiscoveryTendril({
-                speed: 0.05,
-                timeToDelete: 1,
-                timeToAttack: 2,
-                startPos: vec2.clone(boss.pos),
-                angleOffset: angle,
-                absAngle: true,
-                creator: boss,
-              })
-            );
-          })
-        );
-        yield timer(0.035);
-      }
-    });
-    return timer(4);
+        })
+      );
+      yield timer(0.035);
+    }
   }
 
   resetMainAttackSequence() {
@@ -447,12 +388,12 @@ export class DiscoveryBoss implements Entity, StopAttackable {
     this.mainAttackSequence = multiTimer(function* (game) {
       let firstIter = true;
       while (true) {
-        yield boss.switchToTeleportState(game, firstIter ? 2 : undefined);
-        yield boss.switchToZigzagState(game);
-        yield boss.switchToTeleportState(game);
-        yield boss.switchToSlowZigzagState(game);
-        yield boss.switchToTeleportState(game);
-        yield boss.switchToRadialState(game);
+        yield* boss.switchToTeleportState(game, firstIter ? 2 : undefined);
+        yield* boss.switchToZigzagState(game);
+        yield* boss.switchToTeleportState(game);
+        yield* boss.switchToSlowZigzagState(game);
+        yield* boss.switchToTeleportState(game);
+        yield* boss.switchToRadialState(game);
         firstIter = false;
       }
     });
@@ -464,8 +405,6 @@ export class DiscoveryBoss implements Entity, StopAttackable {
 
   init(game: Game) {
     this.mainAttackSequence!.init(game);
-
-    this.state.startTime = game.t;
 
     game.onPlayerDead(this, () => {
       this.hp = DISCOVERY_MAX_HP;
@@ -480,9 +419,7 @@ export class DiscoveryBoss implements Entity, StopAttackable {
     if (
       isPlayerAttacking(game) &&
       vec2.dist(game.player.pos, this.pos) < ATTACK_RADIUS + 0.3 &&
-      this.state.type !== "death-teleport" &&
-      this.state.type !== "idle" &&
-      this.state.type !== "teleport"
+      !this.isImmuneToDamage
     ) {
       this.hp--;
       this.isBeingDamaged = true;
@@ -496,7 +433,7 @@ export class DiscoveryBoss implements Entity, StopAttackable {
 
     if (this.hp === 0) {
       this.isRunningMainAttackSequence = false;
-      this.switchToDeathTeleportState(game);
+      game.generator(this.switchToDefeatState(game));
       this.stopAttacking = true;
       this.hp = -0.00001;
     }
@@ -507,12 +444,9 @@ export class DiscoveryBoss implements Entity, StopAttackable {
 
     const bossT = mat3.create();
     mat3.translate(bossT, bossT, this.pos);
-    if (
-      this.state.type === "teleport" ||
-      this.state.type === "death-teleport"
-    ) {
+    if (this.animation.type == "teleport") {
       const teleportTime =
-        (game.t - this.state.startTime) / this.state.duration;
+        (game.t - this.animation.start) / this.animation.duration;
       mat3.scale(bossT, bossT, [
         keyframes([
           [0, 1],
@@ -523,12 +457,14 @@ export class DiscoveryBoss implements Entity, StopAttackable {
         1,
       ]);
     }
+
     drawDiscoveryBody(
       bossT,
       game,
-      this.isBeingDamaged || this.state.type === "death-teleport",
-      this.state.type === "idle" ? 0.4 : 1,
-      this.isBeingDamaged || this.state.type === "idle" ? 5 : 1
+      this.isBeingDamaged ||
+        (this.hasBeenDefeated && this.animation.type !== "converted"),
+      this.animation.type === "converted" ? 0.4 : 1,
+      this.isBeingDamaged || this.animation.type === "converted" ? 5 : 1
     );
   }
 
