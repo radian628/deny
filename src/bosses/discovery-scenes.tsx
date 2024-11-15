@@ -8,7 +8,6 @@ import {
   sampleCatmullRom,
   sampleFullCatmullRom,
   Scene,
-  sceneSequence,
   smoothstep,
   tlerp,
 } from "../animation";

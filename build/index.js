@@ -24858,10 +24858,10 @@
   // src/ecs/player.ts
   var keysPressed = {};
   document.addEventListener("keydown", (e) => {
-    keysPressed[e.key] = true;
+    keysPressed[e.key.toLowerCase()] = true;
   });
   document.addEventListener("keyup", (e) => {
-    keysPressed[e.key] = false;
+    keysPressed[e.key.toLowerCase()] = false;
   });
   var DEATH_ANIMATION_LENGTH = 100;
   var PLAYER_VEL = 0.01;
@@ -24881,6 +24881,7 @@
     player.pos[1] += player.vel[1];
     player.vel[0] *= PLAYER_DAMPEN;
     player.vel[1] *= PLAYER_DAMPEN;
+    const playerVelMul = 0.2;
     if (keysPressed.w) player.vel[1] += PLAYER_VEL;
     if (keysPressed.a) player.vel[0] -= PLAYER_VEL;
     if (keysPressed.s) player.vel[1] -= PLAYER_VEL;
@@ -24903,6 +24904,40 @@
   function drawPlayer(game2) {
     const player = game2.player;
     if (player.deathAnimationTimer > 0) {
+      const factor = 1 - player.deathAnimationTimer / DEATH_ANIMATION_LENGTH;
+      const trans = mat3_exports.create();
+      game2.ds.draw(
+        0,
+        5,
+        trans,
+        [1, 0.6, 0.6, 0.1],
+        [
+          keyframes([
+            [0, 0],
+            [0.8, 0],
+            [1, Math.sqrt(2) - 0]
+          ])(factor),
+          0.01,
+          0,
+          0
+        ]
+      );
+      game2.ds.draw(
+        0,
+        5,
+        trans,
+        [0, 0, 0, 1],
+        [
+          keyframes([
+            [0, 0],
+            [0.8, 0],
+            [1, Math.sqrt(2) + 0.5]
+          ])(factor),
+          0.01,
+          0,
+          0
+        ]
+      );
       for (const p of player.deathParticles) {
         vec2_exports.add(p.pos, p.pos, p.vel);
         vec2_exports.scale(p.vel, p.vel, 0.8);
@@ -24950,7 +24985,7 @@
       },
       iter(game2) {
         if (game2.t > startTime + time) {
-          f();
+          f?.();
           this.isDead = true;
         }
       },
@@ -24959,19 +24994,21 @@
     };
   }
   function multiTimer(f) {
-    let timeThreshold = 0;
-    const gen = f();
+    let gen;
+    let currEntity;
     return {
       isDead: false,
       init(game2) {
+        gen = f(game2);
       },
       iter(game2) {
-        if (game2.t > timeThreshold) {
-          const delay = gen.next();
-          if (delay.done) {
+        if (!currEntity || currEntity.isDead) {
+          const iter = gen.next();
+          if (iter.done) {
             this.isDead = true;
           } else {
-            timeThreshold = game2.t + delay.value;
+            currEntity = iter.value;
+            game2.addEntity(currEntity);
           }
         }
       },
@@ -25078,9 +25115,6 @@
     }
     init(game2) {
       this.startTime = game2.t;
-      game2.onKill(this.creator, () => {
-        this.isDead = true;
-      });
       game2.onPlayerDead(this, () => {
         this.isDead = true;
       });
@@ -25106,6 +25140,7 @@
       );
     }
     iter(game2) {
+      if (this.creator.stopAttacking) this.isDead = true;
       const t = game2.t - this.startTime;
       doFabrik(this.points, this.target, 10);
       vec2_exports.add(this.target, this.target, this.dir);
@@ -25120,9 +25155,9 @@
       drawFabrikChainSegments(this.points, (trans, pos, i) => {
         mat3_exports.scale(trans, trans, [0.1, 0.1]);
         game2.ds.img(1, trans, [
+          0.5,
           1,
-          1,
-          1,
+          1.6,
           ease((x) => x, vec2_exports.dist(pos, this.points[0].pos), 0, 0.3, -1, 1)
         ]);
       });
@@ -25168,270 +25203,275 @@
     state = {
       type: "teleport",
       startTime: 0,
-      duration: 2,
-      initialized: false
+      duration: 2
     };
     isBeingDamaged = false;
-    init(game2) {
-      this.state.startTime = game2.t;
-      game2.onPlayerDead(this, () => {
-        this.hp = DISCOVERY_MAX_HP;
-        this.state = {
-          type: "teleport",
-          startTime: game2.t,
-          duration: 2,
-          initialized: false
-        };
-      });
-    }
-    handleBossPattern(game2) {
+    mainAttackSequence;
+    isRunningMainAttackSequence = true;
+    stopAttacking = false;
+    switchToTeleportState(game2, overrideDelay) {
+      const delay = overrideDelay ?? ease((x) => x, this.hp, DISCOVERY_MAX_HP, 0, 1, 0.5);
+      this.state = {
+        type: "teleport",
+        startTime: game2.t,
+        duration: delay
+      };
       const boss = this;
-      const outOfTime = game2.t > this.state.startTime + this.state.duration;
-      if (this.state.type === "zigzag") {
-        if (!this.state.initialized) {
+      game2.addEntity(
+        timer(this.state.duration / 2, () => {
+          if (this.state.type === "teleport") {
+            const randAngle = Math.random() * Math.PI * 2;
+            this.pos = [Math.cos(randAngle) * 0.4, Math.sin(randAngle) * 0.4];
+          } else {
+            this.pos = [0, 0];
+          }
+        })
+      );
+      game2.generator(function* () {
+        playSound("dialogue-noise.wav", 0.8);
+        yield timer(boss.state.duration * 0.9);
+        playSound("dialogue-noise.wav", 1.2);
+      });
+      return timer(delay);
+    }
+    switchToDeathTeleportState(game2) {
+      const boss = this;
+      this.state = {
+        type: "death-teleport",
+        startTime: game2.t,
+        duration: 2
+      };
+      game2.generator(function* () {
+        playSound("dialogue-noise.wav", 0.8);
+        yield timer(boss.state.duration * 0.9);
+        playSound("dialogue-noise.wav", 1.2);
+      });
+      game2.addEntity(
+        text([/* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Oh no."), /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Oh no oh no oh no oh no.")], () => {
           game2.generator(function* () {
-            yield 1;
-            for (const i of range(8)) {
-              if (boss.state.type !== "zigzag") return;
-              playSound("fart.wav", i * 0.3 + 1);
-              game2.addEntity(
-                new DiscoveryTendril({
-                  speed: 0.08,
-                  timeToDelete: 0.8,
-                  timeToAttack: 0.15,
-                  startPos: vec2_exports.clone(boss.pos),
-                  angleOffset: Math.PI / 2 * (2 * (i % 2) - 1),
-                  creator: boss
-                })
-              );
-              yield 0.07;
-            }
+            yield timer(1);
+            boss.state = {
+              type: "idle",
+              startTime: game2.t,
+              duration: Infinity
+            };
+            game2.addEntity(
+              text([
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Wait"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "What is this?"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Oh."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "So you never intended to destroy me."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Even if it appeared that way."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "It was only... a merging."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Fascinating."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How incredibly fascinating."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Your permanence in the face of resistance surpassed even my expectations."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "You are but a crude slick of oil on a puddle that comes back into our world seemingly by its own nature but."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "The pattern you diffract."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Is"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Nonetheless beautiful.", /* @__PURE__ */ import_react3.default.createElement(SlowText, { delay: 1200 }, " ")),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "However..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I witness that the others are already reacting to your presence."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "To, even, my seemingly altered presence."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Good luck."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "You ", /* @__PURE__ */ import_react3.default.createElement("em", null, "will"), " prevail."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "But the question is:"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How long will it take?"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How long will we drag our feet?"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How long will we ignore what you have to offer to ease our pain?"),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I suppose that was more like three questions."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Now be on your way."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I have..."),
+                /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "A lot... to mull over.")
+              ])
+            );
           });
-          this.state.initialized = true;
-        }
-        if (outOfTime) {
-          this.state = {
-            type: "teleport",
-            startTime: game2.t,
-            duration: 2,
-            initialized: false
-          };
-        }
-      } else if (this.state.type === "slow-zigzag") {
-        if (!this.state.initialized) {
-          game2.generator(function* () {
-            game2.generator(function* () {
-              for (const i of range(10)) {
-                for (const mul3 of [-1, 1]) {
-                  const angle2 = mul3 * Math.PI / 6 + Math.atan2(
-                    game2.player.pos[1] - boss.pos[1],
-                    game2.player.pos[0] - boss.pos[0]
-                  );
-                  const end = [
-                    boss.pos[0] + Math.cos(angle2) * 3,
-                    boss.pos[1] + Math.sin(angle2) * 3
-                  ];
-                  game2.addEntity(
-                    new LineDamageIndicator(vec2_exports.clone(boss.pos), end, 0.1)
-                  );
-                }
-                yield 0.1;
-              }
-            });
-            yield 1;
-            for (const mul3 of [-1, 1]) {
-              game2.addEntity(
-                new DiscoveryTendril({
-                  speed: 0.15,
-                  timeToDelete: 6,
-                  timeToAttack: Infinity,
-                  startPos: vec2_exports.clone(boss.pos),
-                  angleOffset: mul3 * Math.PI / 6,
-                  creator: boss
-                })
-              );
-            }
-            yield 0.5;
-            for (const i of range(5)) {
-              if (boss.state.type !== "slow-zigzag") return;
-              playSound("fart.wav", i * 0.3 + 1);
-              game2.addEntity(
-                new DiscoveryTendril({
-                  speed: 0.12,
-                  timeToDelete: 0.6,
-                  timeToAttack: 0.2,
-                  startPos: vec2_exports.clone(boss.pos),
-                  angleOffset: Math.PI / 2 * (i % 2 * 2 - 1),
-                  creator: boss
-                })
-              );
-              yield 1;
-            }
-          });
-          this.state.initialized = true;
-        }
-        if (outOfTime) {
-          this.state = {
-            type: "teleport",
-            startTime: game2.t,
-            duration: 2,
-            initialized: false
-          };
-        }
-      } else if (this.state.type === "teleport" || this.state.type === "death-teleport") {
-        if (!this.state.initialized) {
+        })
+      );
+      return timer(boss.state.duration);
+    }
+    switchToZigzagState(game2) {
+      this.state = {
+        type: "zigzag",
+        startTime: game2.t,
+        duration: 2
+      };
+      const boss = this;
+      game2.generator(function* () {
+        yield timer(1);
+        for (const i of range(8)) {
+          if (boss.state.type !== "zigzag") return;
+          playSound("fart.wav", i * 0.3 + 1);
           game2.addEntity(
-            timer(1, () => {
-              if (this.state.type === "teleport") {
-                const randAngle = Math.random() * Math.PI * 2;
-                this.pos = [Math.cos(randAngle) * 0.4, Math.sin(randAngle) * 0.4];
-              } else {
-                this.pos = [0, 0];
-              }
+            new DiscoveryTendril({
+              speed: 0.08,
+              timeToDelete: 0.8,
+              timeToAttack: 0.15,
+              startPos: vec2_exports.clone(boss.pos),
+              angleOffset: Math.PI / 2 * (2 * (i % 2) - 1),
+              creator: boss
             })
           );
-          game2.generator(function* () {
-            playSound("dialogue-noise.wav", 0.8);
-            yield 1.9;
-            playSound("dialogue-noise.wav", 1.2);
-          });
-          this.state.initialized = true;
-          if (this.state.type === "death-teleport") {
-            const boss2 = this;
+          yield timer(0.07);
+        }
+      });
+      return timer(2);
+    }
+    switchToSlowZigzagState(game2) {
+      this.state = {
+        type: "slow-zigzag",
+        startTime: game2.t,
+        duration: 8
+      };
+      const boss = this;
+      game2.generator(function* () {
+        for (const i of range(10)) {
+          for (const mul3 of [-1, 1]) {
+            const angle2 = mul3 * 0.6 + Math.atan2(
+              game2.player.pos[1] - boss.pos[1],
+              game2.player.pos[0] - boss.pos[0]
+            );
+            const end = [
+              boss.pos[0] + Math.cos(angle2) * 3,
+              boss.pos[1] + Math.sin(angle2) * 3
+            ];
             game2.addEntity(
-              text([/* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Oh no."), /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Oh no oh no oh no oh no.")], () => {
-                game2.generator(function* () {
-                  yield 1;
-                  boss2.state = {
-                    type: "idle",
-                    startTime: game2.t,
-                    duration: Infinity,
-                    initialized: false
-                  };
-                  game2.addEntity(
-                    text([
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Wait"),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "What is this?"),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Oh."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "So you never intended to destroy me."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Even if it appeared that way."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "It was only... a merging."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "..."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Fascinating."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How incredibly fascinating."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Your permanence in the face of resistance surpassed even my expectations."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "You are but a crude slick of oil on a puddle that comes back into our world seemingly by its own nature but."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "The pattern you diffract."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Is"),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Nonetheless beautiful.", /* @__PURE__ */ import_react3.default.createElement(SlowText, { delay: 1200 }, " ")),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "However..."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I witness that the others are already reacting to your presence."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "To, even, my seemingly altered presence."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Good luck."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "You ", /* @__PURE__ */ import_react3.default.createElement("em", null, "will"), " prevail."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "But the question is:"),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How long will it take?"),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How long will we drag our feet?"),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "How long will we ignore your presence?"),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "..."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I suppose that was more like three questions."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "..."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Now be on your way."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I have..."),
-                      /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "Things... to attend to.")
-                    ])
-                  );
-                });
+              new LineDamageIndicator(vec2_exports.clone(boss.pos), end, 0.1)
+            );
+          }
+          yield timer(0.1);
+        }
+        const angleBase = Math.atan2(
+          game2.player.pos[1] - boss.pos[1],
+          game2.player.pos[0] - boss.pos[0]
+        );
+        let angleAllowance = 0.6;
+        const createBoundaries = () => {
+          for (const mul3 of [-1, 1]) {
+            game2.addEntity(
+              new DiscoveryTendril({
+                speed: 0.07,
+                timeToDelete: 1,
+                timeToAttack: Infinity,
+                startPos: vec2_exports.clone(boss.pos),
+                angleOffset: angleBase + mul3 * angleAllowance,
+                creator: boss,
+                absAngle: true
               })
             );
           }
+        };
+        createBoundaries();
+        yield timer(0.5);
+        for (const i of range(5)) {
+          if (boss.state.type !== "slow-zigzag") return;
+          playSound("fart.wav", i * 0.3 + 1);
+          game2.addEntity(
+            new DiscoveryTendril({
+              speed: 0.12,
+              timeToDelete: 0.6,
+              timeToAttack: 0.2,
+              startPos: vec2_exports.clone(boss.pos),
+              angleOffset: Math.PI / 2 * (i % 2 * 2 - 1),
+              creator: boss
+            })
+          );
+          createBoundaries();
+          angleAllowance -= 0.07;
+          yield timer(1);
         }
-        if (outOfTime) {
-          this.state = Math.random() > 0.66666 ? {
-            type: "zigzag",
-            startTime: game2.t,
-            duration: 2,
-            initialized: false
-          } : Math.random() > 0.33333 ? {
-            type: "slow-zigzag",
-            startTime: game2.t,
-            duration: 8,
-            initialized: false
-          } : {
-            type: "radial",
-            startTime: game2.t,
-            duration: 4,
-            initialized: false
-          };
-        }
-      } else if (this.state.type === "radial") {
-        if (!this.state.initialized) {
-          game2.generator(function* () {
-            yield 1;
-            for (const i of range(31)) {
-              if (boss.state.type !== "radial") return;
-              playSound("fart.wav", i * 0.06 + 1);
-              const angle2 = 5 * (Math.PI / 31) * 2 * i;
+      });
+      return timer(8);
+    }
+    switchToRadialState(game2) {
+      this.state = {
+        type: "radial",
+        startTime: game2.t,
+        duration: 4
+      };
+      const boss = this;
+      game2.generator(function* () {
+        yield timer(1);
+        for (const i of range(31)) {
+          if (boss.state.type !== "radial") return;
+          playSound("fart.wav", i * 0.06 + 1);
+          const angle2 = 5 * (Math.PI / 31) * 2 * i;
+          game2.addEntity(
+            new LineDamageIndicator(
+              vec2_exports.clone(boss.pos),
+              [
+                boss.pos[0] + Math.cos(angle2) * 2,
+                boss.pos[1] + Math.sin(angle2) * 2
+              ],
+              1
+            )
+          );
+          game2.addEntity(
+            timer(0.25, () => {
               game2.addEntity(
-                new LineDamageIndicator(
-                  vec2_exports.clone(boss.pos),
-                  [
-                    boss.pos[0] + Math.cos(angle2) * 2,
-                    boss.pos[1] + Math.sin(angle2) * 2
-                  ],
-                  1
-                )
-              );
-              game2.addEntity(
-                timer(0.25, () => {
-                  game2.addEntity(
-                    new DiscoveryTendril({
-                      speed: 0.05,
-                      timeToDelete: 1,
-                      timeToAttack: 2,
-                      startPos: vec2_exports.clone(boss.pos),
-                      angleOffset: angle2,
-                      absAngle: true,
-                      creator: boss
-                    })
-                  );
+                new DiscoveryTendril({
+                  speed: 0.05,
+                  timeToDelete: 1,
+                  timeToAttack: 2,
+                  startPos: vec2_exports.clone(boss.pos),
+                  angleOffset: angle2,
+                  absAngle: true,
+                  creator: boss
                 })
               );
-              yield 0.035;
-            }
-          });
-          this.state.initialized = true;
+            })
+          );
+          yield timer(0.035);
         }
-        if (outOfTime) {
-          this.state = {
-            type: "teleport",
-            startTime: game2.t,
-            duration: 2,
-            initialized: false
-          };
+      });
+      return timer(4);
+    }
+    resetMainAttackSequence() {
+      const boss = this;
+      this.mainAttackSequence = multiTimer(function* (game2) {
+        let firstIter = true;
+        while (true) {
+          yield boss.switchToTeleportState(game2, firstIter ? 2 : void 0);
+          yield boss.switchToZigzagState(game2);
+          yield boss.switchToTeleportState(game2);
+          yield boss.switchToSlowZigzagState(game2);
+          yield boss.switchToTeleportState(game2);
+          yield boss.switchToRadialState(game2);
+          firstIter = false;
         }
-      }
+      });
+    }
+    constructor() {
+      this.resetMainAttackSequence();
+    }
+    init(game2) {
+      this.mainAttackSequence.init(game2);
+      this.state.startTime = game2.t;
+      game2.onPlayerDead(this, () => {
+        this.hp = DISCOVERY_MAX_HP;
+        this.resetMainAttackSequence();
+        this.mainAttackSequence.init(game2);
+      });
     }
     iter(game2) {
-      this.handleBossPattern(game2);
+      if (this.isRunningMainAttackSequence) this.mainAttackSequence?.iter(game2);
       if (isPlayerAttacking(game2) && vec2_exports.dist(game2.player.pos, this.pos) < ATTACK_RADIUS + 0.3 && this.state.type !== "death-teleport" && this.state.type !== "idle" && this.state.type !== "teleport") {
         this.hp--;
         this.isBeingDamaged = true;
         game2.addEntity(
-          timer(0.3, () => {
+          timer(0.1, () => {
             this.isBeingDamaged = false;
           })
         );
         playSound("click.wav", Math.random() * 0.2 + 0.9);
       }
       if (this.hp === 0) {
-        this.state = {
-          type: "death-teleport",
-          startTime: game2.t,
-          duration: Infinity,
-          initialized: false
-        };
-        playSound("discovery-hurt.wav", 0.3, 10);
+        this.isRunningMainAttackSequence = false;
+        this.switchToDeathTeleportState(game2);
+        this.stopAttacking = true;
         this.hp = -1e-5;
       }
     }
@@ -25456,7 +25496,7 @@
         game2,
         this.isBeingDamaged || this.state.type === "death-teleport",
         this.state.type === "idle" ? 0.4 : 1,
-        this.state.type === "idle" ? 5 : 1
+        this.isBeingDamaged || this.state.type === "idle" ? 5 : 1
       );
     }
     displayDiscoveryHealthBar(ds) {
