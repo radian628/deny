@@ -26,6 +26,7 @@ export async function makeDrawSystem(gl: WebGL2RenderingContext) {
     "wasd.png",
     "attack.png",
     "arrow.png",
+    "inverted-eyeball.png",
   ];
   const images = gl.createTexture();
   gl.bindTexture(gl.TEXTURE_2D_ARRAY, images);

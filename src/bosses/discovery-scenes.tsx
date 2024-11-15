@@ -29,7 +29,7 @@ import {
 } from "../ecs/player";
 import {
   discoveryBackground,
-  discoveryBoss,
+  DiscoveryBoss,
   drawDiscoveryBody,
 } from "./discovery-boss";
 import { playSound } from "../sound";
@@ -351,7 +351,7 @@ const playerMoveCutscene = {
     drawPlayer(game);
 
     if (
-      isPlayerAttacking() &&
+      isPlayerAttacking(game) &&
       this.showAttackTutorial &&
       vec2.dist(game.player.pos, [0.0, 0.5]) < ATTACK_RADIUS + 0.3
     ) {
@@ -443,7 +443,7 @@ const playerAttackCutscene = {
 const bossPhase = {
   isDead: false,
   init(game: Game) {
-    game.addEntity(discoveryBoss());
+    game.addEntity(new DiscoveryBoss());
   },
   iter(game: Game) {
     runPlayerIter(game);
