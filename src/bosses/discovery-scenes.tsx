@@ -33,7 +33,16 @@ import {
 } from "./discovery-boss";
 import { playSound } from "../sound";
 import { Game } from "../ecs/game";
-import { drawWithLayer, Entity, sequence, text, timer } from "../ecs/entity";
+import {
+  allDone,
+  drawOnly,
+  drawWithLayer,
+  Entity,
+  multiTimer,
+  sequence,
+  text,
+  timer,
+} from "../ecs/entity";
 
 export const discoveryInitDialogue = [
   <>It seems very. Peculiar. Odd. Interesting. Enticing. Strange. Weird.</>,
@@ -49,267 +58,214 @@ function drawPlayerAtOrigin(game: Game) {
   game.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
 }
 
-export const introText: Entity = {
-  isDead: false,
-  init(game) {
-    game.addEntity(
-      text(
-        [<>A thing!</>, <>In our domain!</>, <>In the periphery!</>],
-        () => (this.isDead = true)
-      )
-    );
-  },
-  iter(game) {},
-  draw(game) {
-    discoveryBackground(game, true);
-    drawPlayerAtOrigin(game);
-  },
-};
+export const introText: Entity = multiTimer(function* (game: Game) {
+  yield allDone(
+    [text([<>A thing!</>, <>In our domain!</>, <>In the periphery!</>])],
+    [
+      drawOnly((game) => {
+        discoveryBackground(game, true);
+        drawPlayerAtOrigin(game);
+      }),
+    ]
+  );
 
-// const introText: Scene = {
-//   loop(root, ds, t, gt, f, done) {
-//     discoveryBackground(ds, t, true);
-//     if (f)
-//       setTimeout(() => {
-//         root.render(
-//           <TextSeq
-//             done={done}
-//             seq={[<>A thing!</>, <>In our domain!</>, <>In the periphery!</>]}
-//           ></TextSeq>
-//         );
-//       }, 3000);
+  let start = game.t;
+  yield allDone(
+    [
+      multiTimer(function* (game: Game) {
+        yield timer(8);
+        yield text([
+          <>
+            It seems very. Peculiar. Odd. Interesting. Enticing. Strange. Weird.
+          </>,
+          <>Perhaps if I...</>,
+        ]);
+      }),
+    ],
+    [
+      drawOnly((game) => {
+        discoveryBackground(game, true);
 
-//     const playerSize = Math.sin(t * 10 * Math.PI * 2) * 0.005 + 0.02;
-//     ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
-//   },
-// };
-
-const introCutscene: Entity = {
-  isDead: false,
-  start: 0,
-  init(game) {
-    this.start = game.t;
-    game.addEntity(
-      timer(8, () => {
-        game.addEntity(
-          text(
-            [
-              <>
-                It seems very. Peculiar. Odd. Interesting. Enticing. Strange.
-                Weird.
-              </>,
-              <>Perhaps if I...</>,
-            ],
-            () => (this.isDead = true)
-          )
+        const lt = game.t - start;
+        const bossT = mat3.create();
+        mat3.translate(
+          bossT,
+          bossT,
+          vec2.fromValues(0, ease(easeOut, lt, 3, 8, 1.5, 0.5))
         );
-      })
-    );
-  },
-  iter(game) {},
-  draw(game) {
-    discoveryBackground(game, true);
+        drawDiscoveryBody(bossT, game);
 
-    const lt = game.t - this.start;
-    const bossT = mat3.create();
-    mat3.translate(
-      bossT,
-      bossT,
-      vec2.fromValues(0, ease(easeOut, lt, 3, 8, 1.5, 0.5))
-    );
-    drawDiscoveryBody(bossT, game);
+        drawPlayerAtOrigin(game);
+      }),
+    ]
+  );
 
-    drawPlayerAtOrigin(game);
-  },
-};
-
-function drawExplodedPlayer(ds: DrawSystem) {
-  for (const pp of playerPieces) {
-    const t = mat3.create();
-    ds.circle(pp.pos, 0.004 + Math.random() * 0.003, [1, 0.7, 0.7, 1]);
-  }
-}
-
-const playerPieces = range(50).map((i) => ({
-  pos: [0, 0] as vec2,
-  vel: [0, 0] as vec2,
-}));
-const attackCutscene = {
-  isDead: false,
-  start: 0,
-
-  playerExploded: false,
-
-  discoveryArm: range(10).map((i) => ({
+  const playerPieces = range(50).map((i) => ({
+    pos: [0, 0] as vec2,
+    vel: [0, 0] as vec2,
+  }));
+  const discoveryArm = range(10).map((i) => ({
     length: 0.1,
     pos: vec2.fromValues(0, 0.5 + 0.1 * (i % 2)),
-  })),
-
-  drawDiscoveryArm(game: Game) {
-    for (const { length, pos } of this.discoveryArm.slice(1, -1)) {
-      vec2.add(pos, pos, [
-        Math.random() * 0.01 - 0.005,
-        Math.random() * 0.01 - 0.005,
-      ]);
-    }
-
-    drawFabrikChainSegments(this.discoveryArm, (t) => {
-      mat3.scale(t, t, [0.1, 0.1]);
-      game.ds.img(1, t);
-    });
-  },
-
-  init(game: Game) {
-    this.start = game.t;
-    game.addEntity(
-      timer(6, () => {
-        game.addEntity(
-          text(
-            [
-              <>Oh...</>,
-              <>I appear to have.</>,
-              <>Exploded it!</>,
-              <>That is rather unfortunate.</>,
-              <>
-                I was quite excited to sample the flesh of this strange,
-                nondescript, quivering blob.
-              </>,
-            ],
-            () => (this.isDead = true)
-          )
-        );
-      })
-    );
-  },
-  iter(game: Game) {},
-  draw(game: Game) {
-    const t = game.t - this.start;
-    const gt = game.t;
-
-    discoveryBackground(game, true);
-    const bossT = mat3.create();
-    mat3.translate(bossT, bossT, vec2.fromValues(0, 0.5));
-    drawDiscoveryBody(bossT, game);
-
-    if (t < 4) {
-      const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 0.005 + 0.02;
-      game.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
-    }
-
-    if (t > 0 && t < 4)
-      doFabrik(
-        this.discoveryArm,
-        sampleFullCatmullRom(
-          [0, 0.5],
-          [0.5, 0.6],
-          [0.3, -0.2],
-          [0.0, 0.0],
-          ease(easeIn, t, 0, 4, 0, 1)
-        ),
-        10
-      );
-    if (t > 4 && t < 5)
-      doFabrik(
-        this.discoveryArm,
-        sampleFullCatmullRom(
-          [0, 0.0],
-          [0.3, 0.1],
-          [0.4, 0.4],
-          [0.0, 0.5],
-          ease(smoothstep, t, 4, 5, 0, 1)
-        ),
-        10
-      );
-
-    if (t > 5) {
-      for (const da of this.discoveryArm) {
-        vec2.sub(da.pos, da.pos, [0, 0.5]);
-        vec2.mul(da.pos, da.pos, [0.9, 0.9]);
-        vec2.add(da.pos, da.pos, [0, 0.5]);
-      }
-    }
-
-    this.drawDiscoveryArm(game);
-
-    if (t > 4) {
-      if (!this.playerExploded) {
-        this.playerExploded = true;
-        for (const pp of playerPieces) {
-          pp.vel = [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1];
-        }
-      }
-
-      drawExplodedPlayer(game.ds);
-
-      for (const pp of playerPieces) {
-        vec2.add(pp.pos, pp.pos, pp.vel);
-        vec2.mul(pp.vel, pp.vel, [0.9, 0.9]);
-      }
-    }
-  },
-};
-
-const playerRegenerateCutscene = {
-  isDead: false,
-  start: 0,
-  init(game: Game) {
-    this.start = game.t;
-    game.addEntity(
-      timer(5, () => {
-        game.addEntity(
-          text(
-            [
-              <>...</>,
-              <>How utterly scrumptuous!</>,
-              <>
-                Most of this type of creature disappear much akin to a transient
-                froth of bubbles upon being prodded with my appendages!
-              </>,
-              <>But this one...</>,
-              <>
-                Perhaps it is more similar to the bubbles of oil dancing atop a
-                bowl of water, its recoalescence inevitable following its
-                dispersal into an unstable emulsion!
-              </>,
-              <>It is.</>,
-              <>Rather.</>,
-              <>
-                Strange? Unusual? <em>Concerning?</em>
-              </>,
-            ],
-            () => (this.isDead = true)
-          )
-        );
-      })
-    );
-  },
-  iter(game: Game) {},
-  draw(game: Game) {
-    discoveryBackground(game, true);
-
-    const t = game.t - this.start;
+  }));
+  start = game.t;
+  let playerExploded = false;
+  function drawExplodedPlayer() {
     for (const pp of playerPieces) {
-      vec2.add(pp.pos, pp.pos, pp.vel);
-      vec2.mul(pp.vel, pp.vel, [0.9, 0.9]);
+      const t = mat3.create();
+      game.ds.circle(pp.pos, 0.004 + Math.random() * 0.003, [1, 0.7, 0.7, 1]);
     }
+  }
 
-    if (t > 1) {
-      for (const pp of playerPieces) {
-        vec2.mul(pp.pos, pp.pos, [0.97, 0.97]);
-      }
-    }
+  yield allDone(
+    [
+      multiTimer(function* (game) {
+        yield timer(6);
+        yield text([
+          <>Oh...</>,
+          <>I appear to have.</>,
+          <>Exploded it!</>,
+          <>That is rather unfortunate.</>,
+          <>
+            I was quite excited to sample the flesh of this strange,
+            nondescript, quivering blob.
+          </>,
+        ]);
+      }),
+    ],
+    [
+      drawOnly((game) => {
+        const t = game.t - start;
+        const gt = game.t;
 
-    if (t > 3) {
-      const playerSize = Math.sin(game.t * 10 * Math.PI * 2) * 0.005 + 0.02;
-      game.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
-    }
+        discoveryBackground(game, true);
+        const bossT = mat3.create();
+        mat3.translate(bossT, bossT, vec2.fromValues(0, 0.5));
+        drawDiscoveryBody(bossT, game);
 
-    const bossT = mat3.create();
-    mat3.translate(bossT, bossT, vec2.fromValues(0, 0.5));
-    drawDiscoveryBody(bossT, game);
-    drawExplodedPlayer(game.ds);
-  },
-};
+        if (t < 4) {
+          drawPlayerAtOrigin(game);
+        }
+
+        if (t > 0 && t < 4)
+          doFabrik(
+            discoveryArm,
+            sampleFullCatmullRom(
+              [0, 0.5],
+              [0.5, 0.6],
+              [0.3, -0.2],
+              [0.0, 0.0],
+              ease(easeIn, t, 0, 4, 0, 1)
+            ),
+            10
+          );
+        if (t > 4 && t < 5)
+          doFabrik(
+            discoveryArm,
+            sampleFullCatmullRom(
+              [0, 0.0],
+              [0.3, 0.1],
+              [0.4, 0.4],
+              [0.0, 0.5],
+              ease(smoothstep, t, 4, 5, 0, 1)
+            ),
+            10
+          );
+
+        if (t > 5) {
+          for (const da of discoveryArm) {
+            vec2.sub(da.pos, da.pos, [0, 0.5]);
+            vec2.mul(da.pos, da.pos, [0.9, 0.9]);
+            vec2.add(da.pos, da.pos, [0, 0.5]);
+          }
+        }
+
+        for (const { length, pos } of discoveryArm.slice(1, -1)) {
+          vec2.add(pos, pos, [
+            Math.random() * 0.01 - 0.005,
+            Math.random() * 0.01 - 0.005,
+          ]);
+        }
+
+        drawFabrikChainSegments(discoveryArm, (t) => {
+          mat3.scale(t, t, [0.1, 0.1]);
+          game.ds.img(1, t);
+        });
+
+        drawExplodedPlayer();
+
+        if (t > 4) {
+          if (!playerExploded) {
+            playerExploded = true;
+            for (const pp of playerPieces) {
+              pp.vel = [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1];
+            }
+          }
+
+          for (const pp of playerPieces) {
+            vec2.add(pp.pos, pp.pos, pp.vel);
+            vec2.mul(pp.vel, pp.vel, [0.9, 0.9]);
+          }
+        }
+      }),
+    ]
+  );
+
+  start = game.t;
+  yield allDone(
+    [
+      multiTimer(function* () {
+        yield timer(5);
+        yield text([
+          <>...</>,
+          <>How utterly scrumptuous!</>,
+          <>
+            Most of this type of creature disappear much akin to a transient
+            froth of bubbles upon being prodded with my appendages!
+          </>,
+          <>But this one...</>,
+          <>
+            Perhaps it is more similar to the bubbles of oil dancing atop a bowl
+            of water, its recoalescence inevitable following its dispersal into
+            an unstable emulsion!
+          </>,
+          <>It is.</>,
+          <>Rather.</>,
+          <>
+            Strange? Unusual? <em>Concerning?</em>
+          </>,
+        ]);
+      }),
+    ],
+    [
+      drawOnly((game) => {
+        discoveryBackground(game, true);
+
+        const t = game.t - start;
+        for (const pp of playerPieces) {
+          vec2.add(pp.pos, pp.pos, pp.vel);
+          vec2.mul(pp.vel, pp.vel, [0.9, 0.9]);
+        }
+
+        if (t > 1) {
+          for (const pp of playerPieces) {
+            vec2.mul(pp.pos, pp.pos, [0.97, 0.97]);
+          }
+        }
+
+        if (t > 3) {
+          const playerSize = Math.sin(game.t * 10 * Math.PI * 2) * 0.005 + 0.02;
+          game.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+        }
+
+        const bossT = mat3.create();
+        mat3.translate(bossT, bossT, vec2.fromValues(0, 0.5));
+        drawDiscoveryBody(bossT, game);
+        drawExplodedPlayer();
+      }),
+    ]
+  );
+});
 
 const playerMoveCutscene = {
   isDead: false,
@@ -459,11 +415,7 @@ const bossPhase = {
 
 export const discoveryScenes = sequence([
   introText,
-  introCutscene,
-  attackCutscene,
-  playerRegenerateCutscene,
   playerMoveCutscene,
   playerAttackCutscene,
   bossPhase,
-  // {},
 ]);

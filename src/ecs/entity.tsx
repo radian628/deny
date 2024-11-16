@@ -165,3 +165,34 @@ export function drawWithLayer(
     },
   };
 }
+
+export function allDone(
+  shouldBeDone: Entity[],
+  killWhenDone: Entity[]
+): Entity {
+  return {
+    isDead: false,
+    init(game) {
+      for (const e of shouldBeDone) game.addEntity(e);
+      for (const e of killWhenDone) game.addEntity(e);
+    },
+    iter(game) {
+      if (shouldBeDone.every((e) => e.isDead)) {
+        this.isDead = true;
+        for (const e of killWhenDone) {
+          e.isDead = true;
+        }
+      }
+    },
+    draw(game) {},
+  };
+}
+
+export function drawOnly(draw: (game: Game) => void): Entity {
+  return {
+    isDead: false,
+    init(game) {},
+    iter(game) {},
+    draw,
+  };
+}

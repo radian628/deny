@@ -25112,6 +25112,35 @@
       }
     };
   }
+  function allDone(shouldBeDone, killWhenDone) {
+    return {
+      isDead: false,
+      init(game2) {
+        for (const e of shouldBeDone) game2.addEntity(e);
+        for (const e of killWhenDone) game2.addEntity(e);
+      },
+      iter(game2) {
+        if (shouldBeDone.every((e) => e.isDead)) {
+          this.isDead = true;
+          for (const e of killWhenDone) {
+            e.isDead = true;
+          }
+        }
+      },
+      draw(game2) {
+      }
+    };
+  }
+  function drawOnly(draw) {
+    return {
+      isDead: false,
+      init(game2) {
+      },
+      iter(game2) {
+      },
+      draw
+    };
+  }
 
   // src/bosses/discovery-boss.tsx
   var import_react3 = __toESM(require_react());
@@ -25536,215 +25565,181 @@
     const playerSize = Math.sin(game2.t * 10 * Math.PI * 2) * 5e-3 + 0.02;
     game2.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
   }
-  var introText = {
-    isDead: false,
-    init(game2) {
-      game2.addEntity(
-        text(
-          [/* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "A thing!"), /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "In our domain!"), /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "In the periphery!")],
-          () => this.isDead = true
-        )
-      );
-    },
-    iter(game2) {
-    },
-    draw(game2) {
-      discoveryBackground(game2, true);
-      drawPlayerAtOrigin(game2);
-    }
-  };
-  var introCutscene = {
-    isDead: false,
-    start: 0,
-    init(game2) {
-      this.start = game2.t;
-      game2.addEntity(
-        timer(8, () => {
-          game2.addEntity(
-            text(
-              [
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "It seems very. Peculiar. Odd. Interesting. Enticing. Strange. Weird."),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Perhaps if I...")
-              ],
-              () => this.isDead = true
-            )
-          );
+  var introText = multiTimer(function* (game2) {
+    yield allDone(
+      [text([/* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "A thing!"), /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "In our domain!"), /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "In the periphery!")])],
+      [
+        drawOnly((game3) => {
+          discoveryBackground(game3, true);
+          drawPlayerAtOrigin(game3);
         })
-      );
-    },
-    iter(game2) {
-    },
-    draw(game2) {
-      discoveryBackground(game2, true);
-      const lt = game2.t - this.start;
-      const bossT = mat3_exports.create();
-      mat3_exports.translate(
-        bossT,
-        bossT,
-        vec2_exports.fromValues(0, ease(easeOut, lt, 3, 8, 1.5, 0.5))
-      );
-      drawDiscoveryBody(bossT, game2);
-      drawPlayerAtOrigin(game2);
-    }
-  };
-  function drawExplodedPlayer(ds) {
-    for (const pp of playerPieces) {
-      const t = mat3_exports.create();
-      ds.circle(pp.pos, 4e-3 + Math.random() * 3e-3, [1, 0.7, 0.7, 1]);
-    }
-  }
-  var playerPieces = range(50).map((i) => ({
-    pos: [0, 0],
-    vel: [0, 0]
-  }));
-  var attackCutscene = {
-    isDead: false,
-    start: 0,
-    playerExploded: false,
-    discoveryArm: range(10).map((i) => ({
+      ]
+    );
+    let start = game2.t;
+    yield allDone(
+      [
+        multiTimer(function* (game3) {
+          yield timer(8);
+          yield text([
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "It seems very. Peculiar. Odd. Interesting. Enticing. Strange. Weird."),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Perhaps if I...")
+          ]);
+        })
+      ],
+      [
+        drawOnly((game3) => {
+          discoveryBackground(game3, true);
+          const lt = game3.t - start;
+          const bossT = mat3_exports.create();
+          mat3_exports.translate(
+            bossT,
+            bossT,
+            vec2_exports.fromValues(0, ease(easeOut, lt, 3, 8, 1.5, 0.5))
+          );
+          drawDiscoveryBody(bossT, game3);
+          drawPlayerAtOrigin(game3);
+        })
+      ]
+    );
+    const playerPieces = range(50).map((i) => ({
+      pos: [0, 0],
+      vel: [0, 0]
+    }));
+    const discoveryArm = range(10).map((i) => ({
       length: 0.1,
       pos: vec2_exports.fromValues(0, 0.5 + 0.1 * (i % 2))
-    })),
-    drawDiscoveryArm(game2) {
-      for (const { length: length2, pos } of this.discoveryArm.slice(1, -1)) {
-        vec2_exports.add(pos, pos, [
-          Math.random() * 0.01 - 5e-3,
-          Math.random() * 0.01 - 5e-3
-        ]);
-      }
-      drawFabrikChainSegments(this.discoveryArm, (t) => {
-        mat3_exports.scale(t, t, [0.1, 0.1]);
-        game2.ds.img(1, t);
-      });
-    },
-    init(game2) {
-      this.start = game2.t;
-      game2.addEntity(
-        timer(6, () => {
-          game2.addEntity(
-            text(
-              [
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Oh..."),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "I appear to have."),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Exploded it!"),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "That is rather unfortunate."),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "I was quite excited to sample the flesh of this strange, nondescript, quivering blob.")
-              ],
-              () => this.isDead = true
-            )
-          );
-        })
-      );
-    },
-    iter(game2) {
-    },
-    draw(game2) {
-      const t = game2.t - this.start;
-      const gt = game2.t;
-      discoveryBackground(game2, true);
-      const bossT = mat3_exports.create();
-      mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
-      drawDiscoveryBody(bossT, game2);
-      if (t < 4) {
-        const playerSize = Math.sin(gt * 10 * Math.PI * 2) * 5e-3 + 0.02;
-        game2.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
-      }
-      if (t > 0 && t < 4)
-        doFabrik(
-          this.discoveryArm,
-          sampleFullCatmullRom(
-            [0, 0.5],
-            [0.5, 0.6],
-            [0.3, -0.2],
-            [0, 0],
-            ease(easeIn, t, 0, 4, 0, 1)
-          ),
-          10
-        );
-      if (t > 4 && t < 5)
-        doFabrik(
-          this.discoveryArm,
-          sampleFullCatmullRom(
-            [0, 0],
-            [0.3, 0.1],
-            [0.4, 0.4],
-            [0, 0.5],
-            ease(smoothstep, t, 4, 5, 0, 1)
-          ),
-          10
-        );
-      if (t > 5) {
-        for (const da of this.discoveryArm) {
-          vec2_exports.sub(da.pos, da.pos, [0, 0.5]);
-          vec2_exports.mul(da.pos, da.pos, [0.9, 0.9]);
-          vec2_exports.add(da.pos, da.pos, [0, 0.5]);
-        }
-      }
-      this.drawDiscoveryArm(game2);
-      if (t > 4) {
-        if (!this.playerExploded) {
-          this.playerExploded = true;
-          for (const pp of playerPieces) {
-            pp.vel = [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1];
-          }
-        }
-        drawExplodedPlayer(game2.ds);
-        for (const pp of playerPieces) {
-          vec2_exports.add(pp.pos, pp.pos, pp.vel);
-          vec2_exports.mul(pp.vel, pp.vel, [0.9, 0.9]);
-        }
-      }
-    }
-  };
-  var playerRegenerateCutscene = {
-    isDead: false,
-    start: 0,
-    init(game2) {
-      this.start = game2.t;
-      game2.addEntity(
-        timer(5, () => {
-          game2.addEntity(
-            text(
-              [
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "..."),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "How utterly scrumptuous!"),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Most of this type of creature disappear much akin to a transient froth of bubbles upon being prodded with my appendages!"),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "But this one..."),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Perhaps it is more similar to the bubbles of oil dancing atop a bowl of water, its recoalescence inevitable following its dispersal into an unstable emulsion!"),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "It is."),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Rather."),
-                /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Strange? Unusual? ", /* @__PURE__ */ import_react4.default.createElement("em", null, "Concerning?"))
-              ],
-              () => this.isDead = true
-            )
-          );
-        })
-      );
-    },
-    iter(game2) {
-    },
-    draw(game2) {
-      discoveryBackground(game2, true);
-      const t = game2.t - this.start;
+    }));
+    start = game2.t;
+    let playerExploded = false;
+    function drawExplodedPlayer() {
       for (const pp of playerPieces) {
-        vec2_exports.add(pp.pos, pp.pos, pp.vel);
-        vec2_exports.mul(pp.vel, pp.vel, [0.9, 0.9]);
+        const t = mat3_exports.create();
+        game2.ds.circle(pp.pos, 4e-3 + Math.random() * 3e-3, [1, 0.7, 0.7, 1]);
       }
-      if (t > 1) {
-        for (const pp of playerPieces) {
-          vec2_exports.mul(pp.pos, pp.pos, [0.97, 0.97]);
-        }
-      }
-      if (t > 3) {
-        const playerSize = Math.sin(game2.t * 10 * Math.PI * 2) * 5e-3 + 0.02;
-        game2.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
-      }
-      const bossT = mat3_exports.create();
-      mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
-      drawDiscoveryBody(bossT, game2);
-      drawExplodedPlayer(game2.ds);
     }
-  };
+    yield allDone(
+      [
+        multiTimer(function* (game3) {
+          yield timer(6);
+          yield text([
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Oh..."),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "I appear to have."),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Exploded it!"),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "That is rather unfortunate."),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "I was quite excited to sample the flesh of this strange, nondescript, quivering blob.")
+          ]);
+        })
+      ],
+      [
+        drawOnly((game3) => {
+          const t = game3.t - start;
+          const gt = game3.t;
+          discoveryBackground(game3, true);
+          const bossT = mat3_exports.create();
+          mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
+          drawDiscoveryBody(bossT, game3);
+          if (t < 4) {
+            drawPlayerAtOrigin(game3);
+          }
+          if (t > 0 && t < 4)
+            doFabrik(
+              discoveryArm,
+              sampleFullCatmullRom(
+                [0, 0.5],
+                [0.5, 0.6],
+                [0.3, -0.2],
+                [0, 0],
+                ease(easeIn, t, 0, 4, 0, 1)
+              ),
+              10
+            );
+          if (t > 4 && t < 5)
+            doFabrik(
+              discoveryArm,
+              sampleFullCatmullRom(
+                [0, 0],
+                [0.3, 0.1],
+                [0.4, 0.4],
+                [0, 0.5],
+                ease(smoothstep, t, 4, 5, 0, 1)
+              ),
+              10
+            );
+          if (t > 5) {
+            for (const da of discoveryArm) {
+              vec2_exports.sub(da.pos, da.pos, [0, 0.5]);
+              vec2_exports.mul(da.pos, da.pos, [0.9, 0.9]);
+              vec2_exports.add(da.pos, da.pos, [0, 0.5]);
+            }
+          }
+          for (const { length: length2, pos } of discoveryArm.slice(1, -1)) {
+            vec2_exports.add(pos, pos, [
+              Math.random() * 0.01 - 5e-3,
+              Math.random() * 0.01 - 5e-3
+            ]);
+          }
+          drawFabrikChainSegments(discoveryArm, (t2) => {
+            mat3_exports.scale(t2, t2, [0.1, 0.1]);
+            game3.ds.img(1, t2);
+          });
+          drawExplodedPlayer();
+          if (t > 4) {
+            if (!playerExploded) {
+              playerExploded = true;
+              for (const pp of playerPieces) {
+                pp.vel = [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1];
+              }
+            }
+            for (const pp of playerPieces) {
+              vec2_exports.add(pp.pos, pp.pos, pp.vel);
+              vec2_exports.mul(pp.vel, pp.vel, [0.9, 0.9]);
+            }
+          }
+        })
+      ]
+    );
+    start = game2.t;
+    yield allDone(
+      [
+        multiTimer(function* () {
+          yield timer(5);
+          yield text([
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "..."),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "How utterly scrumptuous!"),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Most of this type of creature disappear much akin to a transient froth of bubbles upon being prodded with my appendages!"),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "But this one..."),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Perhaps it is more similar to the bubbles of oil dancing atop a bowl of water, its recoalescence inevitable following its dispersal into an unstable emulsion!"),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "It is."),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Rather."),
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Strange? Unusual? ", /* @__PURE__ */ import_react4.default.createElement("em", null, "Concerning?"))
+          ]);
+        })
+      ],
+      [
+        drawOnly((game3) => {
+          discoveryBackground(game3, true);
+          const t = game3.t - start;
+          for (const pp of playerPieces) {
+            vec2_exports.add(pp.pos, pp.pos, pp.vel);
+            vec2_exports.mul(pp.vel, pp.vel, [0.9, 0.9]);
+          }
+          if (t > 1) {
+            for (const pp of playerPieces) {
+              vec2_exports.mul(pp.pos, pp.pos, [0.97, 0.97]);
+            }
+          }
+          if (t > 3) {
+            const playerSize = Math.sin(game3.t * 10 * Math.PI * 2) * 5e-3 + 0.02;
+            game3.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+          }
+          const bossT = mat3_exports.create();
+          mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
+          drawDiscoveryBody(bossT, game3);
+          drawExplodedPlayer();
+        })
+      ]
+    );
+  });
   var playerMoveCutscene = {
     isDead: false,
     start: 0,
@@ -25870,13 +25865,9 @@
   };
   var discoveryScenes = sequence([
     introText,
-    introCutscene,
-    attackCutscene,
-    playerRegenerateCutscene,
     playerMoveCutscene,
     playerAttackCutscene,
     bossPhase
-    // {},
   ]);
 
   // src/game.tsx
