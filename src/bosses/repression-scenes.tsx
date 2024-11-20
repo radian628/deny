@@ -35,6 +35,7 @@ function emptyGameEntity(): Entity {
 }
 
 const repressionIntro = multiTimer(function* (game: Game) {
+  yield timer(3);
   yield allDone(
     [
       multiTimer(function* (game: Game) {
@@ -92,7 +93,7 @@ const repressionIntro = multiTimer(function* (game: Game) {
 });
 
 export function repressionBackground(game: Game, black?: boolean) {
-  const t2 = game.t * 0.2;
+  const t2 = game.t * 0.5;
   const offsetX = Math.cos(t2) * 0.1;
   const offsetY = Math.sin(t2) * 0.1;
   game.ds.draw(
@@ -100,7 +101,7 @@ export function repressionBackground(game: Game, black?: boolean) {
     2,
     mat3.create(),
     [0.64 + offsetX, -0.75 + offsetY, 20, 0.4],
-    black ? [0, 0, 0, 0.2] : [0.2, 0.1, 0.1, 0.2]
+    black ? [0, 0, 0, 0.2] : [0.07, 0.05, 0.05, 0.2]
   );
 }
 export const repressionScenes = sequence([repressionIntro]);

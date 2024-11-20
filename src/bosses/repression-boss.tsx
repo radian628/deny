@@ -548,11 +548,8 @@ export class RepressionBoss implements Entity, StopAttackable {
           boss.movement = { type: "idle" };
           boss.pos = [0, 0.5];
           yield text([
-            <>
-              nononono NO NO NO NON ON ON ON ON O NN NO NO NO I AM REAL. YOU ARE
-              FAKE.
-            </>,
-            <>I AM BEDROCK. I AM GROUND TRUTH.</>,
+            <>NO. I AM REAL. YOU ARE FAKE.</>,
+            <>I AM GROUND TRUTH.</>,
             <>YOU ARE A FANTASY PROPPED UP BY A PYRAMID OF LIES.</>,
             <>WHY DO I.</>,
             <>WHY DO I FEEL MY CONNECTION SEVERING?</>,
@@ -624,10 +621,13 @@ export class RepressionBoss implements Entity, StopAttackable {
   draw(game: Game) {
     const t = mat3.create();
     mat3.translate(t, t, this.getCurrentPos(game));
-    mat3.translate(t, t, [
-      Math.random() * 0.02 - 0.01,
-      Math.random() * 0.02 - 0.01,
-    ]);
+    mat3.translate(
+      t,
+      t,
+      this.hasBeenDefeated
+        ? [Math.random() * 0.1 - 0.05, Math.random() * 0.1 - 0.05]
+        : [Math.random() * 0.02 - 0.01, Math.random() * 0.02 - 0.01]
+    );
     mat3.scale(t, t, [this.scale, this.scale]);
     mat3.rotate(t, t, this.getCurrentAngle(game));
     game.ds.img(

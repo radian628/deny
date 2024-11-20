@@ -43,7 +43,11 @@ export async function game() {
 
   const game = makeGame(ds, textRoot);
 
-  game.addEntity(sequence([discoveryScenes, repressionScenes]));
+  const skip = new URLSearchParams(window.location.search).get("skip");
+
+  const startAt = Number(skip) || 0;
+
+  game.addEntity(sequence([discoveryScenes, repressionScenes].slice(startAt)));
 
   const loop = () => {
     game.iterEntities();

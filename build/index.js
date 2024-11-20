@@ -26476,8 +26476,8 @@
             boss.movement = { type: "idle" };
             boss.pos = [0, 0.5];
             yield text([
-              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "nononono NO NO NO NON ON ON ON ON O NN NO NO NO I AM REAL. YOU ARE FAKE."),
-              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "I AM BEDROCK. I AM GROUND TRUTH."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "NO. I AM REAL. YOU ARE FAKE."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "I AM GROUND TRUTH."),
               /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "YOU ARE A FANTASY PROPPED UP BY A PYRAMID OF LIES."),
               /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "WHY DO I."),
               /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "WHY DO I FEEL MY CONNECTION SEVERING?"),
@@ -26535,10 +26535,11 @@
     draw(game2) {
       const t = mat3_exports.create();
       mat3_exports.translate(t, t, this.getCurrentPos(game2));
-      mat3_exports.translate(t, t, [
-        Math.random() * 0.02 - 0.01,
-        Math.random() * 0.02 - 0.01
-      ]);
+      mat3_exports.translate(
+        t,
+        t,
+        this.hasBeenDefeated ? [Math.random() * 0.1 - 0.05, Math.random() * 0.1 - 0.05] : [Math.random() * 0.02 - 0.01, Math.random() * 0.02 - 0.01]
+      );
       mat3_exports.scale(t, t, [this.scale, this.scale]);
       mat3_exports.rotate(t, t, this.getCurrentAngle(game2));
       game2.ds.img(
@@ -26572,6 +26573,7 @@
     };
   }
   var repressionIntro = multiTimer(function* (game2) {
+    yield timer(3);
     yield allDone(
       [
         multiTimer(function* (game3) {
@@ -26621,7 +26623,7 @@
     );
   });
   function repressionBackground(game2, black) {
-    const t2 = game2.t * 0.2;
+    const t2 = game2.t * 0.5;
     const offsetX = Math.cos(t2) * 0.1;
     const offsetY = Math.sin(t2) * 0.1;
     game2.ds.draw(
@@ -26629,7 +26631,7 @@
       2,
       mat3_exports.create(),
       [0.64 + offsetX, -0.75 + offsetY, 20, 0.4],
-      black ? [0, 0, 0, 0.2] : [0.2, 0.1, 0.1, 0.2]
+      black ? [0, 0, 0, 0.2] : [0.07, 0.05, 0.05, 0.2]
     );
   }
   var repressionScenes = sequence([repressionIntro]);
@@ -26650,7 +26652,9 @@
     const ds = await makeDrawSystem(gl);
     if (!ds) throw new Error("no ds");
     const game2 = makeGame(ds, textRoot);
-    game2.addEntity(sequence([discoveryScenes, repressionScenes]));
+    const skip = new URLSearchParams(window.location.search).get("skip");
+    const startAt = Number(skip) || 0;
+    game2.addEntity(sequence([discoveryScenes, repressionScenes].slice(startAt)));
     const loop = () => {
       game2.iterEntities();
       game2.drawEntities();
