@@ -398,7 +398,8 @@ const playerAttackCutscene = {
 const bossPhase = {
   isDead: false,
   init(game: Game) {
-    game.addEntity(new DiscoveryBoss());
+    const boss = game.addEntity(new DiscoveryBoss());
+    game.onKill(boss, () => (this.isDead = true));
   },
   iter(game: Game) {
     runPlayerIter(game);

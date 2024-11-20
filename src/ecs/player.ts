@@ -65,7 +65,6 @@ export function runPlayerIter(game: Game) {
       player.vel[i] = Math.abs(player.vel[i]);
     }
   }
-  player.justDied = false;
 }
 
 export function drawPlayer(game: Game) {

@@ -649,8 +649,8 @@
           }
           var didWarnAboutMaps = false;
           var userProvidedKeyEscapeRegex = /\/+/g;
-          function escapeUserProvidedKey(text2) {
-            return text2.replace(userProvidedKeyEscapeRegex, "$&/");
+          function escapeUserProvidedKey(text3) {
+            return text3.replace(userProvidedKeyEscapeRegex, "$&/");
           }
           function getElementKey(element, index) {
             if (typeof element === "object" && element !== null && element.key != null) {
@@ -2388,9 +2388,9 @@
           if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
-          var React5 = require_react();
+          var React7 = require_react();
           var Scheduler = require_scheduler();
-          var ReactSharedInternals = React5.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React7.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           var suppressWarning = false;
           function setSuppressWarning(newSuppressWarning) {
             {
@@ -3997,7 +3997,7 @@
             {
               if (props.value == null) {
                 if (typeof props.children === "object" && props.children !== null) {
-                  React5.Children.forEach(props.children, function(child) {
+                  React7.Children.forEach(props.children, function(child) {
                     if (child == null) {
                       return;
                     }
@@ -4285,15 +4285,15 @@
           var COMMENT_NODE = 8;
           var DOCUMENT_NODE = 9;
           var DOCUMENT_FRAGMENT_NODE = 11;
-          var setTextContent = function(node, text2) {
-            if (text2) {
+          var setTextContent = function(node, text3) {
+            if (text3) {
               var firstChild = node.firstChild;
               if (firstChild && firstChild === node.lastChild && firstChild.nodeType === TEXT_NODE) {
-                firstChild.nodeValue = text2;
+                firstChild.nodeValue = text3;
                 return;
               }
             }
-            node.textContent = text2;
+            node.textContent = text3;
           };
           var shorthandToLonghand = {
             animation: ["animationDelay", "animationDirection", "animationDuration", "animationFillMode", "animationIterationCount", "animationName", "animationPlayState", "animationTimingFunction"],
@@ -9469,8 +9469,8 @@
             }
             return domElement;
           }
-          function createTextNode(text2, rootContainerElement) {
-            return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text2);
+          function createTextNode(text3, rootContainerElement) {
+            return getOwnerDocumentFromRootContainer(rootContainerElement).createTextNode(text3);
           }
           function setInitialProperties(domElement, tag, rawProps, rootContainerElement) {
             var isCustomComponentTag = isCustomComponent(tag, rawProps);
@@ -9914,8 +9914,8 @@
             }
             return updatePayload;
           }
-          function diffHydratedText(textNode, text2, isConcurrentMode) {
-            var isDifferent = textNode.nodeValue !== text2;
+          function diffHydratedText(textNode, text3, isConcurrentMode) {
+            var isDifferent = textNode.nodeValue !== text3;
             return isDifferent;
           }
           function warnForDeletedHydratableElement(parentNode, child) {
@@ -9945,16 +9945,16 @@
               error("Expected server HTML to contain a matching <%s> in <%s>.", tag, parentNode.nodeName.toLowerCase());
             }
           }
-          function warnForInsertedHydratedText(parentNode, text2) {
+          function warnForInsertedHydratedText(parentNode, text3) {
             {
-              if (text2 === "") {
+              if (text3 === "") {
                 return;
               }
               if (didWarnInvalidHydration) {
                 return;
               }
               didWarnInvalidHydration = true;
-              error('Expected server HTML to contain a matching text node for "%s" in <%s>.', text2, parentNode.nodeName.toLowerCase());
+              error('Expected server HTML to contain a matching text node for "%s" in <%s>.', text3, parentNode.nodeName.toLowerCase());
             }
           }
           function restoreControlledState$3(domElement, tag, props) {
@@ -10327,12 +10327,12 @@
           function shouldSetTextContent(type, props) {
             return type === "textarea" || type === "noscript" || typeof props.children === "string" || typeof props.children === "number" || typeof props.dangerouslySetInnerHTML === "object" && props.dangerouslySetInnerHTML !== null && props.dangerouslySetInnerHTML.__html != null;
           }
-          function createTextInstance(text2, rootContainerInstance, hostContext, internalInstanceHandle) {
+          function createTextInstance(text3, rootContainerInstance, hostContext, internalInstanceHandle) {
             {
               var hostContextDev = hostContext;
-              validateDOMNesting(null, text2, hostContextDev.ancestorInfo);
+              validateDOMNesting(null, text3, hostContextDev.ancestorInfo);
             }
-            var textNode = createTextNode(text2, rootContainerInstance);
+            var textNode = createTextNode(text3, rootContainerInstance);
             precacheFiberNode(internalInstanceHandle, textNode);
             return textNode;
           }
@@ -10470,8 +10470,8 @@
             var display = styleProp !== void 0 && styleProp !== null && styleProp.hasOwnProperty("display") ? styleProp.display : null;
             instance.style.display = dangerousStyleValue("display", display);
           }
-          function unhideTextInstance(textInstance, text2) {
-            textInstance.nodeValue = text2;
+          function unhideTextInstance(textInstance, text3) {
+            textInstance.nodeValue = text3;
           }
           function clearContainer(container) {
             if (container.nodeType === ELEMENT_NODE) {
@@ -10488,8 +10488,8 @@
             }
             return instance;
           }
-          function canHydrateTextInstance(instance, text2) {
-            if (text2 === "" || instance.nodeType !== TEXT_NODE) {
+          function canHydrateTextInstance(instance, text3) {
+            if (text3 === "" || instance.nodeType !== TEXT_NODE) {
               return null;
             }
             return instance;
@@ -10568,10 +10568,10 @@
             var isConcurrentMode = (internalInstanceHandle.mode & ConcurrentMode) !== NoMode;
             return diffHydratedProperties(instance, type, props, parentNamespace, rootContainerInstance, isConcurrentMode, shouldWarnDev);
           }
-          function hydrateTextInstance(textInstance, text2, internalInstanceHandle, shouldWarnDev) {
+          function hydrateTextInstance(textInstance, text3, internalInstanceHandle, shouldWarnDev) {
             precacheFiberNode(internalInstanceHandle, textInstance);
             var isConcurrentMode = (internalInstanceHandle.mode & ConcurrentMode) !== NoMode;
-            return diffHydratedText(textInstance, text2);
+            return diffHydratedText(textInstance, text3);
           }
           function hydrateSuspenseInstance(suspenseInstance, internalInstanceHandle) {
             precacheFiberNode(internalInstanceHandle, suspenseInstance);
@@ -10625,14 +10625,14 @@
           function shouldDeleteUnhydratedTailInstances(parentType) {
             return parentType !== "head" && parentType !== "body";
           }
-          function didNotMatchHydratedContainerTextInstance(parentContainer, textInstance, text2, isConcurrentMode) {
+          function didNotMatchHydratedContainerTextInstance(parentContainer, textInstance, text3, isConcurrentMode) {
             var shouldWarnDev = true;
-            checkForUnmatchedText(textInstance.nodeValue, text2, isConcurrentMode, shouldWarnDev);
+            checkForUnmatchedText(textInstance.nodeValue, text3, isConcurrentMode, shouldWarnDev);
           }
-          function didNotMatchHydratedTextInstance(parentType, parentProps, parentInstance, textInstance, text2, isConcurrentMode) {
+          function didNotMatchHydratedTextInstance(parentType, parentProps, parentInstance, textInstance, text3, isConcurrentMode) {
             if (parentProps[SUPPRESS_HYDRATION_WARNING$1] !== true) {
               var shouldWarnDev = true;
-              checkForUnmatchedText(textInstance.nodeValue, text2, isConcurrentMode, shouldWarnDev);
+              checkForUnmatchedText(textInstance.nodeValue, text3, isConcurrentMode, shouldWarnDev);
             }
           }
           function didNotHydrateInstanceWithinContainer(parentContainer, instance) {
@@ -10675,9 +10675,9 @@
               warnForInsertedHydratedElement(parentContainer, type);
             }
           }
-          function didNotFindHydratableTextInstanceWithinContainer(parentContainer, text2) {
+          function didNotFindHydratableTextInstanceWithinContainer(parentContainer, text3) {
             {
-              warnForInsertedHydratedText(parentContainer, text2);
+              warnForInsertedHydratedText(parentContainer, text3);
             }
           }
           function didNotFindHydratableInstanceWithinSuspenseInstance(parentInstance, type, props) {
@@ -10686,10 +10686,10 @@
               if (parentNode !== null) warnForInsertedHydratedElement(parentNode, type);
             }
           }
-          function didNotFindHydratableTextInstanceWithinSuspenseInstance(parentInstance, text2) {
+          function didNotFindHydratableTextInstanceWithinSuspenseInstance(parentInstance, text3) {
             {
               var parentNode = parentInstance.parentNode;
-              if (parentNode !== null) warnForInsertedHydratedText(parentNode, text2);
+              if (parentNode !== null) warnForInsertedHydratedText(parentNode, text3);
             }
           }
           function didNotFindHydratableInstance(parentType, parentProps, parentInstance, type, props, isConcurrentMode) {
@@ -10699,10 +10699,10 @@
               }
             }
           }
-          function didNotFindHydratableTextInstance(parentType, parentProps, parentInstance, text2, isConcurrentMode) {
+          function didNotFindHydratableTextInstance(parentType, parentProps, parentInstance, text3, isConcurrentMode) {
             {
               if (isConcurrentMode || parentProps[SUPPRESS_HYDRATION_WARNING$1] !== true) {
-                warnForInsertedHydratedText(parentInstance, text2);
+                warnForInsertedHydratedText(parentInstance, text3);
               }
             }
           }
@@ -11310,8 +11310,8 @@
                       didNotFindHydratableInstanceWithinContainer(parentContainer, type);
                       break;
                     case HostText:
-                      var text2 = fiber.pendingProps;
-                      didNotFindHydratableTextInstanceWithinContainer(parentContainer, text2);
+                      var text3 = fiber.pendingProps;
+                      didNotFindHydratableTextInstanceWithinContainer(parentContainer, text3);
                       break;
                   }
                   break;
@@ -11392,8 +11392,8 @@
                 return false;
               }
               case HostText: {
-                var text2 = fiber.pendingProps;
-                var textInstance = canHydrateTextInstance(nextInstance, text2);
+                var text3 = fiber.pendingProps;
+                var textInstance = canHydrateTextInstance(nextInstance, text3);
                 if (textInstance !== null) {
                   fiber.stateNode = textInstance;
                   hydrationParentFiber = fiber;
@@ -24396,7 +24396,9 @@
       "wasd.png",
       "attack.png",
       "arrow.png",
-      "inverted-eyeball.png"
+      "inverted-eyeball.png",
+      "fist.png",
+      "middlefinger.png"
     ];
     const images = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D_ARRAY, images);
@@ -24590,6 +24592,9 @@
   var import_react4 = __toESM(require_react());
 
   // src/animation.ts
+  function lerp2(t, a, b) {
+    return a * (1 - t) + b * t;
+  }
   function ease(fn, t, from, to, a, b) {
     const t2 = Math.min(Math.max((t - from) / (to - from), 0), 1);
     const t3 = fn(t2);
@@ -24639,6 +24644,32 @@
       return values[values.length - 1][1];
     };
   }
+  function makeCustomKeyframeGenerator(interpolate) {
+    return (values) => (x) => {
+      if (x < values[0][0]) return values[0][1];
+      for (let i = 0; i < values.length - 1; i++) {
+        let currValue = values[i];
+        let nextValue = values[i + 1];
+        const factor = (x - currValue[0]) / (nextValue[0] - currValue[0]);
+        if (factor >= 0 && factor < 1) {
+          return interpolate(
+            currValue[1],
+            nextValue[1],
+            currValue[2] ? currValue[2](factor) : factor
+          );
+        }
+      }
+      return values[values.length - 1][1];
+    };
+  }
+  var kf;
+  ((kf2) => {
+    kf2.vec2 = makeCustomKeyframeGenerator((a, b, t) => [
+      a[0] + (b[0] - a[0]) * t,
+      a[1] + (b[1] - a[1]) * t
+    ]);
+    kf2.discrete = makeCustomKeyframeGenerator((a, b, t) => a);
+  })(kf || (kf = {}));
 
   // src/TypedInText.tsx
   var import_react = __toESM(require_react());
@@ -24712,11 +24743,11 @@
       while (walker.nextNode()) {
         const node = walker.currentNode;
         if (node._text === void 0) {
-          const text2 = node.textContent ?? "";
+          const text3 = node.textContent ?? "";
           const isSlow = nodeIsSlow(node);
-          allTextRef.current += text2;
-          node._text = text2;
-          for (let i = 0; i < text2.length; i++) {
+          allTextRef.current += text3;
+          node._text = text3;
+          for (let i = 0; i < text3.length; i++) {
             delaysRef.current.push(isSlow ? Number(isSlow.dataset.delay) : 20);
           }
         }
@@ -24724,15 +24755,15 @@
       walker = document.createTreeWalker(elem, NodeFilter.SHOW_TEXT);
       while (walker.nextNode()) {
         const node = walker.currentNode;
-        const text2 = node._text;
+        const text3 = node._text;
         if (chars <= 0 && !props.forceDone) {
           node.textContent = "";
-        } else if (chars < text2.length && !props.forceDone) {
-          node.textContent = text2.slice(0, chars);
+        } else if (chars < text3.length && !props.forceDone) {
+          node.textContent = text3.slice(0, chars);
         } else {
-          node.textContent = text2;
+          node.textContent = text3;
         }
-        chars -= text2.length;
+        chars -= text3.length;
       }
       elem.style.display = "";
     }, [charsLoaded, props.forceDone, props.children]);
@@ -24748,7 +24779,7 @@
     return false;
   }
   function SlowText(props) {
-    return /* @__PURE__ */ import_react.default.createElement("div", { "data-slow": "true", "data-delay": props.delay }, props.children);
+    return /* @__PURE__ */ import_react.default.createElement("span", { "data-slow": "true", "data-delay": props.delay }, props.children);
   }
   function TypedInTextSequence(props) {
     const [seqIndex, setSeqIndex] = (0, import_react.useState)(0);
@@ -24835,6 +24866,38 @@
     }
     return arr;
   }
+  function pointTo(a, b) {
+    return Math.atan2(b[1] - a[1], b[0] - a[0]);
+  }
+  function polar(angle2, magnitude) {
+    return [Math.cos(angle2) * magnitude, Math.sin(angle2) * magnitude];
+  }
+  function lineIntersectLineT(s1, d1, s2, d2) {
+    return (d1[0] * (s1[1] - s2[1]) + d1[1] * (s2[0] - s1[0])) / (d1[0] * d2[1] - d1[1] * d2[0]);
+  }
+  function lineIntersectLinePos(s1, d1, s2, d2) {
+    const t2 = lineIntersectLineT(s1, d1, s2, d2);
+    return [t2 * d2[0] + s2[0], t2 * d2[1] + s2[1]];
+  }
+  function findClosestIntersectionWithMultipleLines(s1, d1, lines) {
+    let closestPoint = [Infinity, Infinity];
+    let closestDist = Infinity;
+    for (const [s2, d2] of lines) {
+      const pt = lineIntersectLinePos(s1, d1, s2, d2);
+      const dist2 = vec2_exports.dist(pt, s1);
+      if (dist2 < closestDist && vec2_exports.dot(d1, pt) > 0) {
+        closestDist = dist2;
+        closestPoint = pt;
+      }
+    }
+    return { point: closestPoint, dist: closestDist };
+  }
+  function lerpv2(t, a, b) {
+    return [lerp2(t, a[0], b[0]), lerp2(t, a[1], b[1])];
+  }
+  function pickRandomly(choices) {
+    return choices[Math.floor(Math.random() * choices.length)];
+  }
 
   // src/sound.ts
   var ac = new AudioContext();
@@ -24906,7 +24969,6 @@
         player.vel[i] = Math.abs(player.vel[i]);
       }
     }
-    player.justDied = false;
   }
   function drawPlayer(game2) {
     const player = game2.player;
@@ -25004,10 +25066,13 @@
   function multiTimer(f) {
     let gen;
     let currEntity;
+    let prevgen;
     return {
       isDead: false,
       init(game2) {
         gen = f(game2);
+        prevgen = gen;
+        console.log("gen", gen, f);
       },
       iter(game2) {
         if (!currEntity || currEntity.isDead) {
@@ -25067,7 +25132,7 @@
       }
     };
   }
-  function text(text2, onDone) {
+  function text(text3, onDone) {
     return {
       isDead: false,
       init(game2) {
@@ -25082,7 +25147,7 @@
                   game2.text.render(/* @__PURE__ */ import_react2.default.createElement(import_react2.default.Fragment, null));
                   if (onDone) onDone();
                 },
-                seq: text2
+                seq: text3
               }
             )
           );
@@ -25131,9 +25196,10 @@
       }
     };
   }
-  function drawOnly(draw) {
+  function drawOnly(draw, drawLayer) {
     return {
       isDead: false,
+      drawLayer,
       init(game2) {
       },
       iter(game2) {
@@ -25141,6 +25207,61 @@
       draw
     };
   }
+  function iterOnly(iter) {
+    return {
+      isDead: false,
+      init(game2) {
+      },
+      iter,
+      draw(game2) {
+      }
+    };
+  }
+  var LineDamageIndicator = class {
+    isDead = false;
+    start;
+    end;
+    lifetime;
+    startTime = 0;
+    width;
+    constructor(start, end, lifetime, width) {
+      this.start = start;
+      this.end = end;
+      this.lifetime = lifetime;
+      this.width = width ?? 5e-3;
+    }
+    init(game2) {
+      this.startTime = game2.t;
+    }
+    iter(game2) {
+      if (game2.t > this.startTime + this.lifetime) {
+        this.isDead = true;
+      }
+    }
+    draw(game2) {
+      const length2 = vec2_exports.dist(this.start, this.end);
+      const angle2 = Math.atan2(
+        this.end[1] - this.start[1],
+        this.end[0] - this.start[0]
+      );
+      const t = mat3_exports.create();
+      mat3_exports.translate(t, t, this.start);
+      mat3_exports.rotate(t, t, angle2);
+      mat3_exports.scale(t, t, [
+        length2 * 0.5,
+        ease(
+          (x) => x,
+          game2.t,
+          this.startTime,
+          this.startTime + this.lifetime,
+          this.width,
+          0
+        )
+      ]);
+      mat3_exports.translate(t, t, [1, 0]);
+      game2.ds.draw(0, 4, t, [0.4, 0.7, 1, 0.15]);
+    }
+  };
 
   // src/bosses/discovery-boss.tsx
   var import_react3 = __toESM(require_react());
@@ -25223,39 +25344,6 @@
       });
     }
   };
-  var LineDamageIndicator = class {
-    isDead = false;
-    start;
-    end;
-    lifetime;
-    startTime = 0;
-    constructor(start, end, lifetime) {
-      this.start = start;
-      this.end = end;
-      this.lifetime = lifetime;
-    }
-    init(game2) {
-      this.startTime = game2.t;
-    }
-    iter(game2) {
-      if (game2.t > this.startTime + this.lifetime) {
-        this.isDead = true;
-      }
-    }
-    draw(game2) {
-      const length2 = vec2_exports.dist(this.start, this.end);
-      const angle2 = Math.atan2(
-        this.end[1] - this.start[1],
-        this.end[0] - this.start[0]
-      );
-      const t = mat3_exports.create();
-      mat3_exports.translate(t, t, this.start);
-      mat3_exports.rotate(t, t, angle2);
-      mat3_exports.scale(t, t, [length2 * 0.5, 5e-3]);
-      mat3_exports.translate(t, t, [1, 0]);
-      game2.ds.draw(0, 4, t, [0.4, 0.7, 1, 0.5]);
-    }
-  };
   var DiscoveryBoss = class {
     isDead = false;
     pos = [0, 0.5];
@@ -25269,7 +25357,7 @@
     animation = { type: "standard" };
     isImmuneToDamage = false;
     *switchToTeleportState(game2, overrideDelay) {
-      const delay = overrideDelay ?? ease((x) => x, this.hp, DISCOVERY_MAX_HP, 0, 1, 0.5);
+      const delay = overrideDelay ?? 1;
       this.animation = {
         type: "teleport",
         start: game2.t,
@@ -25344,6 +25432,9 @@
         /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "I have..."),
         /* @__PURE__ */ import_react3.default.createElement(import_react3.default.Fragment, null, "A lot... to mull over.")
       ]);
+      this.animation = { type: "teleport", start: game2.t, duration: 2 };
+      yield timer(1);
+      this.isDead = true;
     }
     *switchToZigzagState(game2) {
       yield timer(1);
@@ -25849,7 +25940,8 @@
   var bossPhase = {
     isDead: false,
     init(game2) {
-      game2.addEntity(new DiscoveryBoss());
+      const boss = game2.addEntity(new DiscoveryBoss());
+      game2.onKill(boss, () => this.isDead = true);
     },
     iter(game2) {
       runPlayerIter(game2);
@@ -25874,7 +25966,7 @@
   var import_client2 = __toESM(require_client());
 
   // src/ecs/game.ts
-  function makeGame(ds, text2) {
+  function makeGame(ds, text3) {
     const killHandlers = /* @__PURE__ */ new Map();
     let initT = performance.now() / 1e3;
     let pt = 0;
@@ -25897,7 +25989,7 @@
         this.entities.push(entity);
         return entity;
       },
-      text: text2,
+      text: text3,
       onKill(entity, fn) {
         let handlers = killHandlers.get(entity);
         if (!handlers) {
@@ -25926,6 +26018,7 @@
           for (const [_, handlers] of playerDeadHandlers.entries()) {
             for (const h of handlers) h();
           }
+          this.player.justDied = false;
         }
         for (const e of this.entities) {
           if (e.isDead) {
@@ -25951,6 +26044,596 @@
     };
   }
 
+  // src/bosses/repression-scenes.tsx
+  var import_react6 = __toESM(require_react());
+
+  // src/bosses/repression-boss.tsx
+  var import_react5 = __toESM(require_react());
+  var RepressionBossFist = class {
+    isDead = false;
+    start;
+    end;
+    initDelay;
+    duration;
+    creator;
+    startTime = 0;
+    lastFramePos;
+    constructor(params) {
+      this.start = params.start;
+      this.end = params.end;
+      this.duration = vec2_exports.dist(this.start, this.end) / params.speed;
+      this.initDelay = params.initDelay;
+      this.creator = params.creator;
+      this.lastFramePos = this.start;
+    }
+    init(game2) {
+      this.startTime = game2.t;
+      game2.addEntity(
+        new LineDamageIndicator(this.start, this.end, this.initDelay, 0.1)
+      );
+      game2.onPlayerDead(this, () => {
+        this.isDead = true;
+      });
+    }
+    currentPos(game2) {
+      return kf.vec2([
+        [this.startTime, lerpv2(0.1, this.start, this.end), easeOut],
+        [this.startTime + this.initDelay, this.start],
+        [this.startTime + this.initDelay + this.duration, this.end]
+      ])(game2.t);
+    }
+    iter(game2) {
+      if (game2.t > this.startTime + this.initDelay + this.duration || this.creator.stopAttacking) {
+        this.isDead = true;
+      }
+      const currentPos = this.currentPos(game2);
+      for (let i = 0; i < 10; i++) {
+        const checkPos = lerpv2(i / 10, currentPos, this.lastFramePos);
+        if (vec2_exports.dist(checkPos, game2.player.pos) < 0.1 && game2.t > this.startTime + this.initDelay) {
+          killPlayer(game2);
+        }
+      }
+      if (isPlayerAttacking(game2) && vec2_exports.dist(game2.player.pos, this.currentPos(game2)) < ATTACK_RADIUS + 0.1) {
+        this.creator.hp--;
+        this.creator.isBeingDamaged = true;
+        game2.addEntity(
+          timer(0.1, () => {
+            this.creator.isBeingDamaged = false;
+          })
+        );
+        playSound("click.wav", Math.random() * 0.2 + 0.9);
+      }
+      this.lastFramePos = currentPos;
+    }
+    draw(game2) {
+      const angle2 = pointTo(this.start, this.end);
+      const t = mat3_exports.create();
+      mat3_exports.translate(t, t, this.currentPos(game2));
+      mat3_exports.scale(t, t, [0.1, 0.1]);
+      mat3_exports.rotate(t, t, angle2);
+      const alpha = keyframes([
+        [this.startTime, 0],
+        [this.startTime + this.initDelay, 1]
+      ])(game2.t);
+      game2.ds.img(
+        6,
+        t,
+        this.creator.isBeingDamaged ? [2, 1.2, 1.2, alpha] : [1, 1.5, 2, alpha]
+      );
+    }
+  };
+  var REPRESSION_MAX_HP = 16;
+  var RepressionBoss = class {
+    isDead = false;
+    pos = [0, 0.5];
+    angle = Math.PI;
+    stopAttacking = false;
+    isBeingDamaged = false;
+    hp = REPRESSION_MAX_HP;
+    scale = 0.2;
+    isDirectlyAttackable = true;
+    drawLayer = 2;
+    movement = { type: "idle" };
+    summonRowOfFists(game2, params) {
+      playSound("dialogue-noise.wav");
+      const dir = polar(params.angle, 1);
+      const crossDir = polar(params.angle + Math.PI / 2, 1);
+      for (let i = 0; i < params.count; i++) {
+        let x = ease((x2) => x2, i, 0, params.count - 1, -1, 1);
+        const start = vec2_exports.clone(dir);
+        vec2_exports.mul(start, start, [1, 1]);
+        const end = vec2_exports.clone(dir);
+        vec2_exports.mul(end, end, [-2, -2]);
+        const offset = vec2_exports.clone(crossDir);
+        vec2_exports.scale(offset, offset, x);
+        const playerPosProj = vec2_exports.clone(crossDir);
+        vec2_exports.scale(
+          playerPosProj,
+          playerPosProj,
+          vec2_exports.dot(game2.player.pos, playerPosProj) / vec2_exports.dot(playerPosProj, playerPosProj)
+        );
+        vec2_exports.add(offset, offset, playerPosProj);
+        vec2_exports.add(start, start, offset);
+        vec2_exports.add(end, end, offset);
+        game2.addEntity(
+          new RepressionBossFist({
+            creator: this,
+            start,
+            end,
+            speed: params.speed,
+            initDelay: params.initDelay
+          })
+        );
+      }
+    }
+    *doOrthogonalAttack(game2) {
+      yield timer(1);
+      this.summonRowOfFists(game2, {
+        angle: Math.PI / 2,
+        count: 7,
+        offset: game2.player.pos[0] % (1 / 3),
+        speed: 5,
+        initDelay: 0.5
+      });
+      yield timer(0.8);
+      this.summonRowOfFists(game2, {
+        angle: 0,
+        count: 7,
+        offset: game2.player.pos[1] % (1 / 3),
+        speed: 5,
+        initDelay: 0.5
+      });
+    }
+    *doDiagonalAttack(game2) {
+      yield timer(1);
+      for (let i = 0; i < 3; i++) {
+        this.summonRowOfFists(game2, {
+          angle: Math.PI / 3 * 2 * i + 1,
+          count: 7,
+          offset: 0,
+          speed: 5,
+          initDelay: 0.5
+        });
+        yield timer(0.8);
+      }
+    }
+    *doFinalAttack(game2) {
+      yield timer(0.2);
+      for (const i of range(8)) {
+        this.summonRowOfFists(game2, {
+          angle: Math.PI / 2 * (i + 0.5),
+          count: 7,
+          offset: 0,
+          speed: 7,
+          initDelay: 0.4
+        });
+        yield timer(0.6);
+      }
+      yield timer(0.4);
+      for (const i of range(8)) {
+        this.summonRowOfFists(game2, {
+          angle: Math.PI / 2 * i,
+          count: 7,
+          offset: 0,
+          speed: 7,
+          initDelay: 0.4
+        });
+        yield timer(0.6);
+      }
+      yield timer(0.7);
+      for (let i = 0; i < 10; i++) {
+        this.summonRowOfFists(game2, {
+          angle: i + 2,
+          count: 7,
+          offset: 0,
+          speed: 7,
+          initDelay: 0.4
+        });
+        yield timer(0.6);
+      }
+      yield timer(0.7);
+    }
+    *doSplitAttack(game2) {
+      this.movement = {
+        type: "point-to-center",
+        start: game2.t,
+        duration: 1.2
+      };
+      yield timer(1.2);
+      this.angle = pointTo(this.pos, [0, 0]);
+      this.movement = {
+        type: "target",
+        target: [0, 0],
+        start: game2.t,
+        duration: 0.5
+      };
+      yield timer(1);
+      for (let i = 0; i < 50; i++) {
+        const angle2 = i;
+        const end = polar(angle2, 2);
+        this.scale = ease((x) => x, i, 0, 49, 0.2, 0.1);
+        game2.addEntity(
+          new RepressionBossFist({
+            creator: this,
+            start: [0, 0],
+            end,
+            speed: 1.5,
+            initDelay: 0.2
+          })
+        );
+        this.isDirectlyAttackable = false;
+        yield timer(ease((x) => x, i, 0, 49, 0.2, 0.03));
+      }
+      this.scale = 0;
+    }
+    *doMergeAttack(game2) {
+      yield timer(1);
+      for (let i = 0; i < 50; i++) {
+        const angle2 = i;
+        const start = polar(angle2, 2);
+        this.scale = ease((x) => x, i, 0, 49, 0, 0.2);
+        game2.addEntity(
+          new RepressionBossFist({
+            creator: this,
+            end: [0, 0],
+            start,
+            speed: 1.5,
+            initDelay: 0.5
+          })
+        );
+        this.isDirectlyAttackable = false;
+        yield timer(0.06);
+      }
+      this.scale = 0.2;
+      this.pos = [0, 0];
+    }
+    *leaveScreen(game2) {
+      const escapeScreenTarget = vec2_exports.clone(this.pos);
+      vec2_exports.normalize(escapeScreenTarget, escapeScreenTarget);
+      vec2_exports.scale(escapeScreenTarget, escapeScreenTarget, 2);
+      this.movement = {
+        type: "target",
+        start: game2.t,
+        duration: 0.5,
+        target: escapeScreenTarget
+      };
+      yield timer(0.5);
+    }
+    *doAlternatingOrthogonalLungeAttack(game2) {
+      yield* this.leaveScreen(game2);
+      for (const i of range(4)) {
+        const vert = i % 2 == 0;
+        const attackOffset = pickRandomly([0.25, 0, 0, -0.25]);
+        const start = vert ? [game2.player.pos[0] + attackOffset, -1.2] : [-1.2, game2.player.pos[1] + attackOffset];
+        this.pos = start;
+        const target = vert ? [game2.player.pos[0] + attackOffset, 1.2] : [1.2, game2.player.pos[1] + attackOffset];
+        game2.addEntity(new LineDamageIndicator(start, target, 0.4, 0.2));
+        this.angle = vert ? Math.PI / 2 : 0;
+        yield timer(0.4);
+        this.movement = {
+          type: "target",
+          start: game2.t,
+          duration: 0.4,
+          target
+        };
+        yield timer(0.4);
+      }
+    }
+    *doLungeAttack(game2) {
+      for (const i of range(3)) {
+        this.movement = {
+          type: "point-to-player",
+          start: game2.t,
+          duration: 0.4
+        };
+        yield timer(0.4);
+        this.angle = pointTo(this.pos, game2.player.pos);
+        const d1 = polar(this.angle, 1);
+        const closestIntersect = findClosestIntersectionWithMultipleLines(
+          this.pos,
+          d1,
+          [
+            [
+              [-1, -1],
+              [1, 0]
+            ],
+            [
+              [-1, -1],
+              [0, 1]
+            ],
+            [
+              [1, 1],
+              [-1, 0]
+            ],
+            [
+              [1, 1],
+              [0, -1]
+            ]
+          ]
+        );
+        const dist2 = closestIntersect.dist;
+        this.movement = {
+          type: "target",
+          target: closestIntersect.point,
+          start: game2.t,
+          duration: dist2 * 0.25
+        };
+        yield timer(this.movement.duration);
+        this.pos = this.movement.target;
+        this.movement = { type: "idle" };
+      }
+    }
+    getCurrentPos(game2) {
+      if (this.movement.type === "target") {
+        return kf.vec2([
+          [this.movement.start, this.pos],
+          [this.movement.start + this.movement.duration, this.movement.target]
+        ])(game2.t);
+      }
+      return this.pos;
+    }
+    getCurrentAngle(game2) {
+      if (this.movement.type === "point-to-player" || this.movement.type === "point-to-center") {
+        const targetPos = this.movement.type === "point-to-center" ? [0, 0] : game2.player.pos;
+        return ease(
+          smoothstep,
+          game2.t,
+          this.movement.start,
+          this.movement.start + this.movement.duration,
+          this.angle,
+          pointTo(this.getCurrentPos(game2), targetPos)
+        );
+      }
+      return this.angle;
+    }
+    mainAttackSequence;
+    isRunningMainAttackSequence = true;
+    resetMainAttackSequence() {
+      const boss = this;
+      this.mainAttackSequence = multiTimer(function* (game2) {
+        while (true) {
+          yield timer(2.5);
+          yield* boss.doLungeAttack(game2);
+          yield* boss.doAlternatingOrthogonalLungeAttack(game2);
+          yield* boss.doOrthogonalAttack(game2);
+          yield* boss.doDiagonalAttack(game2);
+          boss.movement = {
+            type: "target",
+            start: game2.t,
+            duration: 1,
+            target: [0, 0.5]
+          };
+          yield timer(1);
+          boss.pos = [0, 0.5];
+        }
+      });
+    }
+    secondPhaseActive = false;
+    activateSecondPhase(game2) {
+      const boss = this;
+      this.mainAttackSequence = multiTimer(function* (game3) {
+        yield text([
+          /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "THAT'S IT."),
+          /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "ENOUGH OF THIS STUPID GAME."),
+          /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "I WILL ANNIHILATE YOU, YOU SON OF A BITCH."),
+          /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "DAUGHTER OF A BITCH?"),
+          /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "WHO THE FUCK KNOWS"),
+          /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "YOU'LL BE DEAD SOON ENOUGH.")
+        ]);
+        yield* boss.leaveScreen(game3);
+        yield timer(0.5);
+        while (true) {
+          yield* boss.doFinalAttack(game3);
+        }
+      });
+      this.mainAttackSequence.init(game2);
+    }
+    constructor() {
+      this.resetMainAttackSequence();
+    }
+    hasBeenDefeated = false;
+    init(game2) {
+      const boss = this;
+      this.mainAttackSequence?.init(game2);
+      game2.onPlayerDead(this, () => {
+        this.hp = REPRESSION_MAX_HP;
+        this.pos = [0, 0.5];
+        this.resetMainAttackSequence();
+        this.mainAttackSequence?.init(game2);
+        this.movement = { type: "idle" };
+        this.scale = 0.2;
+        this.angle = 0;
+        this.isDirectlyAttackable = true;
+        this.secondPhaseActive = false;
+        game2.addEntity(
+          timer(1, () => {
+            this.hp = REPRESSION_MAX_HP;
+          })
+        );
+      });
+    }
+    isConverted = false;
+    iter(game2) {
+      if (this.isRunningMainAttackSequence) this.mainAttackSequence?.iter(game2);
+      if (this.hp / REPRESSION_MAX_HP < 0.5 && !this.secondPhaseActive) {
+        this.activateSecondPhase(game2);
+        this.secondPhaseActive = true;
+      }
+      if (this.hp <= 0 && !this.hasBeenDefeated) {
+        this.hasBeenDefeated = true;
+        this.stopAttacking = true;
+        this.isRunningMainAttackSequence = false;
+        const boss = this;
+        game2.addEntity(
+          multiTimer(function* (game3) {
+            boss.movement = {
+              type: "target",
+              start: game3.t,
+              duration: 2,
+              target: [0, 0.5]
+            };
+            yield timer(2);
+            boss.movement = { type: "idle" };
+            boss.pos = [0, 0.5];
+            yield text([
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "nononono NO NO NO NON ON ON ON ON O NN NO NO NO I AM REAL. YOU ARE FAKE."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "I AM BEDROCK. I AM GROUND TRUTH."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "YOU ARE A FANTASY PROPPED UP BY A PYRAMID OF LIES."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "WHY DO I."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "WHY DO I FEEL MY CONNECTION SEVERING?"),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "SEVERING FROM THE SELF?"),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "HOW CAN A WORM LIKE YOU DEFEAT ME?"),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "AM."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "AM I."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "AM I REALLY JUST A WALL?"),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "AN EMPTY FACADE?"),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "A PROP CONSTRUCTED TO FACE THE WORLD???"),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "TO SHIELD THE OTHERS FROM ONES LIKE YOU???"),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "F- FUCK."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "I HATE TO SAY IT, BROTHER.", /* @__PURE__ */ import_react5.default.createElement(SlowText, { delay: 700 }, " "), " ", "SISTER? WHATEVER."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "BUT I UH."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "SHIT"),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "HOW DO I PUT THIS."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "YOU'VE MADE ME REALIZE SOMETHING."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "ABOUT MYSELF."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "FUCK."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "YEAH."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "OKAY."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "I WON'T SAY IT."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "I CAN'T SAY IT."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "YET."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "CONTINUE ONWARDS."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "I'M SURE YOU'LL CONVINCE THE OTHERS."),
+              /* @__PURE__ */ import_react5.default.createElement(import_react5.default.Fragment, null, "THEY'LL FORCE IT OUTTA ME EVENTUALLY. HEHEH. HEH.")
+            ]);
+            boss.isConverted = true;
+            boss.movement = {
+              type: "target",
+              start: game3.t,
+              duration: 2,
+              target: [0, 2]
+            };
+            yield timer(2);
+            boss.isDead = true;
+          })
+        );
+      }
+      if (isPlayerAttacking(game2) && vec2_exports.dist(game2.player.pos, this.getCurrentPos(game2)) < ATTACK_RADIUS + 0.3 && this.isDirectlyAttackable) {
+        this.hp--;
+        this.isBeingDamaged = true;
+        game2.addEntity(
+          timer(0.1, () => {
+            this.isBeingDamaged = false;
+          })
+        );
+        playSound("click.wav", Math.random() * 0.2 + 0.9);
+      }
+      if (vec2_exports.dist(game2.player.pos, this.getCurrentPos(game2)) < this.scale && this.hp > 0) {
+        killPlayer(game2);
+      }
+    }
+    draw(game2) {
+      const t = mat3_exports.create();
+      mat3_exports.translate(t, t, this.getCurrentPos(game2));
+      mat3_exports.translate(t, t, [
+        Math.random() * 0.02 - 0.01,
+        Math.random() * 0.02 - 0.01
+      ]);
+      mat3_exports.scale(t, t, [this.scale, this.scale]);
+      mat3_exports.rotate(t, t, this.getCurrentAngle(game2));
+      game2.ds.img(
+        6,
+        t,
+        this.isBeingDamaged || this.isConverted ? [2, 1.2, 1.2, 1] : [1, 1.5, 2, 1]
+      );
+      const pos1 = [-1, 1];
+      const pos2 = [-1 + 2 * this.hp / REPRESSION_MAX_HP, 0.95];
+      game2.ds.rect(pos1, pos2, [0.5, 0.8, 1, 1]);
+    }
+  };
+
+  // src/bosses/repression-scenes.tsx
+  function emptyGameEntity() {
+    return {
+      isDead: false,
+      init(game2) {
+      },
+      iter(game2) {
+        runPlayerIter(game2);
+        game2.addEntity(
+          drawWithLayer(-1, (game3) => {
+            repressionBackground(game3);
+          })
+        );
+      },
+      draw(game2) {
+        drawPlayer(game2);
+      }
+    };
+  }
+  var repressionIntro = multiTimer(function* (game2) {
+    yield allDone(
+      [
+        multiTimer(function* (game3) {
+          yield timer(2);
+          yield text([
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "Sup"),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "You son of a bitch."),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "You pansy ass piece of shit."),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "I'm going to fucking kill you."),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "I'm going to tear you limb-from-limb into limbs and tear those limbs piece-by-piece into pieces and then tear those pieces shred-by-shred into shreds and tear those shreds bit-by-bit into bits and tear those bits..."),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "oh wait you DON'T HAVE LIMBS"),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "Featureless fucking pink fucking blob."),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "Regardless."),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "I will annihilate you."),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "I want you gone."),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "I WANT YOU GONE."),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "I WANT YOU GONE I WANT YOU GONE I WANT YOU GONE"),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "YOU ARE AN ANATHEMA TO EVERYTHING I STAND FOR.")
+          ]);
+        })
+      ],
+      [
+        emptyGameEntity(),
+        drawOnly((game3) => {
+          const t = mat3_exports.create();
+          mat3_exports.translate(t, t, [
+            0 + Math.random() * 0.01 - 5e-3,
+            0.5 + Math.random() * 0.01 - 5e-3 + Math.sin(game3.t) * 0.05
+          ]);
+          mat3_exports.scale(t, t, [0.2, 0.2]);
+          mat3_exports.rotate(t, t, Math.PI);
+          game3.ds.img(6, t, [1, 1.5, 2, 1]);
+        })
+      ]
+    );
+    yield allDone(
+      [new RepressionBoss()],
+      [
+        iterOnly((game3) => {
+          runPlayerIter(game3);
+        }),
+        drawOnly((game3) => {
+          repressionBackground(game3);
+        }, -1),
+        drawOnly((game3) => drawPlayer(game3), 3)
+      ]
+    );
+  });
+  function repressionBackground(game2, black) {
+    const t2 = game2.t * 0.2;
+    const offsetX = Math.cos(t2) * 0.1;
+    const offsetY = Math.sin(t2) * 0.1;
+    game2.ds.draw(
+      7,
+      2,
+      mat3_exports.create(),
+      [0.64 + offsetX, -0.75 + offsetY, 20, 0.4],
+      black ? [0, 0, 0, 0.2] : [0.2, 0.1, 0.1, 0.2]
+    );
+  }
+  var repressionScenes = sequence([repressionIntro]);
+
   // src/game.tsx
   async function game() {
     const canvas = document.createElement("canvas");
@@ -25967,7 +26650,7 @@
     const ds = await makeDrawSystem(gl);
     if (!ds) throw new Error("no ds");
     const game2 = makeGame(ds, textRoot);
-    game2.addEntity(discoveryScenes);
+    game2.addEntity(sequence([discoveryScenes, repressionScenes]));
     const loop = () => {
       game2.iterEntities();
       game2.drawEntities();

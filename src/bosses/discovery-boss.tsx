@@ -6,17 +6,21 @@ import { range } from "../util";
 import { playSound } from "../sound";
 import { ease, keyframes, lerp, smoothstep } from "../animation";
 import { Game } from "../ecs/game";
-import { Entity, interval, multiTimer, text, timer } from "../ecs/entity";
+import {
+  Entity,
+  interval,
+  LineDamageIndicator,
+  multiTimer,
+  StopAttackable,
+  text,
+  timer,
+} from "../ecs/entity";
 import React from "react";
 import { SlowText } from "../TypedInText";
 
 const DISCOVERY_MAX_HP = 16;
 const DISCOVERY_SIZE = 0.3;
 const DAMAGE_INDICATOR_COOLDOWN = 15;
-
-interface StopAttackable {
-  stopAttacking: boolean;
-}
 
 class DiscoveryTendril implements Entity {
   speed: number;
@@ -117,44 +121,6 @@ class DiscoveryTendril implements Entity {
   }
 }
 
-export class LineDamageIndicator implements Entity {
-  isDead = false;
-  start: vec2;
-  end: vec2;
-  lifetime: number;
-  startTime: number = 0;
-
-  constructor(start: vec2, end: vec2, lifetime: number) {
-    this.start = start;
-    this.end = end;
-    this.lifetime = lifetime;
-  }
-
-  init(game: Game) {
-    this.startTime = game.t;
-  }
-
-  iter(game: Game) {
-    if (game.t > this.startTime + this.lifetime) {
-      this.isDead = true;
-    }
-  }
-
-  draw(game: Game) {
-    const length = vec2.dist(this.start, this.end);
-    const angle = Math.atan2(
-      this.end[1] - this.start[1],
-      this.end[0] - this.start[0]
-    );
-    const t = mat3.create();
-    mat3.translate(t, t, this.start);
-    mat3.rotate(t, t, angle);
-    mat3.scale(t, t, [length * 0.5, 0.005]);
-    mat3.translate(t, t, [1, 0]);
-    game.ds.draw(0, 4, t, [0.4, 0.7, 1.0, 0.5]);
-  }
-}
-
 export class DiscoveryBoss implements Entity, StopAttackable {
   isDead = false;
   pos = [0, 0.5] as vec2;
@@ -173,8 +139,7 @@ export class DiscoveryBoss implements Entity, StopAttackable {
   isImmuneToDamage = false;
 
   *switchToTeleportState(game: Game, overrideDelay?: number) {
-    const delay =
-      overrideDelay ?? ease((x) => x, this.hp, DISCOVERY_MAX_HP, 0, 1, 0.5);
+    const delay = overrideDelay ?? 1; //ease((x) => x, this.hp, DISCOVERY_MAX_HP, 0, 1, 0.5);
     this.animation = {
       type: "teleport",
       start: game.t,
@@ -272,6 +237,10 @@ export class DiscoveryBoss implements Entity, StopAttackable {
       <>I have...</>,
       <>A lot... to mull over.</>,
     ]);
+
+    this.animation = { type: "teleport", start: game.t, duration: 2 };
+    yield timer(1);
+    this.isDead = true;
   }
 
   *switchToZigzagState(game: Game) {

@@ -1,8 +1,9 @@
-import { vec2 } from "gl-matrix";
+import { mat3, vec2 } from "gl-matrix";
 import { DrawSystem } from "../gl/draw";
 import { Game } from "./game";
 import { TextSeq } from "../TypedInText";
 import React from "react";
+import { ease } from "../animation";
 
 export interface Entity {
   isDead: boolean;
@@ -59,10 +60,13 @@ export function multiTimer(
 ): Entity {
   let gen: ReturnType<typeof f>;
   let currEntity: Entity;
+  let prevgen;
   return {
     isDead: false,
     init(game) {
       gen = f(game);
+      prevgen = gen;
+      console.log("gen", gen, f);
     },
     iter(game) {
       if (!currEntity || currEntity.isDead) {
@@ -188,11 +192,78 @@ export function allDone(
   };
 }
 
-export function drawOnly(draw: (game: Game) => void): Entity {
+export function drawOnly(
+  draw: (game: Game) => void,
+  drawLayer?: number
+): Entity {
   return {
     isDead: false,
+    drawLayer,
     init(game) {},
     iter(game) {},
     draw,
   };
+}
+
+export function iterOnly(iter: (game: Game) => void): Entity {
+  return {
+    isDead: false,
+    init(game) {},
+    iter,
+    draw(game) {},
+  };
+}
+
+export interface StopAttackable {
+  stopAttacking: boolean;
+}
+
+export class LineDamageIndicator implements Entity {
+  isDead = false;
+  start: vec2;
+  end: vec2;
+  lifetime: number;
+  startTime: number = 0;
+  width: number;
+
+  constructor(start: vec2, end: vec2, lifetime: number, width?: number) {
+    this.start = start;
+    this.end = end;
+    this.lifetime = lifetime;
+    this.width = width ?? 0.005;
+  }
+
+  init(game: Game) {
+    this.startTime = game.t;
+  }
+
+  iter(game: Game) {
+    if (game.t > this.startTime + this.lifetime) {
+      this.isDead = true;
+    }
+  }
+
+  draw(game: Game) {
+    const length = vec2.dist(this.start, this.end);
+    const angle = Math.atan2(
+      this.end[1] - this.start[1],
+      this.end[0] - this.start[0]
+    );
+    const t = mat3.create();
+    mat3.translate(t, t, this.start);
+    mat3.rotate(t, t, angle);
+    mat3.scale(t, t, [
+      length * 0.5,
+      ease(
+        (x) => x,
+        game.t,
+        this.startTime,
+        this.startTime + this.lifetime,
+        this.width,
+        0
+      ),
+    ]);
+    mat3.translate(t, t, [1, 0]);
+    game.ds.draw(0, 4, t, [0.4, 0.7, 1.0, 0.15]);
+  }
 }

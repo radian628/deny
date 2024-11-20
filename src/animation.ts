@@ -113,3 +113,40 @@ export function keyframes(
     return values[values.length - 1][1];
   };
 }
+
+export function makeCustomKeyframeGenerator<T>(
+  interpolate: (a: T, b: T, t: number) => T
+) {
+  return (values: ([number, T] | [number, T, (x: number) => number])[]) =>
+    (x: number): T => {
+      if (x < values[0][0]) return values[0][1];
+      for (let i = 0; i < values.length - 1; i++) {
+        let currValue = values[i];
+        let nextValue = values[i + 1];
+
+        const factor = (x - currValue[0]) / (nextValue[0] - currValue[0]);
+
+        if (factor >= 0 && factor < 1) {
+          return interpolate(
+            currValue[1],
+            nextValue[1],
+            currValue[2] ? currValue[2](factor) : factor
+          );
+        }
+      }
+      return values[values.length - 1][1];
+    };
+}
+
+export namespace kf {
+  export const vec2 = makeCustomKeyframeGenerator<vec2>((a, b, t) => [
+    a[0] + (b[0] - a[0]) * t,
+    a[1] + (b[1] - a[1]) * t,
+  ]);
+
+  export const discrete = makeCustomKeyframeGenerator<any>((a, b, t) => a) as <
+    T
+  >(
+    values: [number, T][]
+  ) => (x: number) => T;
+}

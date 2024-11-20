@@ -16,6 +16,7 @@ import { TypedInTextSequence } from "./TypedInText.tsx";
 import React from "react";
 import { makeGame } from "./ecs/game.ts";
 import { sequence, text } from "./ecs/entity.tsx";
+import { repressionScenes } from "./bosses/repression-scenes.tsx";
 
 // testing function not for release
 export async function game() {
@@ -42,7 +43,7 @@ export async function game() {
 
   const game = makeGame(ds, textRoot);
 
-  game.addEntity(discoveryScenes);
+  game.addEntity(sequence([discoveryScenes, repressionScenes]));
 
   const loop = () => {
     game.iterEntities();

@@ -77,6 +77,7 @@ export function makeGame(ds: DrawSystem, text: Root): Game {
         for (const [_, handlers] of playerDeadHandlers.entries()) {
           for (const h of handlers) h();
         }
+        this.player.justDied = false;
       }
       for (const e of this.entities) {
         if (e.isDead) {

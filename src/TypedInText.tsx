@@ -150,9 +150,9 @@ function nodeIsSlow(node: Node | null) {
 
 export function SlowText(props: { delay: number; children: TypedInTextChild }) {
   return (
-    <div data-slow="true" data-delay={props.delay}>
+    <span data-slow="true" data-delay={props.delay}>
       {props.children}
-    </div>
+    </span>
   );
 }
 
