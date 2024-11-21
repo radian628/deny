@@ -43,7 +43,7 @@ const repressionIntro = multiTimer(function* (game: Game) {
         yield text([
           <>Sup</>,
           <>You son of a bitch.</>,
-          <>You pansy ass piece of shit.</>,
+          <>You pathetic, weak, limp noodle.</>,
           <>I'm going to fucking kill you.</>,
           <>
             I'm going to tear you limb-from-limb into limbs and tear those limbs

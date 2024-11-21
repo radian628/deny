@@ -17,6 +17,7 @@ import {
 } from "../ecs/entity";
 import React from "react";
 import { SlowText } from "../TypedInText";
+import { drawHealthBar } from "./common";
 
 const DISCOVERY_MAX_HP = 16;
 const DISCOVERY_SIZE = 0.3;
@@ -409,8 +410,6 @@ export class DiscoveryBoss implements Entity, StopAttackable {
   }
 
   draw(game: Game) {
-    this.displayDiscoveryHealthBar(game.ds);
-
     const bossT = mat3.create();
     mat3.translate(bossT, bossT, this.pos);
     if (this.animation.type == "teleport") {
@@ -435,13 +434,8 @@ export class DiscoveryBoss implements Entity, StopAttackable {
       this.animation.type === "converted" ? 0.4 : 1,
       this.isBeingDamaged || this.animation.type === "converted" ? 5 : 1
     );
-  }
 
-  displayDiscoveryHealthBar(ds: DrawSystem) {
-    const pos1: vec2 = [-1.0, 1.0];
-    const pos2: vec2 = [-1 + (2 * this.hp) / DISCOVERY_MAX_HP, 0.95];
-
-    ds.rect(pos1, pos2, [0.5, 0.8, 1.0, 1.0]);
+    drawHealthBar(game, this.hp, DISCOVERY_MAX_HP);
   }
 }
 

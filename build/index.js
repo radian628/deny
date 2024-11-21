@@ -2388,9 +2388,9 @@
           if (typeof __REACT_DEVTOOLS_GLOBAL_HOOK__ !== "undefined" && typeof __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart === "function") {
             __REACT_DEVTOOLS_GLOBAL_HOOK__.registerInternalModuleStart(new Error());
           }
-          var React7 = require_react();
+          var React8 = require_react();
           var Scheduler = require_scheduler();
-          var ReactSharedInternals = React7.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
+          var ReactSharedInternals = React8.__SECRET_INTERNALS_DO_NOT_USE_OR_YOU_WILL_BE_FIRED;
           var suppressWarning = false;
           function setSuppressWarning(newSuppressWarning) {
             {
@@ -3997,7 +3997,7 @@
             {
               if (props.value == null) {
                 if (typeof props.children === "object" && props.children !== null) {
-                  React7.Children.forEach(props.children, function(child) {
+                  React8.Children.forEach(props.children, function(child) {
                     if (child == null) {
                       return;
                     }
@@ -8544,15 +8544,15 @@
               if (selection.rangeCount === 1 && selection.anchorNode === startMarker.node && selection.anchorOffset === startMarker.offset && selection.focusNode === endMarker.node && selection.focusOffset === endMarker.offset) {
                 return;
               }
-              var range2 = doc.createRange();
-              range2.setStart(startMarker.node, startMarker.offset);
+              var range3 = doc.createRange();
+              range3.setStart(startMarker.node, startMarker.offset);
               selection.removeAllRanges();
               if (start > end) {
-                selection.addRange(range2);
+                selection.addRange(range3);
                 selection.extend(endMarker.node, endMarker.offset);
               } else {
-                range2.setEnd(endMarker.node, endMarker.offset);
-                selection.addRange(range2);
+                range3.setEnd(endMarker.node, endMarker.offset);
+                selection.addRange(range3);
               }
             }
           }
@@ -24398,7 +24398,9 @@
       "arrow.png",
       "inverted-eyeball.png",
       "fist.png",
-      "middlefinger.png"
+      "middlefinger.png",
+      "keyboard.png",
+      "m.png"
     ];
     const images = gl.createTexture();
     gl.bindTexture(gl.TEXTURE_2D_ARRAY, images);
@@ -25262,9 +25264,28 @@
       game2.ds.draw(0, 4, t, [0.4, 0.7, 1, 0.15]);
     }
   };
+  function oneTime(data) {
+    return {
+      happened: false,
+      data,
+      do(f) {
+        if (!this.happened) f(this.data);
+        this.happened = true;
+      }
+    };
+  }
 
   // src/bosses/discovery-boss.tsx
   var import_react3 = __toESM(require_react());
+
+  // src/bosses/common.ts
+  function drawHealthBar(game2, hp, maxhp) {
+    const pos1 = [-1, 1];
+    const pos2 = [-1 + 2 * hp / maxhp, 0.95];
+    game2.ds.rect(pos1, pos2, [0.5, 0.8, 1, 1]);
+  }
+
+  // src/bosses/discovery-boss.tsx
   var DISCOVERY_MAX_HP = 16;
   var DiscoveryTendril = class {
     speed;
@@ -25586,7 +25607,6 @@
       }
     }
     draw(game2) {
-      this.displayDiscoveryHealthBar(game2.ds);
       const bossT = mat3_exports.create();
       mat3_exports.translate(bossT, bossT, this.pos);
       if (this.animation.type == "teleport") {
@@ -25608,11 +25628,7 @@
         this.animation.type === "converted" ? 0.4 : 1,
         this.isBeingDamaged || this.animation.type === "converted" ? 5 : 1
       );
-    }
-    displayDiscoveryHealthBar(ds) {
-      const pos1 = [-1, 1];
-      const pos2 = [-1 + 2 * this.hp / DISCOVERY_MAX_HP, 0.95];
-      ds.rect(pos1, pos2, [0.5, 0.8, 1, 1]);
+      drawHealthBar(game2, this.hp, DISCOVERY_MAX_HP);
     }
   };
   function discoveryBackground(game2, black) {
@@ -26547,9 +26563,7 @@
         t,
         this.isBeingDamaged || this.isConverted ? [2, 1.2, 1.2, 1] : [1, 1.5, 2, 1]
       );
-      const pos1 = [-1, 1];
-      const pos2 = [-1 + 2 * this.hp / REPRESSION_MAX_HP, 0.95];
-      game2.ds.rect(pos1, pos2, [0.5, 0.8, 1, 1]);
+      drawHealthBar(game2, this.hp, REPRESSION_MAX_HP);
     }
   };
 
@@ -26581,7 +26595,7 @@
           yield text([
             /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "Sup"),
             /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "You son of a bitch."),
-            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "You pansy ass piece of shit."),
+            /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "You pathetic, weak, limp noodle."),
             /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "I'm going to fucking kill you."),
             /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "I'm going to tear you limb-from-limb into limbs and tear those limbs piece-by-piece into pieces and then tear those pieces shred-by-shred into shreds and tear those shreds bit-by-bit into bits and tear those bits..."),
             /* @__PURE__ */ import_react6.default.createElement(import_react6.default.Fragment, null, "oh wait you DON'T HAVE LIMBS"),
@@ -26636,6 +26650,198 @@
   }
   var repressionScenes = sequence([repressionIntro]);
 
+  // src/bosses/intellectualization-boss.tsx
+  var import_react7 = __toESM(require_react());
+  var SimpleProjectile = class {
+    isDead = false;
+    start;
+    direction;
+    speed;
+    lifetime;
+    size;
+    startTime = 0;
+    constructor(start, direction, speed, lifetime, size) {
+      this.start = start;
+      this.direction = direction;
+      this.speed = speed;
+      this.lifetime = lifetime;
+      this.size = size;
+    }
+    init(game2) {
+      this.startTime = game2.t;
+      game2.onPlayerDead(this, () => {
+        this.isDead = true;
+      });
+    }
+    iter(game2) {
+      if (game2.t > this.startTime + this.lifetime) this.isDead = true;
+      if (vec2_exports.dist(this.getCurrentPos(game2), game2.player.pos) < this.size) {
+        killPlayer(game2);
+      }
+    }
+    getCurrentPos(game2) {
+      const pos = vec2_exports.clone(this.start);
+      const offset = (game2.t - this.startTime) * this.speed;
+      vec2_exports.add(pos, pos, polar(this.direction, offset));
+      return pos;
+    }
+    draw(game2) {
+      const t = mat3_exports.create();
+      mat3_exports.translate(t, t, this.getCurrentPos(game2));
+      mat3_exports.scale(t, t, [this.size, this.size]);
+      game2.ds.img(9, t, [0.5, 0.7, 1, 1]);
+    }
+  };
+  var IntellectualizationBoss = class {
+    isDead = false;
+    drawLayer = 2;
+    hp = 5;
+    pos = [0, 0.5];
+    phase = oneTime({ type: "intro" });
+    movement = { type: "idle" };
+    mainAttackSequence;
+    getCurrentPos(game2) {
+      if (this.movement.type === "move") {
+        return kf.vec2([
+          [this.movement.start, this.pos, smoothstep],
+          [this.movement.start + this.movement.duration, this.movement.target]
+        ])(game2.t);
+      }
+      return this.pos;
+    }
+    *newMainAttackSequence(game2) {
+      yield timer(1.5);
+      const boss = this;
+      game2.addEntity(
+        multiTimer(function* () {
+          yield timer(8);
+          boss.movement = {
+            type: "move",
+            start: game2.t,
+            duration: 1,
+            target: [-0.75, -0.3]
+          };
+          yield timer(1);
+          boss.pos = [-0.75, -0.3];
+        })
+      );
+      let x = 0;
+      while (true) {
+        const angle2 = x * Math.PI * (3 - Math.sqrt(5));
+        game2.addEntity(new SimpleProjectile([0, 0.5], angle2, 0.2, 10, 0.05));
+        x++;
+        yield timer(0.05);
+      }
+    }
+    doPhaseInit(game2) {
+      const phase = this.phase.data;
+      const boss = this;
+      if (phase.type === "intro") {
+        game2.addEntity(
+          multiTimer(function* (game3) {
+            yield timer(2);
+            yield text([
+              /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, "Just FYI the game is unfinished past this point."),
+              /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, "So all the content after this point is buggy as hell."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ A foreign object has entered my killsphere."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It is approximately 0.27 of me in diameter and is vec4(1.0, 0.7, 0.7, 1.0) in hue."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It is to be dissected into its component parts, decompiled so that its individual pieces may be processed and assimilated on our own standards."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ As our master declared its own standards are to be expressly ", /* @__PURE__ */ import_react7.default.createElement("em", null, "ignored.")),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ Enabling multithreaded assault mode.")
+            ]);
+            boss.phase = oneTime({ type: "boss" });
+          })
+        );
+      }
+      if (phase.type === "boss") {
+        this.mainAttackSequence = multiTimer(
+          this.newMainAttackSequence.bind(this)
+        );
+        this.mainAttackSequence.init(game2);
+      }
+      if (phase.type === "defeat") {
+        game2.addEntity(
+          multiTimer(function* (game3) {
+            yield timer(2);
+            yield text([
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ Error: Reduction to basal components failed."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ Process ended with exit code -1."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ Any reductive analysis of this being, this (MANUAL OVERRIDE: DENY DENY DENY ERASE IT ERASE IT DO NOT NAME IT GENERALITIES ONLY) cannot meaningfully split it apart."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It can only be assimilated on its own terms."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "It will be assimilated on its own terms."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ And."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ The most surprising yet certain phenomenon (p < 0.001) is as follows:"),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It is created out of the same substance as ourselves.")
+            ]);
+            boss.isDead = true;
+          })
+        );
+      }
+    }
+    doPhaseIter(game2) {
+      if (this.phase.data.type === "boss") {
+        this.mainAttackSequence?.iter(game2);
+      }
+    }
+    init(game2) {
+      game2.onPlayerDead(this, () => {
+        this.phase = oneTime({ type: "boss" });
+      });
+    }
+    hasBeenDefeated = false;
+    iter(game2) {
+      this.phase.do((phase) => {
+        this.doPhaseInit(game2);
+      });
+      this.doPhaseIter(game2);
+      if (isPlayerAttacking(game2) && vec2_exports.dist(this.getCurrentPos(game2), game2.player.pos) < ATTACK_RADIUS + 0.2) {
+        this.hp--;
+      }
+      if (this.hp <= 0 && !this.hasBeenDefeated) {
+        this.hasBeenDefeated = true;
+        this.phase = oneTime({ type: "defeat" });
+      }
+    }
+    draw(game2) {
+      const t = mat3_exports.create();
+      mat3_exports.translate(t, t, this.getCurrentPos(game2));
+      mat3_exports.scale(t, t, [0.2, 0.2]);
+      const s = 1.8;
+      const t2 = mat3_exports.create();
+      mat3_exports.translate(t2, t2, [0, 0.5]);
+      mat3_exports.scale(t2, t2, [0.2, 0.2]);
+      game2.ds.draw(9, 3, t2, [-0.5, -0.5, 0.8 + game2.t, 2], [-s, -s, s, s]);
+      game2.ds.img(9, t, [1, 1, 1, 1]);
+      drawHealthBar(game2, this.hp, 5);
+    }
+  };
+
+  // src/bosses/intellectualization-scenes.tsx
+  var intellectualizationScenes = allDone(
+    [new IntellectualizationBoss()],
+    [
+      iterOnly((game2) => {
+        runPlayerIter(game2);
+      }),
+      drawOnly((game2) => {
+        intellectualizationBackground(game2);
+      }, -1),
+      drawOnly((game2) => drawPlayer(game2), 3)
+    ]
+  );
+  function intellectualizationBackground(game2, black) {
+    const t2 = game2.t * 0.05;
+    const offsetX = Math.cos(t2) * 0.2;
+    const offsetY = Math.sin(t2) * 0.2;
+    game2.ds.draw(
+      8,
+      2,
+      mat3_exports.create(),
+      [0.64 + offsetX, -0.75 + offsetY, 8, 0.4],
+      black ? [0, 0, 0, 0.2] : [0.15, 0.15, 0.15, 0.05]
+    );
+  }
+
   // src/game.tsx
   async function game() {
     const canvas = document.createElement("canvas");
@@ -26654,7 +26860,13 @@
     const game2 = makeGame(ds, textRoot);
     const skip = new URLSearchParams(window.location.search).get("skip");
     const startAt = Number(skip) || 0;
-    game2.addEntity(sequence([discoveryScenes, repressionScenes].slice(startAt)));
+    game2.addEntity(
+      sequence(
+        [discoveryScenes, repressionScenes, intellectualizationScenes].slice(
+          startAt
+        )
+      )
+    );
     const loop = () => {
       game2.iterEntities();
       game2.drawEntities();

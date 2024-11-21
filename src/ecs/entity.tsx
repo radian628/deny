@@ -267,3 +267,20 @@ export class LineDamageIndicator implements Entity {
     game.ds.draw(0, 4, t, [0.4, 0.7, 1.0, 0.15]);
   }
 }
+
+export type OneTimeEvent<T> = {
+  happened: boolean;
+  data: T;
+  do: (f: (data: T) => void) => void;
+};
+
+export function oneTime<T>(data: T): OneTimeEvent<T> {
+  return {
+    happened: false,
+    data,
+    do(f) {
+      if (!this.happened) f(this.data);
+      this.happened = true;
+    },
+  };
+}

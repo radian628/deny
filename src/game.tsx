@@ -17,6 +17,7 @@ import React from "react";
 import { makeGame } from "./ecs/game.ts";
 import { sequence, text } from "./ecs/entity.tsx";
 import { repressionScenes } from "./bosses/repression-scenes.tsx";
+import { intellectualizationScenes } from "./bosses/intellectualization-scenes.tsx";
 
 // testing function not for release
 export async function game() {
@@ -47,7 +48,13 @@ export async function game() {
 
   const startAt = Number(skip) || 0;
 
-  game.addEntity(sequence([discoveryScenes, repressionScenes].slice(startAt)));
+  game.addEntity(
+    sequence(
+      [discoveryScenes, repressionScenes, intellectualizationScenes].slice(
+        startAt
+      )
+    )
+  );
 
   const loop = () => {
     game.iterEntities();

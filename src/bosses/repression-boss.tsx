@@ -21,6 +21,7 @@ import { ATTACK_RADIUS, isPlayerAttacking, killPlayer } from "../ecs/player";
 import { playSound } from "../sound";
 import React from "react";
 import { SlowText } from "../TypedInText";
+import { drawHealthBar } from "./common";
 
 export class RepressionBossFist implements Entity {
   isDead = false;
@@ -638,9 +639,6 @@ export class RepressionBoss implements Entity, StopAttackable {
         : [1.0, 1.5, 2.0, 1.0]
     );
 
-    const pos1: vec2 = [-1.0, 1.0];
-    const pos2: vec2 = [-1 + (2 * this.hp) / REPRESSION_MAX_HP, 0.95];
-
-    game.ds.rect(pos1, pos2, [0.5, 0.8, 1.0, 1.0]);
+    drawHealthBar(game, this.hp, REPRESSION_MAX_HP);
   }
 }
