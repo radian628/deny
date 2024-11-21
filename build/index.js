@@ -26743,6 +26743,7 @@
             yield text([
               /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, "Just FYI the game is unfinished past this point."),
               /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, "So all the content after this point is buggy as hell."),
+              /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, "OKAY RESUMING NORMAL GAME"),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ A foreign object has entered my killsphere."),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It is approximately 0.27 of me in diameter and is vec4(1.0, 0.7, 0.7, 1.0) in hue."),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It is to be dissected into its component parts, decompiled so that its individual pieces may be processed and assimilated on our own standards."),

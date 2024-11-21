@@ -145,6 +145,7 @@ export class IntellectualizationBoss implements Entity {
           yield text([
             <>Just FYI the game is unfinished past this point.</>,
             <>So all the content after this point is buggy as hell.</>,
+            <>OKAY RESUMING NORMAL GAME</>,
             <code>self:~$ A foreign object has entered my killsphere.</code>,
             <code>
               self:~$ It is approximately 0.27 of me in diameter and is
