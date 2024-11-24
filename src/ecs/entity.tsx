@@ -66,7 +66,6 @@ export function multiTimer(
     init(game) {
       gen = f(game);
       prevgen = gen;
-      console.log("gen", gen, f);
     },
     iter(game) {
       if (!currEntity || currEntity.isDead) {

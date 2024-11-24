@@ -24676,27 +24676,67 @@
   // src/TypedInText.tsx
   var import_react = __toESM(require_react());
   var import_client = __toESM(require_client());
-  function useDialogueNoise() {
-    const [noise, setNoise] = (0, import_react.useState)();
-    (0, import_react.useEffect)(() => {
-      if (noise) return;
-      (async () => {
-        const ac2 = new AudioContext();
-        const file = await fetch("dialogue-noise.wav");
-        const buf = await file.arrayBuffer();
-        const audio = await ac2.decodeAudioData(buf);
-        setNoise(audio);
-      })();
-    }, []);
-    return noise;
+
+  // src/sound.ts
+  var ac = new AudioContext();
+  var soundCache = /* @__PURE__ */ new Map();
+  async function fetchAudio(url) {
+    let audio = soundCache.get(url);
+    if (!audio) {
+      const file = await fetch(url);
+      const buf = await file.arrayBuffer();
+      audio = await ac.decodeAudioData(buf);
+    }
+    return audio;
   }
+  async function createSoundWithPitchAndGain(audio, pitch, gain) {
+    const track = new AudioBufferSourceNode(ac, {
+      buffer: audio,
+      playbackRate: pitch
+    });
+    const gainNode = new GainNode(ac, {
+      gain: gain ?? 1
+    });
+    track.connect(gainNode);
+    gainNode.connect(ac.destination);
+    return track;
+  }
+  async function playSound(url, pitch, gain) {
+    const track = await createSoundWithPitchAndGain(
+      await fetchAudio(url),
+      pitch,
+      gain
+    );
+    track.start();
+    return track;
+  }
+  async function loopSound(url, pitch, gain) {
+    const audio = await fetchAudio(url);
+    const track = await createSoundWithPitchAndGain(audio, pitch, gain);
+    track.loop = true;
+    track.start();
+    return track;
+  }
+  function mutuallyExclusiveSound() {
+    let track;
+    return {
+      async play(url, loop) {
+        track?.stop();
+        track = loop ? await loopSound(url) : await playSound(url);
+      },
+      stop() {
+        track?.stop();
+      }
+    };
+  }
+
+  // src/TypedInText.tsx
   function TypedInText(props) {
     const ref = (0, import_react.useRef)(null);
     const [charsLoaded, setCharsLoaded] = (0, import_react.useState)(0);
     const allTextRef = (0, import_react.useRef)("");
     const delaysRef = (0, import_react.useRef)([]);
     const rootRef = (0, import_react.useRef)();
-    const dialogueNoise = useDialogueNoise();
     (0, import_react.useEffect)(() => {
       setCharsLoaded(0);
       allTextRef.current = "";
@@ -24721,17 +24761,7 @@
             props.done?.();
           } else {
             setCharsLoaded((l) => l + 1);
-            if (!dialogueNoise) return;
-            const ac2 = new AudioContext();
-            const track = new AudioBufferSourceNode(ac2, {
-              buffer: dialogueNoise,
-              playbackRate: Math.random() * 0.75 + 0.5
-            });
-            const gain = ac2.createGain();
-            gain.gain.setValueAtTime(0.2, 0);
-            track.connect(gain);
-            gain.connect(ac2.destination);
-            track.start();
+            playSound("dialogue-noise.wav", 0.3 * Math.random() + 0.6, 0.04);
           }
         },
         charsLoaded === 0 ? 100 : currentChar.match(/\.|\?|\!/g) ? 250 : currentChar.match(/\,/g) ? 100 : delaysRef.current[charsLoaded - 1] ?? 20
@@ -24901,28 +24931,6 @@
     return choices[Math.floor(Math.random() * choices.length)];
   }
 
-  // src/sound.ts
-  var ac = new AudioContext();
-  var soundCache = /* @__PURE__ */ new Map();
-  async function playSound(url, pitch, gain) {
-    let audio = soundCache.get(url);
-    if (!audio) {
-      const file = await fetch(url);
-      const buf = await file.arrayBuffer();
-      audio = await ac.decodeAudioData(buf);
-    }
-    const track = new AudioBufferSourceNode(ac, {
-      buffer: audio,
-      playbackRate: pitch
-    });
-    const gainNode = new GainNode(ac, {
-      gain: gain ?? 1
-    });
-    track.connect(gainNode);
-    gainNode.connect(ac.destination);
-    track.start();
-  }
-
   // src/ecs/player.ts
   var keysPressed = {};
   document.addEventListener("keydown", (e) => {
@@ -24951,7 +24959,7 @@
     player.pos[1] += player.vel[1] * game2.dt;
     player.vel[0] *= 0;
     player.vel[1] *= 0;
-    const playerStepSize = PLAYER_ACCEL * 1 / 60;
+    const playerStepSize = PLAYER_ACCEL * 1 / 60 * (keysPressed.c ? 0.3 : 1);
     if (keysPressed.arrowup) player.vel[1] += playerStepSize;
     if (keysPressed.arrowleft) player.vel[0] -= playerStepSize;
     if (keysPressed.arrowdown) player.vel[1] -= playerStepSize;
@@ -25074,7 +25082,6 @@
       init(game2) {
         gen = f(game2);
         prevgen = gen;
-        console.log("gen", gen, f);
       },
       iter(game2) {
         if (!currEntity || currEntity.isDead) {
@@ -25673,6 +25680,7 @@
     game2.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
   }
   var introText = multiTimer(function* (game2) {
+    game2.backingTrack.play("audio/DenyIntro_Background.flac", true);
     yield allDone(
       [text([/* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "A thing!"), /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "In our domain!"), /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "In the periphery!")])],
       [
@@ -25686,7 +25694,10 @@
     yield allDone(
       [
         multiTimer(function* (game3) {
-          yield timer(8);
+          yield timer(3);
+          game3.eventDrivenSound.play("audio/DenyIntro_Whispers.flac", false);
+          yield timer(5);
+          game3.eventDrivenSound2.play("audio/DenyIntro_Shrill.flac", false);
           yield text([
             /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "It seems very. Peculiar. Odd. Interesting. Enticing. Strange. Weird."),
             /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Perhaps if I...")
@@ -25792,6 +25803,9 @@
           drawExplodedPlayer();
           if (t > 4) {
             if (!playerExploded) {
+              game3.eventDrivenSound2.stop();
+              playSound("click.wav", 1, 4);
+              playSound("player-death.wav", 0.25, 1);
               playerExploded = true;
               for (const pp of playerPieces) {
                 pp.vel = [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1];
@@ -25806,6 +25820,7 @@
       ]
     );
     start = game2.t;
+    let hasPlayerRespawned = false;
     yield allDone(
       [
         multiTimer(function* () {
@@ -25838,6 +25853,10 @@
           if (t > 3) {
             const playerSize = Math.sin(game3.t * 10 * Math.PI * 2) * 5e-3 + 0.02;
             game3.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+            if (!hasPlayerRespawned) {
+              hasPlayerRespawned = true;
+              playSound("audio/DenyIntro_Respawn.flac");
+            }
           }
           const bossT = mat3_exports.create();
           mat3_exports.translate(bossT, bossT, vec2_exports.fromValues(0, 0.5));
@@ -25883,10 +25902,11 @@
       }
       drawPlayer(game2);
       if (isPlayerAttacking(game2) && this.showAttackTutorial && vec2_exports.dist(game2.player.pos, [0, 0.5]) < ATTACK_RADIUS + 0.3) {
-        playSound("discovery-hurt.wav", Math.random() * 0.1 + 0.2);
+        playSound("audio/DenyIntro_Attack.flac");
         this.isDead = true;
       }
       if ((game2.player.pos[0] !== 0 || game2.player.pos[1] !== 0) && this.playerHasntMovedYet) {
+        game2.eventDrivenSound.play("audio/DenyIntro_Movement.flac", false);
         this.playerHasntMovedYet = false;
         game2.addEntity(
           timer(1.5, () => {
@@ -25916,9 +25936,10 @@
     isDead: false,
     start: 0,
     init(game2) {
+      const cutscene = this;
       game2.addEntity(
-        text(
-          [
+        multiTimer(function* (game3) {
+          yield text([
             /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Oh..."),
             /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "It... intersected me."),
             /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "It was rather..."),
@@ -25927,12 +25948,17 @@
             /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "That is."),
             /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Quite."),
             /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Questionable. Unsettling."),
-            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Enticing."),
-            /* @__PURE__ */ import_react4.default.createElement(SlowText, { delay: 300 }, /* @__PURE__ */ import_react4.default.createElement("em", null, "Dangerous. . .")),
-            /* @__PURE__ */ import_react4.default.createElement(SlowText, { delay: 200 }, "I cannot allow such a being to live.")
-          ],
-          () => this.isDead = true
-        )
+            /* @__PURE__ */ import_react4.default.createElement(import_react4.default.Fragment, null, "Enticing.")
+          ]);
+          game3.eventDrivenSound.play("audio/DenyIntro_Anger.flac", false);
+          yield text(
+            [
+              /* @__PURE__ */ import_react4.default.createElement(SlowText, { delay: 300 }, /* @__PURE__ */ import_react4.default.createElement("em", null, "Dangerous. . .")),
+              /* @__PURE__ */ import_react4.default.createElement(SlowText, { delay: 200 }, "I cannot allow such a being to live.")
+            ],
+            () => cutscene.isDead = true
+          );
+        })
       );
     },
     iter(game2) {
@@ -25988,6 +26014,9 @@
     let pt = 0;
     const playerDeadHandlers = /* @__PURE__ */ new Map();
     return {
+      backingTrack: mutuallyExclusiveSound(),
+      eventDrivenSound: mutuallyExclusiveSound(),
+      eventDrivenSound2: mutuallyExclusiveSound(),
       entities: [],
       player: {
         pos: [0, 0],
@@ -26654,18 +26683,21 @@
   var import_react7 = __toESM(require_react());
   var SimpleProjectile = class {
     isDead = false;
+    drawLayer = 3;
     start;
     direction;
     speed;
     lifetime;
     size;
     startTime = 0;
-    constructor(start, direction, speed, lifetime, size) {
+    creator;
+    constructor(creator, start, direction, speed, lifetime, size) {
       this.start = start;
       this.direction = direction;
       this.speed = speed;
       this.lifetime = lifetime;
       this.size = size;
+      this.creator = creator;
     }
     init(game2) {
       this.startTime = game2.t;
@@ -26674,7 +26706,8 @@
       });
     }
     iter(game2) {
-      if (game2.t > this.startTime + this.lifetime) this.isDead = true;
+      if (game2.t > this.startTime + this.lifetime || this.creator.stopAttacking)
+        this.isDead = true;
       if (vec2_exports.dist(this.getCurrentPos(game2), game2.player.pos) < this.size) {
         killPlayer(game2);
       }
@@ -26692,11 +26725,74 @@
       game2.ds.img(9, t, [0.5, 0.7, 1, 1]);
     }
   };
+  var AttackTiedEntity = class {
+    isDead = false;
+    entity;
+    creator;
+    constructor(creator, entity) {
+      this.creator = creator;
+      this.entity = entity;
+    }
+    init(game2) {
+      this.entity.init(game2);
+    }
+    iter(game2) {
+      this.entity.iter(game2);
+      if (this.entity.isDead || this.creator.stopAttacking) {
+        this.isDead = true;
+        this.entity.isDead = true;
+      }
+    }
+    draw(game2) {
+      this.entity.draw(game2);
+    }
+  };
+  var ProjectileSpawner = class {
+    isDead = false;
+    creator;
+    pos;
+    duration;
+    start = 0;
+    pattern;
+    constructor(creator, pos, duration, pattern) {
+      this.creator = creator;
+      this.pos = pos;
+      this.duration = duration;
+      this.pattern = pattern;
+    }
+    mainseq;
+    init(game2) {
+      this.start = game2.t;
+      const self = this;
+      this.mainseq = multiTimer((game3) => this.pattern(this, game3));
+      this.mainseq?.init(game2);
+    }
+    iter(game2) {
+      if (game2.t > this.start + this.duration) this.isDead = true;
+      this.mainseq?.iter(game2);
+    }
+    draw(game2) {
+      const t = mat3_exports.create();
+      mat3_exports.translate(t, t, this.pos);
+      mat3_exports.rotate(t, t, game2.t * 5);
+      mat3_exports.scale(t, t, [0.06, 0.06]);
+      game2.ds.img(9, t, [1, 1, 1, 1]);
+    }
+  };
+  var INTELLECTUALIZATION_MAX_HP = 30;
   var IntellectualizationBoss = class {
     isDead = false;
     drawLayer = 2;
-    hp = 5;
+    hp = INTELLECTUALIZATION_MAX_HP;
+    stopAttacking = false;
     pos = [0, 0.5];
+    standardPositions = [
+      [-0.7, -0.7],
+      [0.7, -0.7],
+      [0.7, 0.7],
+      [-0.7, 0.7]
+    ];
+    nextPosIndex = 0;
     phase = oneTime({ type: "intro" });
     movement = { type: "idle" };
     mainAttackSequence;
@@ -26713,54 +26809,59 @@
       yield timer(1.5);
       const boss = this;
       game2.addEntity(
-        multiTimer(function* () {
-          yield timer(8);
-          boss.movement = {
-            type: "move",
-            start: game2.t,
-            duration: 1,
-            target: [-0.75, -0.3]
-          };
-          yield timer(1);
-          boss.pos = [-0.75, -0.3];
-        })
+        new AttackTiedEntity(
+          this,
+          new ProjectileSpawner(this, [0, 0], Infinity, function* (spawner, game3) {
+            let x = 0;
+            while (true) {
+              const angle2 = x * Math.PI * (3 - Math.sqrt(5));
+              game3.addEntity(
+                new SimpleProjectile(
+                  spawner.creator,
+                  spawner.pos,
+                  angle2,
+                  0.2,
+                  10,
+                  0.05
+                )
+              );
+              x++;
+              yield timer(0.05);
+            }
+          })
+        )
       );
-      let x = 0;
-      while (true) {
-        const angle2 = x * Math.PI * (3 - Math.sqrt(5));
-        game2.addEntity(new SimpleProjectile([0, 0.5], angle2, 0.2, 10, 0.05));
-        x++;
-        yield timer(0.05);
-      }
+      yield timer(1);
     }
     doPhaseInit(game2) {
       const phase = this.phase.data;
       const boss = this;
+      this.nextPosIndex = 0;
       if (phase.type === "intro") {
         game2.addEntity(
           multiTimer(function* (game3) {
             yield timer(2);
             yield text([
-              /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, "Just FYI the game is unfinished past this point."),
-              /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, "So all the content after this point is buggy as hell."),
-              /* @__PURE__ */ import_react7.default.createElement(import_react7.default.Fragment, null, "OKAY RESUMING NORMAL GAME"),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ A foreign object has entered my killsphere."),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It is approximately 0.27 of me in diameter and is vec4(1.0, 0.7, 0.7, 1.0) in hue."),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It is to be dissected into its component parts, decompiled so that its individual pieces may be processed and assimilated on our own standards."),
-              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ As our master declared its own standards are to be expressly ", /* @__PURE__ */ import_react7.default.createElement("em", null, "ignored.")),
-              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ Enabling multithreaded assault mode.")
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ As our master declared its own standards are to be expressly ", /* @__PURE__ */ import_react7.default.createElement("em", null, "ignored."))
             ]);
             boss.phase = oneTime({ type: "boss" });
           })
         );
       }
       if (phase.type === "boss") {
+        this.hp = INTELLECTUALIZATION_MAX_HP;
+        this.pos = [0, 0.5];
+        this.stopAttacking = false;
         this.mainAttackSequence = multiTimer(
           this.newMainAttackSequence.bind(this)
         );
         this.mainAttackSequence.init(game2);
       }
       if (phase.type === "defeat") {
+        this.stopAttacking = true;
         game2.addEntity(
           multiTimer(function* (game3) {
             yield timer(2);
@@ -26769,12 +26870,21 @@
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ Process ended with exit code -1."),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ Any reductive analysis of this being, this (MANUAL OVERRIDE: DENY DENY DENY ERASE IT ERASE IT DO NOT NAME IT GENERALITIES ONLY) cannot meaningfully split it apart."),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It can only be assimilated on its own terms."),
-              /* @__PURE__ */ import_react7.default.createElement("code", null, "It will be assimilated on its own terms."),
+              /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It will be assimilated on its own terms."),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ And."),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ The most surprising yet certain phenomenon (p < 0.001) is as follows:"),
               /* @__PURE__ */ import_react7.default.createElement("code", null, "self:~$ It is created out of the same substance as ourselves.")
             ]);
             boss.isDead = true;
+          })
+        );
+      }
+      if (phase.type === "player-death") {
+        game2.addEntity(
+          multiTimer(function* (game3) {
+            boss.stopAttacking = true;
+            yield timer(1);
+            boss.phase = oneTime({ type: "boss" });
           })
         );
       }
@@ -26786,8 +26896,21 @@
     }
     init(game2) {
       game2.onPlayerDead(this, () => {
-        this.phase = oneTime({ type: "boss" });
+        this.phase = oneTime({ type: "player-death" });
       });
+    }
+    teleportToNextPosition(game2) {
+      const boss = this;
+      game2.addEntity(
+        multiTimer(function* () {
+          boss.movement = { type: "teleport", start: game2.t, duration: 1 };
+          yield timer(0.5);
+          boss.pos = boss.hp == 0 ? [0, 0] : boss.standardPositions[boss.nextPosIndex];
+          boss.nextPosIndex = (boss.nextPosIndex + 1) % boss.standardPositions.length;
+          yield timer(0.5);
+          boss.movement = { type: "idle" };
+        })
+      );
     }
     hasBeenDefeated = false;
     iter(game2) {
@@ -26795,8 +26918,10 @@
         this.doPhaseInit(game2);
       });
       this.doPhaseIter(game2);
-      if (isPlayerAttacking(game2) && vec2_exports.dist(this.getCurrentPos(game2), game2.player.pos) < ATTACK_RADIUS + 0.2) {
+      if (isPlayerAttacking(game2) && vec2_exports.dist(this.getCurrentPos(game2), game2.player.pos) < ATTACK_RADIUS + 0.2 && this.phase.data.type === "boss" && this.movement.type !== "teleport") {
         this.hp--;
+        const boss = this;
+        this.teleportToNextPosition(game2);
       }
       if (this.hp <= 0 && !this.hasBeenDefeated) {
         this.hasBeenDefeated = true;
@@ -26806,14 +26931,22 @@
     draw(game2) {
       const t = mat3_exports.create();
       mat3_exports.translate(t, t, this.getCurrentPos(game2));
-      mat3_exports.scale(t, t, [0.2, 0.2]);
+      if (this.movement.type === "teleport") {
+        mat3_exports.scale(t, t, [
+          keyframes([
+            [this.movement.start, 0.2, smoothstep],
+            [this.movement.start + this.movement.duration * 0.1, 0, smoothstep],
+            [this.movement.start + this.movement.duration * 0.9, 0, smoothstep],
+            [this.movement.start + this.movement.duration, 0.2]
+          ])(game2.t),
+          0.2
+        ]);
+      } else {
+        mat3_exports.scale(t, t, [0.2, 0.2]);
+      }
       const s = 1.8;
-      const t2 = mat3_exports.create();
-      mat3_exports.translate(t2, t2, [0, 0.5]);
-      mat3_exports.scale(t2, t2, [0.2, 0.2]);
-      game2.ds.draw(9, 3, t2, [-0.5, -0.5, 0.8 + game2.t, 2], [-s, -s, s, s]);
       game2.ds.img(9, t, [1, 1, 1, 1]);
-      drawHealthBar(game2, this.hp, 5);
+      drawHealthBar(game2, this.hp, INTELLECTUALIZATION_MAX_HP);
     }
   };
 
@@ -26881,7 +27014,6 @@
   common_exports.setMatrixArrayType(Array);
   document.onclick = () => {
     document.onclick = null;
-    playSound("ominous.wav");
     game();
   };
 })();

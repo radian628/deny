@@ -41,7 +41,7 @@ export function runPlayerIter(game: Game) {
   player.vel[0] *= 0; //PLAYER_DAMPEN ** game.dt;
   player.vel[1] *= 0; // PLAYER_DAMPEN ** game.dt;
 
-  const playerStepSize = (PLAYER_ACCEL * 1) / 60;
+  const playerStepSize = ((PLAYER_ACCEL * 1) / 60) * (keysPressed.c ? 0.3 : 1);
 
   // console.log(keysPressed);
   if (keysPressed.arrowup) player.vel[1] += playerStepSize;

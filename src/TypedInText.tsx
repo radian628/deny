@@ -1,5 +1,6 @@
 import React, { createElement, useEffect, useRef, useState } from "react";
 import { createRoot, Root } from "react-dom/client";
+import { playSound } from "./sound";
 
 export type TypedInTextChild = (string | JSX.Element)[] | JSX.Element | string;
 
@@ -34,8 +35,6 @@ export function TypedInText(props: {
 
   const rootRef = useRef<Root | undefined>();
 
-  const dialogueNoise = useDialogueNoise();
-
   useEffect(() => {
     setCharsLoaded(0);
     allTextRef.current = "";
@@ -69,17 +68,7 @@ export function TypedInText(props: {
         } else {
           setCharsLoaded((l) => l + 1);
 
-          if (!dialogueNoise) return;
-          const ac = new AudioContext();
-          const track = new AudioBufferSourceNode(ac, {
-            buffer: dialogueNoise,
-            playbackRate: Math.random() * 0.75 + 0.5,
-          });
-          const gain = ac.createGain();
-          gain.gain.setValueAtTime(0.2, 0);
-          track.connect(gain);
-          gain.connect(ac.destination);
-          track.start();
+          playSound("dialogue-noise.wav", 0.3 * Math.random() + 0.6, 0.04);
         }
       },
       charsLoaded === 0

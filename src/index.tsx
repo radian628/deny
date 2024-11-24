@@ -32,7 +32,6 @@ document.onclick = () => {
   //   track.connect(ac.destination);
   //   track.start();
   // })();
-  playSound("ominous.wav");
 
   game();
 };

@@ -2,6 +2,7 @@ import { vec2 } from "gl-matrix";
 import { directMultiTimer, Entity, multiTimer } from "./entity";
 import { DrawSystem } from "../gl/draw";
 import { Root } from "react-dom/client";
+import { mutuallyExclusiveSound, MutuallyExlusiveSound } from "../sound";
 
 export type Game = {
   entities: Entity[];
@@ -23,6 +24,9 @@ export type Game = {
   drawEntities(): void;
   generator(gen: Generator<Entity, void, void>): void;
   onPlayerDead(entity: Entity, fn: () => void): void;
+  backingTrack: MutuallyExlusiveSound;
+  eventDrivenSound: MutuallyExlusiveSound;
+  eventDrivenSound2: MutuallyExlusiveSound;
 };
 
 export function makeGame(ds: DrawSystem, text: Root): Game {
@@ -31,6 +35,9 @@ export function makeGame(ds: DrawSystem, text: Root): Game {
   let pt = 0;
   const playerDeadHandlers = new Map<Entity, (() => void)[]>();
   return {
+    backingTrack: mutuallyExclusiveSound(),
+    eventDrivenSound: mutuallyExclusiveSound(),
+    eventDrivenSound2: mutuallyExclusiveSound(),
     entities: [],
     player: {
       pos: [0, 0],

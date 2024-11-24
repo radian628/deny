@@ -31,7 +31,7 @@ import {
   DiscoveryBoss,
   drawDiscoveryBody,
 } from "./discovery-boss";
-import { playSound } from "../sound";
+import { loopSound, playSound } from "../sound";
 import { Game } from "../ecs/game";
 import {
   allDone,
@@ -59,6 +59,8 @@ function drawPlayerAtOrigin(game: Game) {
 }
 
 export const introText: Entity = multiTimer(function* (game: Game) {
+  game.backingTrack.play("audio/DenyIntro_Background.flac", true);
+
   yield allDone(
     [text([<>A thing!</>, <>In our domain!</>, <>In the periphery!</>])],
     [
@@ -73,7 +75,10 @@ export const introText: Entity = multiTimer(function* (game: Game) {
   yield allDone(
     [
       multiTimer(function* (game: Game) {
-        yield timer(8);
+        yield timer(3);
+        game.eventDrivenSound.play("audio/DenyIntro_Whispers.flac", false);
+        yield timer(5);
+        game.eventDrivenSound2.play("audio/DenyIntro_Shrill.flac", false);
         yield text([
           <>
             It seems very. Peculiar. Odd. Interesting. Enticing. Strange. Weird.
@@ -196,6 +201,9 @@ export const introText: Entity = multiTimer(function* (game: Game) {
 
         if (t > 4) {
           if (!playerExploded) {
+            game.eventDrivenSound2.stop();
+            playSound("click.wav", 1, 4);
+            playSound("player-death.wav", 0.25, 1);
             playerExploded = true;
             for (const pp of playerPieces) {
               pp.vel = [Math.random() * 0.2 - 0.1, Math.random() * 0.2 - 0.1];
@@ -212,6 +220,7 @@ export const introText: Entity = multiTimer(function* (game: Game) {
   );
 
   start = game.t;
+  let hasPlayerRespawned = false;
   yield allDone(
     [
       multiTimer(function* () {
@@ -256,6 +265,10 @@ export const introText: Entity = multiTimer(function* (game: Game) {
         if (t > 3) {
           const playerSize = Math.sin(game.t * 10 * Math.PI * 2) * 0.005 + 0.02;
           game.ds.circle([0, 0], playerSize, [1, 0.7, 0.7, 1]);
+          if (!hasPlayerRespawned) {
+            hasPlayerRespawned = true;
+            playSound("audio/DenyIntro_Respawn.flac");
+          }
         }
 
         const bossT = mat3.create();
@@ -310,7 +323,8 @@ const playerMoveCutscene = {
       this.showAttackTutorial &&
       vec2.dist(game.player.pos, [0.0, 0.5]) < ATTACK_RADIUS + 0.3
     ) {
-      playSound("discovery-hurt.wav", Math.random() * 0.1 + 0.2);
+      // playSound("discovery-hurt.wav", Math.random() * 0.1 + 0.2);
+      playSound("audio/DenyIntro_Attack.flac");
       this.isDead = true;
     }
 
@@ -318,6 +332,7 @@ const playerMoveCutscene = {
       (game.player.pos[0] !== 0 || game.player.pos[1] !== 0) &&
       this.playerHasntMovedYet
     ) {
+      game.eventDrivenSound.play("audio/DenyIntro_Movement.flac", false);
       this.playerHasntMovedYet = false;
       game.addEntity(
         timer(1.5, () => {
@@ -348,9 +363,10 @@ const playerAttackCutscene = {
   isDead: false,
   start: 0,
   init(game: Game) {
+    const cutscene = this;
     game.addEntity(
-      text(
-        [
+      multiTimer(function* (game) {
+        yield text([
           <>Oh...</>,
           <>It... intersected me.</>,
           <>It was rather...</>,
@@ -365,13 +381,20 @@ const playerAttackCutscene = {
           <>Quite.</>,
           <>Questionable. Unsettling.</>,
           <>Enticing.</>,
-          <SlowText delay={300}>
-            <em>Dangerous. . .</em>
-          </SlowText>,
-          <SlowText delay={200}>I cannot allow such a being to live.</SlowText>,
-        ],
-        () => (this.isDead = true)
-      )
+        ]);
+        game.eventDrivenSound.play("audio/DenyIntro_Anger.flac", false);
+        yield text(
+          [
+            <SlowText delay={300}>
+              <em>Dangerous. . .</em>
+            </SlowText>,
+            <SlowText delay={200}>
+              I cannot allow such a being to live.
+            </SlowText>,
+          ],
+          () => (cutscene.isDead = true)
+        );
+      })
     );
   },
   iter(game: Game) {
