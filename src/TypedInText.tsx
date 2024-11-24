@@ -68,7 +68,7 @@ export function TypedInText(props: {
         } else {
           setCharsLoaded((l) => l + 1);
 
-          playSound("dialogue-noise.wav", 0.3 * Math.random() + 0.6, 0.04);
+          // playSound("dialogue-noise.wav", 0.3 * Math.random() + 0.6, 0.04);
         }
       },
       charsLoaded === 0

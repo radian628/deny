@@ -24676,61 +24676,6 @@
   // src/TypedInText.tsx
   var import_react = __toESM(require_react());
   var import_client = __toESM(require_client());
-
-  // src/sound.ts
-  var ac = new AudioContext();
-  var soundCache = /* @__PURE__ */ new Map();
-  async function fetchAudio(url) {
-    let audio = soundCache.get(url);
-    if (!audio) {
-      const file = await fetch(url);
-      const buf = await file.arrayBuffer();
-      audio = await ac.decodeAudioData(buf);
-    }
-    return audio;
-  }
-  async function createSoundWithPitchAndGain(audio, pitch, gain) {
-    const track = new AudioBufferSourceNode(ac, {
-      buffer: audio,
-      playbackRate: pitch
-    });
-    const gainNode = new GainNode(ac, {
-      gain: gain ?? 1
-    });
-    track.connect(gainNode);
-    gainNode.connect(ac.destination);
-    return track;
-  }
-  async function playSound(url, pitch, gain) {
-    const track = await createSoundWithPitchAndGain(
-      await fetchAudio(url),
-      pitch,
-      gain
-    );
-    track.start();
-    return track;
-  }
-  async function loopSound(url, pitch, gain) {
-    const audio = await fetchAudio(url);
-    const track = await createSoundWithPitchAndGain(audio, pitch, gain);
-    track.loop = true;
-    track.start();
-    return track;
-  }
-  function mutuallyExclusiveSound() {
-    let track;
-    return {
-      async play(url, loop) {
-        track?.stop();
-        track = loop ? await loopSound(url) : await playSound(url);
-      },
-      stop() {
-        track?.stop();
-      }
-    };
-  }
-
-  // src/TypedInText.tsx
   function TypedInText(props) {
     const ref = (0, import_react.useRef)(null);
     const [charsLoaded, setCharsLoaded] = (0, import_react.useState)(0);
@@ -24761,7 +24706,6 @@
             props.done?.();
           } else {
             setCharsLoaded((l) => l + 1);
-            playSound("dialogue-noise.wav", 0.3 * Math.random() + 0.6, 0.04);
           }
         },
         charsLoaded === 0 ? 100 : currentChar.match(/\.|\?|\!/g) ? 250 : currentChar.match(/\,/g) ? 100 : delaysRef.current[charsLoaded - 1] ?? 20
@@ -24929,6 +24873,59 @@
   }
   function pickRandomly(choices) {
     return choices[Math.floor(Math.random() * choices.length)];
+  }
+
+  // src/sound.ts
+  var ac = new AudioContext();
+  var soundCache = /* @__PURE__ */ new Map();
+  async function fetchAudio(url) {
+    let audio = soundCache.get(url);
+    if (!audio) {
+      const file = await fetch(url);
+      const buf = await file.arrayBuffer();
+      audio = await ac.decodeAudioData(buf);
+    }
+    return audio;
+  }
+  async function createSoundWithPitchAndGain(audio, pitch, gain) {
+    const track = new AudioBufferSourceNode(ac, {
+      buffer: audio,
+      playbackRate: pitch
+    });
+    const gainNode = new GainNode(ac, {
+      gain: gain ?? 1
+    });
+    track.connect(gainNode);
+    gainNode.connect(ac.destination);
+    return track;
+  }
+  async function playSound(url, pitch, gain) {
+    const track = await createSoundWithPitchAndGain(
+      await fetchAudio(url),
+      pitch,
+      gain
+    );
+    track.start();
+    return track;
+  }
+  async function loopSound(url, pitch, gain) {
+    const audio = await fetchAudio(url);
+    const track = await createSoundWithPitchAndGain(audio, pitch, gain);
+    track.loop = true;
+    track.start();
+    return track;
+  }
+  function mutuallyExclusiveSound() {
+    let track;
+    return {
+      async play(url, loop) {
+        track?.stop();
+        track = loop ? await loopSound(url) : await playSound(url);
+      },
+      stop() {
+        track?.stop();
+      }
+    };
   }
 
   // src/ecs/player.ts
